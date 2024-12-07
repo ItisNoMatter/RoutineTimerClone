@@ -1,0 +1,24 @@
+name: Ktlint Check
+
+# プルリクエストごとにチェックする設定
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  ktlint:
+    name: Run Ktlint Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Gradle
+        uses: gradle/setup-gradle@v2
+        with:
+          gradle-version: 8.6
+
+      - name: Run Ktlint Check
+        run: ./gradlew ktlintCheck
