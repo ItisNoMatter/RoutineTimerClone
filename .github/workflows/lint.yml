@@ -1,6 +1,5 @@
 name: Ktlint Check
 
-# プルリクエストごとにチェックする設定
 on:
   pull_request:
     branches:
@@ -15,10 +14,8 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
 
-      - name: Set up Gradle
-        uses: gradle/setup-gradle@v2
-        with:
-          gradle-version: 8.6
+      - name: Grant permission
+      - run: chmod +x ./gradlew
 
       - name: Run Ktlint Check
         run: ./gradlew ktlintCheck
