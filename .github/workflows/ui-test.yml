@@ -6,30 +6,37 @@ on:
       - opened
       - synchronize
     branches:
-      - master
+      - main
 
 jobs:
   ui-test:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v2
-      - name: set up JDK
+
+      - name: Set up JDK
         uses: actions/setup-java@v2
         with:
           java-version: 17
           distribution: 'temurin'
-      - name: add permission
-        run: chmod +x ./gradlew
+
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
-      - name: Debug ADB Devices
-        run: adb devices
+
+      - name: Install Dependencies
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager --install 'build-tools;35.0.0' platform-tools 'platforms;android-30' 'system-images;android-30;google_apis;x86_64'
+
       - name: Start Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 30
-          target: default
-          arch: x86
+          target: google_apis
+          arch: x86_64
           profile: Pixel_4
           script: ./gradlew connectedAndroidTest
+
+      - name: Terminate Emulator
+        run: adb emu kill
