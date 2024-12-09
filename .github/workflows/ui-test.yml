@@ -1,0 +1,25 @@
+name: Run UI Test
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - master
+
+jobs:
+  ui-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+      - name: set up JDK
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: 'temurin'
+      - name: add permission
+        run: chmod +x ./gradlew
+      - name: Run Unit Tests
+        run: ./gradlew connectedAndroidTest
