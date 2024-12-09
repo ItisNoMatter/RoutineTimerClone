@@ -21,5 +21,13 @@ jobs:
           distribution: 'temurin'
       - name: add permission
         run: chmod +x ./gradlew
-      - name: Run Unit Tests
-        run: ./gradlew connectedAndroidTest
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+      - name: Start Emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          target: google_apis
+          arch: x86_64
+          profile: Pixel_4
+          script: ./gradlew connectedAndroidTest
