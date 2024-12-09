@@ -23,6 +23,8 @@ jobs:
         run: chmod +x ./gradlew
       - name: Set up Android SDK
         uses: android-actions/setup-android@v2
+      - name: Debug ADB Devices
+        run: adb devices
       - name: Start Emulator
         uses: reactivecircus/android-emulator-runner@v2
         with:
