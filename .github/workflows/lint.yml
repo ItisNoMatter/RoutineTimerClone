@@ -11,11 +11,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Setup JDK 17
+        uses: actions/setup-java@v3
+        with:
+            java-version: '17' # Java 17 を指定
+            distribution: 'temurin' # OpenJDK の推奨ディストリビューション
       - name: Checkout Repository
         uses: actions/checkout@v4
 
       - name: Grant permission
-      - run: chmod +x ./gradlew
+        run: chmod +x ./gradlew
 
       - name: Run Ktlint Check
         run: ./gradlew ktlintCheck
