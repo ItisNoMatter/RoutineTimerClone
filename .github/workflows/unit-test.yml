@@ -22,4 +22,4 @@ jobs:
       - name: add permission
         run: chmod +x ./gradlew
       - name: Run Unit Tests
-        run: ./gradlew test
+        run: ./gradlew testDebugUnitTest
