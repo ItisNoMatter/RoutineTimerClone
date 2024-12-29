@@ -13,4 +13,10 @@ data class Duration(
     fun getTotalSeconds(): Int {
         return minutes * 60 + seconds
     }
+
+    companion object {
+        fun fromSeconds(seconds: Int): Duration {
+            return Duration(seconds / 60, seconds % 60)
+        }
+    }
 }
