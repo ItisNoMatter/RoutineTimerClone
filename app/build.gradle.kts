@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
-    id("kotlin-kapt")
 }
 
 android {
@@ -63,9 +62,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
-    implementation(platform(libs.room.bom))
     implementation(libs.room.runtime)
-    kapt(libs.room.compiler)
     testImplementation(libs.junit)
     testImplementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.androidx.ui.test.junit4)
