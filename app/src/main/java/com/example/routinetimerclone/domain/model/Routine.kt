@@ -1,6 +1,7 @@
 package com.example.routinetimerclone.domain.model
 
 data class Routine(
+    val id: Int,
     val name: String,
     var tasks: List<Task>,
 ) {
@@ -19,6 +20,6 @@ data class Routine(
         val newTasks: MutableList<Task> = tasks.toMutableList()
         val task = newTasks.removeAt(from)
         newTasks.add(to, task)
-        return Routine(name, newTasks)
+        return Routine(id, name, newTasks)
     }
 }
