@@ -35,7 +35,10 @@ interface RoutineDao {
     suspend fun insertRoutines(routines: List<RoutineEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTasks(tasks: List<TaskEntity>)
+    suspend fun insertTasks(
+        tasks: List<TaskEntity>,
+        parentRoutineId: Int,
+    )
 
     @Transaction
     suspend fun insertRoutineWithTasks(
@@ -43,8 +46,7 @@ interface RoutineDao {
         tasks: List<TaskEntity>,
     ) {
         val routineId = insertRoutine(routine)
-        val tasksWithRoutineId = tasks.map { it.copy(parentRoutineId = routineId) }
-        insertTasks(tasksWithRoutineId)
+        insertTasks(tasks, routineId)
     }
 
     @Query("SELECT * FROM task WHERE parentRoutineId = :id")
