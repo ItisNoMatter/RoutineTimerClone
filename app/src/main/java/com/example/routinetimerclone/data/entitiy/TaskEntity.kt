@@ -1,12 +1,23 @@
 package com.example.routinetimerclone.data.entitiy
 
 import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "task")
+@Entity(
+    tableName = "task",
+    foreignKeys = [
+        ForeignKey(
+            entity = RoutineEntity::class,
+            parentColumns = ["id"],
+            childColumns = ["parentRoutineId"],
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
+)
 data class TaskEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val name: String,
     val seconds: Int,
-    val minutes: Int,
+    val parentRoutineId: Int,
 )
