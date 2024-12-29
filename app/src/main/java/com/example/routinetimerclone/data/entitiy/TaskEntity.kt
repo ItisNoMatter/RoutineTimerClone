@@ -14,6 +14,7 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE,
         ),
     ],
+    indices = [androidx.room.Index("parentRoutineId")],
 )
 data class TaskEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
