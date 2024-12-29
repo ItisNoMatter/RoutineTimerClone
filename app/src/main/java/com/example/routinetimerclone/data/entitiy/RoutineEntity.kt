@@ -7,5 +7,4 @@ import androidx.room.PrimaryKey
 data class RoutineEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val name: String,
-    val tasks: List<TaskEntity>,
 )
