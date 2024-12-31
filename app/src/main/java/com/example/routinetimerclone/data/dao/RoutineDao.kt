@@ -19,7 +19,7 @@ interface RoutineDao {
 
     @Transaction
     @Query("SELECT * FROM routine WHERE id = :id")
-    fun getRoutineById(id: Int): Flow<RoutineWithTasks?>
+    fun getRoutineById(id: Long): Flow<RoutineWithTasks?>
 
     @Transaction
     @Query("SELECT * FROM routine WHERE name = :name")
@@ -36,39 +36,22 @@ interface RoutineDao {
     suspend fun insertRoutines(routines: List<RoutineEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTask(task: TaskEntity)
-
-    @Transaction
-    suspend fun insertTasks(
-        tasks: List<TaskEntity>,
-        parentRoutineId: Long,
-    ) {
-        if (!tasks.all { it.id == parentRoutineId })return
-        for (task in tasks) {
-            insertTask(task)
-        }
-    }
-
-    @Transaction
-    suspend fun insertRoutineWithTasks(
-        routine: RoutineEntity,
-        tasks: List<TaskEntity>,
-    ) {
-        val routineId = insertRoutine(routine)
-        insertTasks(tasks, routineId)
-    }
+    suspend fun insertTask(task: TaskEntity): Long
 
     @Query("SELECT * FROM task WHERE parentRoutineId = :id")
-    fun getTasksByRoutineId(id: Int): Flow<List<TaskEntity>>
+    fun getTasksByRoutineId(id: Long): Flow<List<TaskEntity>>
+
+    @Query("SELECT * FROM task WHERE id = :id")
+    fun getTaskById(id: Long): Flow<List<TaskEntity>>
 
     @Query("DELETE FROM task WHERE parentRoutineId = :id")
-    suspend fun deleteTasksByRoutineId(id: Int)
+    suspend fun deleteTasksByRoutineId(id: Long)
 
     @Query("DELETE FROM routine WHERE id = :id")
-    suspend fun deleteRoutineById(id: Int)
+    suspend fun deleteRoutineById(id: Long)
 
     @Query("DELETE FROM task WHERE id = :id")
-    suspend fun deleteTaskById(id: Int)
+    suspend fun deleteTaskById(id: Long)
 
     @Update
     suspend fun updateRoutine(routine: RoutineEntity)
