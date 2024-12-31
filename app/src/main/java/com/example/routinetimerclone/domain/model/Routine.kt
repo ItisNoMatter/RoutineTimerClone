@@ -1,7 +1,7 @@
 package com.example.routinetimerclone.domain.model
 
 data class Routine(
-    val id: Int,
+    val id: Long,
     val name: String,
     var tasks: List<Task>,
 ) {
