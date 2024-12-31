@@ -17,8 +17,8 @@ import androidx.room.PrimaryKey
     indices = [androidx.room.Index("parentRoutineId")],
 )
 data class TaskEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Long,
     val name: String,
     val seconds: Int,
-    val parentRoutineId: Int,
+    val parentRoutineId: Long,
 )

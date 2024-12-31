@@ -21,10 +21,11 @@ class RoutineDaoTest {
 
     @Before
     fun setup() {
-        db = Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), Database::class.java)
-            .setQueryExecutor(testDispatcher.asExecutor())
-            .setTransactionExecutor(testDispatcher.asExecutor())
-            .build()
+        db =
+            Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), Database::class.java)
+                .setQueryExecutor(testDispatcher.asExecutor())
+                .setTransactionExecutor(testDispatcher.asExecutor())
+                .build()
         dao = db.routineDao()
     }
 
@@ -34,10 +35,11 @@ class RoutineDaoTest {
     }
 
     @Test
-    fun getRoutineTest() = runTest{
-        val routine = dao.getRoutineById(1)
-        routine.collect{ routine ->
-            assert(routine == null)
+    fun getRoutineTest() =
+        runTest {
+            val routine = dao.getRoutineById(1)
+            routine.collect { it ->
+                assert(it == null)
+            }
         }
-    }
 }

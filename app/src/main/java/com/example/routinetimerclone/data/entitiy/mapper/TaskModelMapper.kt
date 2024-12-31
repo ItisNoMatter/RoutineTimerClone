@@ -12,7 +12,7 @@ class TaskModelMapper {
 
         fun toEntity(
             task: Task,
-            parentRoutineId: Int,
+            parentRoutineId: Long,
         ): TaskEntity {
             return TaskEntity(task.id, task.name, task.duration.getTotalSeconds(), parentRoutineId)
         }

@@ -15,31 +15,39 @@ import kotlinx.coroutines.flow.Flow
 interface RoutineDao {
     @Transaction
     @Query("SELECT * FROM routine")
-    suspend fun getAllRoutines(): Flow<List<RoutineWithTasks>>
+    fun getAllRoutines(): Flow<List<RoutineWithTasks>>
 
     @Transaction
     @Query("SELECT * FROM routine WHERE id = :id")
-    suspend fun getRoutineById(id: Int): Flow<RoutineWithTasks?>
+    fun getRoutineById(id: Int): Flow<RoutineWithTasks?>
 
     @Transaction
     @Query("SELECT * FROM routine WHERE name = :name")
-    suspend fun getRoutineByName(name: String): Flow<RoutineWithTasks?>
+    fun getRoutineByName(name: String): Flow<RoutineWithTasks?>
 
     @Transaction
     @Query("SELECT * FROM routine WHERE name LIKE '%' || :name || '%'")
-    suspend fun getRoutinesByName(name: String): Flow<List<RoutineWithTasks>>
+    fun getRoutinesByName(name: String): Flow<List<RoutineWithTasks>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRoutine(routine: RoutineEntity): Int
+    suspend fun insertRoutine(routine: RoutineEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertRoutines(routines: List<RoutineEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertTask(task: TaskEntity)
+
+    @Transaction
     suspend fun insertTasks(
         tasks: List<TaskEntity>,
-        parentRoutineId: Int,
-    )
+        parentRoutineId: Long,
+    ) {
+        if (!tasks.all { it.id == parentRoutineId })return
+        for (task in tasks) {
+            insertTask(task)
+        }
+    }
 
     @Transaction
     suspend fun insertRoutineWithTasks(
@@ -51,7 +59,7 @@ interface RoutineDao {
     }
 
     @Query("SELECT * FROM task WHERE parentRoutineId = :id")
-    suspend fun getTasksByRoutineId(id: Int): Flow<List<TaskEntity>>
+    fun getTasksByRoutineId(id: Int): Flow<List<TaskEntity>>
 
     @Query("DELETE FROM task WHERE parentRoutineId = :id")
     suspend fun deleteTasksByRoutineId(id: Int)

@@ -1,12 +1,12 @@
 package com.example.routinetimerclone.domain.model
 
 data class Task(
-    val id: Int,
+    val id: Long,
     val name: String,
     val duration: Duration,
 ) {
     constructor(
-        id: Int,
+        id: Long,
         name: String,
         minutes: Int,
         seconds: Int,
