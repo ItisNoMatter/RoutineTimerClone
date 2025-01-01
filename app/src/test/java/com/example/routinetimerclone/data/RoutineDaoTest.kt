@@ -277,4 +277,19 @@ class RoutineDaoTest {
             advanceUntilIdle()
             assertEquals(result[0], updatedTask)
         }
+    @Test
+    fun insertRoutineWithTasksTest() =
+        runTest(testDispatcher.scheduler) {
+            val routine = RoutineEntity(0, "Test Routine")
+            val tasks =
+                listOf(
+                    TaskEntity(0, "Test Task 1", 60, 0),
+                    TaskEntity(0, "Test Task 2", 120, 0),
+                )
+            dao.insertRoutineWithTasks(routine, tasks)
+            advanceUntilIdle()
+            val result = dao.getAllRoutines().first()
+            advanceUntilIdle()
+            assert(result.isNotEmpty())
+        }
 }
