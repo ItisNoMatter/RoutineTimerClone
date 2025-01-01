@@ -25,7 +25,7 @@ class RoutineRepositoryImpl(
         }
     }
 
-    override fun getRoutine(name: String): Flow<Routine?> {
+    override fun getRoutineByName(name: String): Flow<Routine?> {
         return localDataSource.getRoutineByName(name).map { routineWithTasks ->
             routineWithTasks?.let { routineModelMapper.toDomain(it.routine, it.tasks) }
         }

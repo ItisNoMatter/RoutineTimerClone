@@ -9,7 +9,7 @@ interface RoutineRepository {
 
     fun getRoutine(id: Long): Flow<Routine?>
 
-    fun getRoutine(name: String): Flow<Routine?>
+    fun getRoutineByName(name: String): Flow<Routine?>
 
     suspend fun insertRoutine(routine: Routine): Long
 
