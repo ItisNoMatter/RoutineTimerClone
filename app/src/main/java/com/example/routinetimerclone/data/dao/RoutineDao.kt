@@ -33,7 +33,7 @@ interface RoutineDao {
     suspend fun insertRoutine(routine: RoutineEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRoutines(routines: List<RoutineEntity>)
+    suspend fun insertRoutines(routines: List<RoutineEntity>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(task: TaskEntity): Long
