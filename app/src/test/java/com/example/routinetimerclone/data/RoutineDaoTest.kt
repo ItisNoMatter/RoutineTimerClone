@@ -277,6 +277,7 @@ class RoutineDaoTest {
             advanceUntilIdle()
             assertEquals(result[0], updatedTask)
         }
+
     @Test
     fun insertRoutineWithTasksTest() =
         runTest(testDispatcher.scheduler) {

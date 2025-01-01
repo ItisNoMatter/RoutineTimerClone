@@ -60,7 +60,10 @@ interface RoutineDao {
     suspend fun updateTask(task: TaskEntity)
 
     @Transaction
-    suspend fun insertRoutineWithTasks(routine: RoutineEntity, tasks: List<TaskEntity>): Long {
+    suspend fun insertRoutineWithTasks(
+        routine: RoutineEntity,
+        tasks: List<TaskEntity>,
+    ): Long {
         val routineId = insertRoutine(routine)
         for (task in tasks) {
             insertTask(task.copy(parentRoutineId = routineId))
