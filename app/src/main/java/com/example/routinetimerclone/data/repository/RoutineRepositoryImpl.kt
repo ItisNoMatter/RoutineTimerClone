@@ -94,7 +94,7 @@ class RoutineRepositoryImpl(
     }
 
     override suspend fun deleteAllTasksByRoutineId(routineId: Long) {
-        localDataSource.deleteRoutineById(routineId)
+        localDataSource.deleteAllTasksByRoutineId(routineId)
     }
 
     override fun getRoutinesByName(name: String): Flow<List<Routine>> {
