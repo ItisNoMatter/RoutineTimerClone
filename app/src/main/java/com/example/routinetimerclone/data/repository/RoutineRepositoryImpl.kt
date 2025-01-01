@@ -43,9 +43,8 @@ class RoutineRepositoryImpl(
 
     override suspend fun insertRoutines(routines: List<Routine>): List<Long> {
         return routines.map {
-            val parentid = localDataSource.insertRoutine(routineModelMapper.toEntity(it).routine)
-            localDataSource.insertTasks(routineModelMapper.toEntity(it).tasks.map { it.copy(parentRoutineId = parentid) })
-            parentid
+            val entitiy = routineModelMapper.toEntity(it)
+            localDataSource.insertRoutineWithTasks(entitiy.routine,entitiy.tasks)
         }
     }
 
