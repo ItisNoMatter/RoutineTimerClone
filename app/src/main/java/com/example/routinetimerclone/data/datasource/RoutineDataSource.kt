@@ -16,9 +16,11 @@ interface RoutineDataSource {
 
     suspend fun insertRoutine(routine: RoutineEntity): Long
 
-    suspend fun insertRoutines(routines: List<RoutineEntity>)
+    suspend fun insertRoutines(routines: List<RoutineEntity>): List<Long>
 
     suspend fun insertTask(task: TaskEntity): Long
+
+    suspend fun insertTasks(tasks: List<TaskEntity>): List<Long>
 
     fun getTasksByRoutineId(id: Long): Flow<List<TaskEntity>>
 

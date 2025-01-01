@@ -27,12 +27,18 @@ class RoutineLocalDataSource(private val dao: RoutineDao) : RoutineDataSource {
         return dao.insertRoutine(routine)
     }
 
-    override suspend fun insertRoutines(routines: List<RoutineEntity>) {
-        return dao.insertRoutines(routines)
+    override suspend fun insertRoutines(routines: List<RoutineEntity>): List<Long> {
+        return insertRoutines(routines)
     }
 
     override suspend fun insertTask(task: TaskEntity): Long {
         return dao.insertTask(task)
+    }
+
+    override suspend fun insertTasks(tasks: List<TaskEntity>): List<Long> {
+        return tasks.map{
+            insertTask(it)
+        }
     }
 
     override fun getTasksByRoutineId(id: Long): Flow<List<TaskEntity>> {
