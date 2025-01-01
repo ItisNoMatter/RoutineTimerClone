@@ -7,18 +7,20 @@ import com.example.routinetimerclone.domain.model.Task
 import org.junit.Test
 
 class TaskModelMapperTest {
+    val taskModelMapper = TaskModelMapper()
+
     @Test
     fun taskModelMapperTest() {
         val task = Task(1, "Task 1", Duration(1, 30))
-        val taskEntity = TaskModelMapper.toEntity(task, 1)
-        val task2 = TaskModelMapper.toDomain(taskEntity)
+        val taskEntity = taskModelMapper.toEntity(task, 1)
+        val task2 = taskModelMapper.toDomain(taskEntity)
         assert(task == task2)
     }
 
     @Test
     fun taskModelMapper_toDomainTest() {
         val taskEntity = TaskEntity(1, "Task 1", 90, 1)
-        val task = TaskModelMapper.toDomain(taskEntity)
+        val task = taskModelMapper.toDomain(taskEntity)
         val expectedTask = Task(1, "Task 1", Duration(1, 30))
         assert(task == expectedTask)
     }
@@ -26,7 +28,7 @@ class TaskModelMapperTest {
     @Test
     fun taskModelMapper_toEntityTest() {
         val task = Task(1, "Task 1", Duration(1, 30))
-        val taskEntity = TaskModelMapper.toEntity(task, 1)
+        val taskEntity = taskModelMapper.toEntity(task, 1)
         val expectedTaskEntity = TaskEntity(1, "Task 1", 90, 1)
         assert(taskEntity == expectedTaskEntity)
     }
