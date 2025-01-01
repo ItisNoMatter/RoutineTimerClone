@@ -36,7 +36,7 @@ class RoutineLocalDataSource(private val dao: RoutineDao) : RoutineDataSource {
     }
 
     override suspend fun insertTasks(tasks: List<TaskEntity>): List<Long> {
-        return tasks.map{
+        return tasks.map {
             insertTask(it)
         }
     }
