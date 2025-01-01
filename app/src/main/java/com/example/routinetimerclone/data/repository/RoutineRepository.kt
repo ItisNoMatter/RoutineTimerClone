@@ -9,7 +9,7 @@ interface RoutineRepository {
 
     fun getRoutine(id: Long): Flow<Routine?>
 
-    fun getRoutine(name: String): Flow<Routine?>
+    fun getRoutinesByName(name: String): Flow<Routine?>
 
     suspend fun insertRoutine(routine: Routine): Long
 
@@ -41,6 +41,4 @@ interface RoutineRepository {
     suspend fun deleteTaskById(id: Long)
 
     suspend fun deleteAllTasksByRoutineId(routineId: Long)
-
-    fun getRoutinesByName(name: String): Flow<List<Routine>>
 }

@@ -25,7 +25,7 @@ class RoutineRepositoryImpl(
         }
     }
 
-    override fun getRoutine(name: String): Flow<Routine?> {
+    override fun getRoutinesByName(name: String): Flow<Routine?> {
         return localDataSource.getRoutineByName(name).map { routineWithTasks ->
             routineWithTasks?.let { routineModelMapper.toDomain(it.routine, it.tasks) }
         }
@@ -96,11 +96,5 @@ class RoutineRepositoryImpl(
 
     override suspend fun deleteAllTasksByRoutineId(routineId: Long) {
         localDataSource.deleteRoutineById(routineId)
-    }
-
-    override fun getRoutinesByName(name: String): Flow<List<Routine>> {
-        return localDataSource.getRoutinesByName(name).map { routinesWithTasks ->
-            routinesWithTasks.map { routineModelMapper.toDomain(it.routine, it.tasks) }
-        }
     }
 }
