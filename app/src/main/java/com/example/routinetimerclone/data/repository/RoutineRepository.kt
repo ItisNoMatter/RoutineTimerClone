@@ -7,9 +7,9 @@ import kotlinx.coroutines.flow.Flow
 interface RoutineRepository {
     fun getAllRoutines(): Flow<List<Routine>>
 
-    fun getRoutineById(id: Long): Flow<Routine?>
+    fun getRoutine(id: Long): Flow<Routine?>
 
-    fun getRoutineByName(name: String): Flow<Routine?>
+    fun getRoutine(name: String): Flow<Routine?>
 
     suspend fun insertRoutine(routine: Routine): Long
 

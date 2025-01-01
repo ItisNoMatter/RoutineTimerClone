@@ -19,13 +19,13 @@ class RoutineRepositoryImpl(
         }
     }
 
-    override fun getRoutineById(id: Long): Flow<Routine?> {
+    override fun getRoutine(id: Long): Flow<Routine?> {
         return localDataSource.getRoutineById(id).map { routineWithTasks ->
             routineWithTasks?.let { routineModelMapper.toDomain(it.routine, it.tasks) }
         }
     }
 
-    override fun getRoutineByName(name: String): Flow<Routine?> {
+    override fun getRoutine(name: String): Flow<Routine?> {
         return localDataSource.getRoutineByName(name).map { routineWithTasks ->
             routineWithTasks?.let { routineModelMapper.toDomain(it.routine, it.tasks) }
         }
