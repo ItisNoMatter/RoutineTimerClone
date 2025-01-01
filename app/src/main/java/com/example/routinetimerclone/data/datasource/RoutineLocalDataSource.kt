@@ -75,4 +75,11 @@ class RoutineLocalDataSource(private val dao: RoutineDao) : RoutineDataSource {
     ): Long {
         return dao.insertRoutineWithTasks(routine, tasks)
     }
+
+    override suspend fun updateRoutineWithTasks(
+        routine: RoutineEntity,
+        tasks: List<TaskEntity>,
+    ) {
+        dao.updateRoutineWithTasks(routine, tasks)
+    }
 }

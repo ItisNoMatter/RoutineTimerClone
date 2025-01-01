@@ -70,4 +70,16 @@ interface RoutineDao {
         }
         return routineId
     }
+
+    @Transaction
+    suspend fun updateRoutineWithTasks(
+        routine: RoutineEntity,
+        tasks: List<TaskEntity>,
+    ) {
+        updateRoutine(routine)
+        deleteAllTasksByRoutineId(routine.id)
+        for (task in tasks) {
+            insertTask(task.copy(parentRoutineId = routine.id))
+        }
+    }
 }
