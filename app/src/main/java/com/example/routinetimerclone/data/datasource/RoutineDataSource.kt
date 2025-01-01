@@ -35,4 +35,6 @@ interface RoutineDataSource {
     suspend fun updateRoutine(routine: RoutineEntity)
 
     suspend fun updateTask(task: TaskEntity)
+
+    suspend fun insertRoutineWithTasks(routine: RoutineEntity, tasks: List<TaskEntity>): Long
 }
