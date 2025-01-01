@@ -167,7 +167,7 @@ class RoutineDaoTest {
         }
 
     @Test
-    fun deleteTasksByRoutineIdTest() =
+    fun deleteAllTasksByRoutineIdTest() =
         runTest(testDispatcher.scheduler) {
             val routine = RoutineEntity(0, "Test Routine")
             val routineId = dao.insertRoutine(routine)
@@ -181,7 +181,7 @@ class RoutineDaoTest {
                 dao.insertTask(it)
                 advanceUntilIdle()
             }
-            dao.deleteTasksByRoutineId(routineId)
+            dao.deleteAllTasksByRoutineId(routineId)
             advanceUntilIdle()
             val result = dao.getTasksByRoutineId(routineId).first()
             advanceUntilIdle()

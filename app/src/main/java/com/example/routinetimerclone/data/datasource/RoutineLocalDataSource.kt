@@ -49,8 +49,8 @@ class RoutineLocalDataSource(private val dao: RoutineDao) : RoutineDataSource {
         return dao.getTaskById(id)
     }
 
-    override suspend fun deleteTasksByRoutineId(id: Long) {
-        dao.deleteTasksByRoutineId(id)
+    override suspend fun deleteAllTasksByRoutineId(id: Long) {
+        dao.deleteAllTasksByRoutineId(id)
     }
 
     override suspend fun deleteRoutineById(id: Long) {

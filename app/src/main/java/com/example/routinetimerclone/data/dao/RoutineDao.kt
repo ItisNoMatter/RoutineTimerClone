@@ -45,7 +45,7 @@ interface RoutineDao {
     fun getTaskById(id: Long): Flow<List<TaskEntity>>
 
     @Query("DELETE FROM task WHERE parentRoutineId = :id")
-    suspend fun deleteTasksByRoutineId(id: Long)
+    suspend fun deleteAllTasksByRoutineId(id: Long)
 
     @Query("DELETE FROM routine WHERE id = :id")
     suspend fun deleteRoutineById(id: Long)
