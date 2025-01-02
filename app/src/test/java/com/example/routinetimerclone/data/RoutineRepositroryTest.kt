@@ -107,14 +107,14 @@ class RoutineRepositroryTest {
         }
 
     @Test
-    fun `insertRoutine should call routineLocalDataSource insertRoutineWithTasks` () =
+    fun `insertRoutine should call routineLocalDataSource insertRoutineWithTasks`() =
         runBlocking {
             val routine = Routine(1, "Routine 1", emptyList())
             val routineEntity = RoutineEntity(1, "Routine 1")
             val routineWithTasks = RoutineWithTasks(routine = routineEntity, tasks = emptyList())
             every { routineModelMapper.toEntity(routine) } returns routineWithTasks
-            coEvery { routineLocalDataSource.insertRoutineWithTasks(any(),any())} returns 1L
+            coEvery { routineLocalDataSource.insertRoutineWithTasks(any(), any()) } returns 1L
             routineRepository.insertRoutine(routine)
-            coVerify { routineLocalDataSource.insertRoutineWithTasks(any(),any())}
+            coVerify { routineLocalDataSource.insertRoutineWithTasks(any(), any()) }
         }
 }
