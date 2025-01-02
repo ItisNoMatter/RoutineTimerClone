@@ -15,7 +15,6 @@ import io.mockk.verify
 import kotlinx.coroutines.flow.asFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -28,7 +27,7 @@ class RoutineRepositroryTest {
     private lateinit var routineLocalDataSource: RoutineLocalDataSource
 
     @Before
-    fun setup()  {
+    fun setup() {
         routineModelMapper = mockk()
         taskModelMapper = mockk()
         routineLocalDataSource = mockk()
@@ -43,7 +42,7 @@ class RoutineRepositroryTest {
     }
 
     @Test
-    fun `getAllRoutines should call routineLocalDataSource getAllRoutines`()  {
+    fun `getAllRoutines should call routineLocalDataSource getAllRoutines`() {
         val mockResponse = listOf<List<RoutineWithTasks>>().asFlow()
         every { routineLocalDataSource.getAllRoutines() } returns mockResponse
         routineRepository.getAllRoutines()
@@ -61,13 +60,47 @@ class RoutineRepositroryTest {
 
             // Arrange
             every { routineLocalDataSource.getAllRoutines() } returns flowOf(routinesWithTasks)
-            every { routineModelMapper.toDomain(routineEntity1, emptyList())} returns Routine(1, "Routine 1", emptyList())
-            every { routineModelMapper.toDomain(routineEntity2, emptyList())} returns Routine(2, "Routine 2", emptyList())
+            every { routineModelMapper.toDomain(routineEntity1, emptyList()) } returns Routine(1, "Routine 1", emptyList())
+            every { routineModelMapper.toDomain(routineEntity2, emptyList()) } returns Routine(2, "Routine 2", emptyList())
 
             // Act
             val result = routineRepository.getAllRoutines().first()
             val expected = listOf(Routine(1, "Routine 1", emptyList()), Routine(2, "Routine 2", emptyList()))
             // Assert
             assertEquals(expected, result)
+        }
+
+    @Test
+    fun `getRoutine should call routineLocalDataSource getRoutineById`() =
+        runBlocking {
+            val id = 1L
+            val mockResponse = flowOf<RoutineWithTasks?>(null)
+            every { routineLocalDataSource.getRoutineById(id) } returns mockResponse
+            routineRepository.getRoutine(id)
+            verify { routineLocalDataSource.getRoutineById(id) }
+        }
+
+    @Test
+    fun `getRoutine should return a routine`() =
+        runBlocking {
+            val id = 1L
+            val routineEntity = RoutineEntity(id, "Routine 1")
+            val routineWithTasks = RoutineWithTasks(routine = routineEntity, tasks = emptyList())
+            every { routineLocalDataSource.getRoutineById(id) } returns flowOf(routineWithTasks)
+            every { routineModelMapper.toDomain(routineEntity, emptyList()) } returns Routine(id, "Routine 1", emptyList())
+            val result = routineRepository.getRoutine(id).first()
+            val expected = Routine(id, "Routine 1", emptyList())
+            assertEquals(expected, result)
+        }
+
+    @Test
+    fun `getRoutineByName should call routineLocalDataSource getRoutineByName`() =
+        runBlocking {
+            val name = "Routine 1"
+            val mockResponse = flowOf<RoutineWithTasks?>(null)
+            every { routineLocalDataSource.getRoutineByName(name) } returns mockResponse
+            every { routineModelMapper.toDomain(any(), any()) } returns Routine(1, "Routine 1", emptyList())
+            routineRepository.getRoutineByName(name)
+            verify { routineLocalDataSource.getRoutineByName(name) }
         }
 }
