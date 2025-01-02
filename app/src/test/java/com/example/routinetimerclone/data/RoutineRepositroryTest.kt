@@ -52,14 +52,20 @@ class RoutineRepositroryTest {
     @Test
     fun `getAllRoutines should return a list of routines`() =
         runBlocking {
+            val routineEntity1 = RoutineEntity(1, "Routine 1")
+            val routineEntity2 = RoutineEntity(2, "Routine 2")
+            val routineWithTasks1 = RoutineWithTasks(routine = routineEntity1, tasks = emptyList())
+            val routineWithTasks2 = RoutineWithTasks(routine = routineEntity2, tasks = emptyList())
+            val routinesWithTasks = listOf(routineWithTasks1, routineWithTasks2)
+
             // Arrange
-            val routineWithTasks = listOf(RoutineWithTasks(routine = RoutineEntity(1, "Routine 1"), tasks = emptyList()))
-            every { routineLocalDataSource.getAllRoutines() } returns flowOf(routineWithTasks)
-            every { routineModelMapper.toDomain(any(), any()) } returns Routine(1, "Routine 1", emptyList())
+            every { routineLocalDataSource.getAllRoutines() } returns flowOf(routinesWithTasks)
+            every { routineModelMapper.toDomain(RoutineEntity(1,"Routine 1"), emptyList()) } returns Routine(1, "Routine 1", emptyList())
+            every { routineModelMapper.toDomain(RoutineEntity(2,"Routine 2"), emptyList()) } returns Routine(2, "Routine 2", emptyList())
 
             // Act
-            val result = routineRepository.getAllRoutines().toList()
-            val expected = listOf(Routine(1, "Routine 1", emptyList()))
+            val result = routineRepository.getAllRoutines().toList()[0]
+            val expected = listOf(Routine(1, "Routine 1", emptyList()), Routine(2, "Routine 2", emptyList()))
             // Assert
             assertEquals(expected, result)
         }
