@@ -13,6 +13,7 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.runBlocking
@@ -60,11 +61,11 @@ class RoutineRepositroryTest {
 
             // Arrange
             every { routineLocalDataSource.getAllRoutines() } returns flowOf(routinesWithTasks)
-            every { routineModelMapper.toDomain(RoutineEntity(1,"Routine 1"), emptyList()) } returns Routine(1, "Routine 1", emptyList())
-            every { routineModelMapper.toDomain(RoutineEntity(2,"Routine 2"), emptyList()) } returns Routine(2, "Routine 2", emptyList())
+            every { routineModelMapper.toDomain(routineEntity1, emptyList())} returns Routine(1, "Routine 1", emptyList())
+            every { routineModelMapper.toDomain(routineEntity2, emptyList())} returns Routine(2, "Routine 2", emptyList())
 
             // Act
-            val result = routineRepository.getAllRoutines().toList()[0]
+            val result = routineRepository.getAllRoutines().first()
             val expected = listOf(Routine(1, "Routine 1", emptyList()), Routine(2, "Routine 2", emptyList()))
             // Assert
             assertEquals(expected, result)
