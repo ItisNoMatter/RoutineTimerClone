@@ -9,6 +9,8 @@ import com.example.routinetimerclone.data.repository.RoutineRepository
 import com.example.routinetimerclone.data.repository.RoutineRepositoryImpl
 import com.example.routinetimerclone.domain.model.Routine
 import com.google.common.base.Verify.verify
+import io.mockk.coEvery
+import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
@@ -102,5 +104,17 @@ class RoutineRepositroryTest {
             every { routineModelMapper.toDomain(any(), any()) } returns Routine(1, "Routine 1", emptyList())
             routineRepository.getRoutineByName(name)
             verify { routineLocalDataSource.getRoutineByName(name) }
+        }
+
+    @Test
+    fun `insertRoutine should call routineLocalDataSource insertRoutineWithTasks` () =
+        runBlocking {
+            val routine = Routine(1, "Routine 1", emptyList())
+            val routineEntity = RoutineEntity(1, "Routine 1")
+            val routineWithTasks = RoutineWithTasks(routine = routineEntity, tasks = emptyList())
+            every { routineModelMapper.toEntity(routine) } returns routineWithTasks
+            coEvery { routineLocalDataSource.insertRoutineWithTasks(any(),any())} returns 1L
+            routineRepository.insertRoutine(routine)
+            coVerify { routineLocalDataSource.insertRoutineWithTasks(any(),any())}
         }
 }
