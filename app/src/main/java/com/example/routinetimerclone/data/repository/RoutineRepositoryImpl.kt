@@ -50,7 +50,7 @@ class RoutineRepositoryImpl(
 
     override suspend fun updateRoutine(routine: Routine) {
         val entity = routineModelMapper.toEntity(routine)
-        localDataSource.updateRoutineWithTasks(entity.routine,entity.tasks)
+        localDataSource.updateRoutineWithTasks(entity.routine, entity.tasks)
     }
 
     override suspend fun deleteRoutineById(id: Long) {
