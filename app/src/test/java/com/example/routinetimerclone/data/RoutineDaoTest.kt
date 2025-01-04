@@ -3,7 +3,7 @@ package com.example.routinetimerclone.data
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import com.example.routinetimerclone.data.dao.RoutineDao
-import com.example.routinetimerclone.data.database.Database
+import com.example.routinetimerclone.data.database.EEffortDatabase
 import com.example.routinetimerclone.data.entitiy.RoutineEntity
 import com.example.routinetimerclone.data.entitiy.TaskEntity
 import kotlinx.coroutines.asExecutor
@@ -22,13 +22,13 @@ import org.robolectric.RobolectricTestRunner
 @RunWith(RobolectricTestRunner::class)
 class RoutineDaoTest {
     val testDispatcher = StandardTestDispatcher()
-    private lateinit var db: Database
+    private lateinit var db: EEffortDatabase
     private lateinit var dao: RoutineDao
 
     @Before
     fun setup() {
         db =
-            Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), Database::class.java)
+            Room.inMemoryDatabaseBuilder(ApplicationProvider.getApplicationContext(), EEffortDatabase::class.java)
                 .setQueryExecutor(testDispatcher.asExecutor())
                 .setTransactionExecutor(testDispatcher.asExecutor())
                 .allowMainThreadQueries()
