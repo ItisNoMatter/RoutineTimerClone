@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.Flow
 interface RoutineRepository {
     fun getAllRoutines(): Flow<List<Routine>>
 
-    fun getRoutineById(id: Long): Flow<Routine?>
+    fun getRoutine(id: Long): Flow<Routine?>
 
     fun getRoutineByName(name: String): Flow<Routine?>
 
@@ -19,23 +19,28 @@ interface RoutineRepository {
 
     suspend fun deleteRoutineById(id: Long)
 
-    suspend fun deleteRoutines(routines: List<Routine>)
-
     fun getTasksByRoutineId(routineId: Long): Flow<List<Task>>
 
     fun getTaskById(id: Long): Flow<Task?>
 
-    suspend fun insertTask(task: Task): Long
+    suspend fun insertTask(
+        task: Task,
+        parentRoutineId: Long,
+    ): Long
 
-    suspend fun insertTasks(tasks: List<Task>)
+    suspend fun insertTasks(
+        tasks: List<Task>,
+        parentRoutineId: Long,
+    ): List<Long>
 
-    suspend fun updateTask(task: Task)
+    suspend fun updateTask(
+        task: Task,
+        parentRoutineId: Long,
+    )
 
     suspend fun deleteTaskById(id: Long)
 
-    suspend fun deleteTasksByRoutineId(routineId: Long)
+    suspend fun deleteAllTasksByRoutineId(routineId: Long)
 
     fun getRoutinesByName(name: String): Flow<List<Routine>>
-
-    fun insertRoutineWithTasks(routines: List<Routine>): Long
 }

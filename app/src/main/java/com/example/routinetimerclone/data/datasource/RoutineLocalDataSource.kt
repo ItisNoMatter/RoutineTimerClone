@@ -27,12 +27,18 @@ class RoutineLocalDataSource(private val dao: RoutineDao) : RoutineDataSource {
         return dao.insertRoutine(routine)
     }
 
-    override suspend fun insertRoutines(routines: List<RoutineEntity>) {
-        return dao.insertRoutines(routines)
+    override suspend fun insertRoutines(routines: List<RoutineEntity>): List<Long> {
+        return insertRoutines(routines)
     }
 
     override suspend fun insertTask(task: TaskEntity): Long {
         return dao.insertTask(task)
+    }
+
+    override suspend fun insertTasks(tasks: List<TaskEntity>): List<Long> {
+        return tasks.map {
+            insertTask(it)
+        }
     }
 
     override fun getTasksByRoutineId(id: Long): Flow<List<TaskEntity>> {
@@ -43,8 +49,8 @@ class RoutineLocalDataSource(private val dao: RoutineDao) : RoutineDataSource {
         return dao.getTaskById(id)
     }
 
-    override suspend fun deleteTasksByRoutineId(id: Long) {
-        dao.deleteTasksByRoutineId(id)
+    override suspend fun deleteAllTasksByRoutineId(id: Long) {
+        dao.deleteAllTasksByRoutineId(id)
     }
 
     override suspend fun deleteRoutineById(id: Long) {
@@ -61,5 +67,19 @@ class RoutineLocalDataSource(private val dao: RoutineDao) : RoutineDataSource {
 
     override suspend fun updateTask(task: TaskEntity) {
         dao.updateTask(task)
+    }
+
+    override suspend fun insertRoutineWithTasks(
+        routine: RoutineEntity,
+        tasks: List<TaskEntity>,
+    ): Long {
+        return dao.insertRoutineWithTasks(routine, tasks)
+    }
+
+    override suspend fun updateRoutineWithTasks(
+        routine: RoutineEntity,
+        tasks: List<TaskEntity>,
+    ) {
+        dao.updateRoutineWithTasks(routine, tasks)
     }
 }

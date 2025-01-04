@@ -11,6 +11,7 @@ composeBom = "2024.12.01"
 robolectric = "4.14.1"
 room = "2.6.0"
 kotlinx-coroutines = "1.7.3"
+mockK = "1.13.14"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -30,6 +31,7 @@ kotlinx-coroutines-test = {group = "org.jetbrains.kotlinx",name = "kotlinx-corou
 room-runtime = {module = "androidx.room:room-runtime", version.ref = "room"}
 room-ktx = {module = "androidx.room:room-ktx", version.ref = "room"}
 room-compiler = {module  = "androidx.room:room-compiler",version.ref = "room"}
+mockK = {group = "io.mockk:mockk",name="mockK",version.ref="mockK"}
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -33,7 +33,7 @@ interface RoutineDao {
     suspend fun insertRoutine(routine: RoutineEntity): Long
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRoutines(routines: List<RoutineEntity>)
+    suspend fun insertRoutines(routines: List<RoutineEntity>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTask(task: TaskEntity): Long
@@ -45,7 +45,7 @@ interface RoutineDao {
     fun getTaskById(id: Long): Flow<List<TaskEntity>>
 
     @Query("DELETE FROM task WHERE parentRoutineId = :id")
-    suspend fun deleteTasksByRoutineId(id: Long)
+    suspend fun deleteAllTasksByRoutineId(id: Long)
 
     @Query("DELETE FROM routine WHERE id = :id")
     suspend fun deleteRoutineById(id: Long)
@@ -58,4 +58,28 @@ interface RoutineDao {
 
     @Update
     suspend fun updateTask(task: TaskEntity)
+
+    @Transaction
+    suspend fun insertRoutineWithTasks(
+        routine: RoutineEntity,
+        tasks: List<TaskEntity>,
+    ): Long {
+        val routineId = insertRoutine(routine)
+        for (task in tasks) {
+            insertTask(task.copy(parentRoutineId = routineId))
+        }
+        return routineId
+    }
+
+    @Transaction
+    suspend fun updateRoutineWithTasks(
+        routine: RoutineEntity,
+        tasks: List<TaskEntity>,
+    ) {
+        updateRoutine(routine)
+        deleteAllTasksByRoutineId(routine.id)
+        for (task in tasks) {
+            insertTask(task.copy(parentRoutineId = routine.id))
+        }
+    }
 }
