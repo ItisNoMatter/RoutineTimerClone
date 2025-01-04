@@ -7,6 +7,6 @@ import com.example.routinetimerclone.data.entitiy.RoutineEntity
 import com.example.routinetimerclone.data.entitiy.TaskEntity
 
 @Database(entities = [RoutineEntity::class, TaskEntity::class], version = 1, exportSchema = false)
-abstract class Database : RoomDatabase() {
+abstract class EEfortDatabase : RoomDatabase() {
     abstract fun routineDao(): RoutineDao
 }
