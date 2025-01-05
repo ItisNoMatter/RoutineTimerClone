@@ -323,4 +323,33 @@ class RoutineDaoTest {
             advanceUntilIdle()
             assertEquals(null, result)
         }
+
+    @Test
+    fun `insertRoutine replaces when conflict `() =
+        runTest(testDispatcher.scheduler) {
+            val routine = RoutineEntity(1, "Test Routine 1")
+            val duplicatedRoutine = RoutineEntity(1, "Test Routine 2")
+            dao.insertRoutine(routine)
+            dao.insertRoutine(duplicatedRoutine)
+            advanceUntilIdle()
+            val result = dao.getRoutineById(1).first()
+            advanceUntilIdle()
+            assertEquals(duplicatedRoutine.name, result?.routine?.name)
+        }
+
+    @Test
+    fun `insertTask replaces when conflict`() =
+        runTest(testDispatcher.scheduler) {
+            val routine = RoutineEntity(0, "Test Routine")
+            val routineId = dao.insertRoutine(routine)
+            advanceUntilIdle()
+            val task = TaskEntity(1, "Test Task", 60, routineId)
+            val duplicatedTask = TaskEntity(1, "Test Task", 120, routineId)
+            dao.insertTask(task)
+            dao.insertTask(duplicatedTask)
+            advanceUntilIdle()
+            val result = dao.getTasksByRoutineId(routineId).first()
+            advanceUntilIdle()
+            assertEquals(listOf(duplicatedTask.copy(id = 1)), result)
+        }
 }
