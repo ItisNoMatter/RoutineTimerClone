@@ -7,8 +7,9 @@ import com.example.routinetimerclone.domain.model.Routine
 import com.example.routinetimerclone.domain.model.Task
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
-class RoutineRepositoryImpl(
+class RoutineRepositoryImpl @Inject constructor(
     private val localDataSource: RoutineLocalDataSource,
     private val routineModelMapper: RoutineModelMapper,
     private val taskModelMapper: TaskModelMapper,

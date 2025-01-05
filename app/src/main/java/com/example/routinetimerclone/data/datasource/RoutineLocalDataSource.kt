@@ -5,8 +5,9 @@ import com.example.routinetimerclone.data.entitiy.RoutineEntity
 import com.example.routinetimerclone.data.entitiy.RoutineWithTasks
 import com.example.routinetimerclone.data.entitiy.TaskEntity
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class RoutineLocalDataSource(private val dao: RoutineDao) : RoutineDataSource {
+class RoutineLocalDataSource @Inject constructor(private val dao: RoutineDao) : RoutineDataSource {
     override fun getAllRoutines(): Flow<List<RoutineWithTasks>> {
         return dao.getAllRoutines()
     }
