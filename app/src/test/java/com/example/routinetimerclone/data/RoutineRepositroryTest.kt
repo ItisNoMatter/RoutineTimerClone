@@ -10,7 +10,6 @@ import com.example.routinetimerclone.data.repository.RoutineRepository
 import com.example.routinetimerclone.data.repository.RoutineRepositoryImpl
 import com.example.routinetimerclone.domain.model.Routine
 import com.example.routinetimerclone.domain.model.Task
-import com.google.common.base.Verify.verify
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
@@ -204,8 +203,8 @@ class RoutineRepositroryTest {
     fun `getTaskById should return a task`() =
         runBlocking {
             val id = 1L
-            every { routineLocalDataSource.getTaskById(id) } returns flowOf(tasksEntity1)
-            val result = routineRepository.getTaskById(id).first()
+            every { routineLocalDataSource.getTaskByTaskId(id) } returns flowOf(taskEntity1)
+            val result = routineRepository.getTaskByTaskId(id).first()
             val expected = task1
             assertEquals(result, expected)
         }
@@ -214,9 +213,9 @@ class RoutineRepositroryTest {
     fun `getTaskById should call routineLocalDataSource getTaskById`() =
         runBlocking {
             val id = 1L
-            every { routineLocalDataSource.getTaskById(id) } returns flowOf(tasksEntity1)
-            routineRepository.getTaskById(id)
-            verify { routineLocalDataSource.getTaskById(id) }
+            every { routineLocalDataSource.getTaskByTaskId(id) } returns flowOf(taskEntity1)
+            routineRepository.getTaskByTaskId(id)
+            verify { routineLocalDataSource.getTaskByTaskId(id) }
         }
 
     @Test

@@ -66,9 +66,9 @@ class RoutineRepositoryImpl
             }
         }
 
-        override fun getTaskById(id: Long): Flow<Task?> {
-            return localDataSource.getTaskById(id).map { taskEntities ->
-                taskEntities.firstOrNull()?.let { taskModelMapper.toDomain(it) }
+        override fun getTaskByTaskId(id: Long): Flow<Task?> {
+            return localDataSource.getTaskByTaskId(id).map { taskEntities ->
+                taskEntities.let { taskModelMapper.toDomain(it) }
             }
         }
 

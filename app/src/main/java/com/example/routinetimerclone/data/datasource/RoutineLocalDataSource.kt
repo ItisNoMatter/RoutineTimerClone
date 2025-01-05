@@ -48,8 +48,8 @@ class RoutineLocalDataSource
             return dao.getTasksByRoutineId(id)
         }
 
-        override fun getTaskById(id: Long): Flow<List<TaskEntity>> {
-            return dao.getTaskById(id)
+        override fun getTaskByTaskId(id: Long): Flow<TaskEntity> {
+            return dao.getTaskByTaskId(id)
         }
 
         override suspend fun deleteAllTasksByRoutineId(id: Long) {

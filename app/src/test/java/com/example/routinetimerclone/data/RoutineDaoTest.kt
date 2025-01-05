@@ -273,9 +273,9 @@ class RoutineDaoTest {
             val updatedTask = TaskEntity(taskId, "Updated Task", 120, routineId)
             dao.updateTask(updatedTask)
             advanceUntilIdle()
-            val result = dao.getTaskById(taskId).first()
+            val result = dao.getTaskByTaskId(taskId).first()
             advanceUntilIdle()
-            assertEquals(result[0], updatedTask)
+            assertEquals(result, updatedTask)
         }
 
     @Test
@@ -317,7 +317,7 @@ class RoutineDaoTest {
             val updatedTask = TaskEntity(taskId + 1, "Updated Task", 120, routineId)
             dao.updateTask(updatedTask)
             advanceUntilIdle()
-            val result = dao.getTaskById(updatedTask.id).first()
+            val result = dao.getTaskByTaskId(updatedTask.id).first()
             advanceUntilIdle()
             assertEquals(null,result)
         }

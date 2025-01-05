@@ -42,7 +42,7 @@ interface RoutineDao {
     fun getTasksByRoutineId(id: Long): Flow<List<TaskEntity>>
 
     @Query("SELECT * FROM task WHERE id = :id")
-    fun getTaskById(id: Long): Flow<List<TaskEntity>>
+    fun getTaskByTaskId(id: Long): Flow<TaskEntity>
 
     @Query("DELETE FROM task WHERE parentRoutineId = :id")
     suspend fun deleteAllTasksByRoutineId(id: Long)
