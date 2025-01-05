@@ -293,9 +293,10 @@ class RoutineDaoTest {
             advanceUntilIdle()
             assert(result.isNotEmpty())
         }
+
     @Test
     fun `updateRoutineById with InvalidId returns null`() =
-        runTest(testDispatcher.scheduler){
+        runTest(testDispatcher.scheduler) {
             val routine = RoutineEntity(0, "Test Routine")
             val routineId = dao.insertRoutine(routine)
             advanceUntilIdle()
@@ -304,11 +305,12 @@ class RoutineDaoTest {
             advanceUntilIdle()
             val result = dao.getRoutineById(updatedRoutine.id).first()
             advanceUntilIdle()
-            assertEquals(null,result)
+            assertEquals(null, result)
         }
+
     @Test
     fun `updateTaskById with InvalidId returns null`() =
-        runTest(testDispatcher.scheduler){
+        runTest(testDispatcher.scheduler) {
             val routine = RoutineEntity(0, "Test Routine")
             val routineId = dao.insertRoutine(routine)
             advanceUntilIdle()
@@ -319,7 +321,6 @@ class RoutineDaoTest {
             advanceUntilIdle()
             val result = dao.getTaskByTaskId(updatedTask.id).first()
             advanceUntilIdle()
-            assertEquals(null,result)
+            assertEquals(null, result)
         }
-
 }
