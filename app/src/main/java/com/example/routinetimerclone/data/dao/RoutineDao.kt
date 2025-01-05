@@ -54,10 +54,10 @@ interface RoutineDao {
     suspend fun deleteTaskById(id: Long)
 
     @Update
-    suspend fun updateRoutine(routine: RoutineEntity)
+    suspend fun updateRoutine(routine: RoutineEntity): Int
 
     @Update
-    suspend fun updateTask(task: TaskEntity)
+    suspend fun updateTask(task: TaskEntity): Int
 
     @Transaction
     suspend fun insertRoutineWithTasks(
@@ -75,11 +75,12 @@ interface RoutineDao {
     suspend fun updateRoutineWithTasks(
         routine: RoutineEntity,
         tasks: List<TaskEntity>,
-    ) {
-        updateRoutine(routine)
+    ): Int {
+        val updatedRows = updateRoutine(routine)
         deleteAllTasksByRoutineId(routine.id)
         for (task in tasks) {
             insertTask(task.copy(parentRoutineId = routine.id))
         }
+        return updatedRows
     }
 }
