@@ -21,7 +21,7 @@ interface RoutineRepository {
 
     fun getTasksByRoutineId(routineId: Long): Flow<List<Task>>
 
-    fun getTaskById(id: Long): Flow<Task?>
+    fun getTaskByTaskId(id: Long): Flow<Task?>
 
     suspend fun insertTask(
         task: Task,

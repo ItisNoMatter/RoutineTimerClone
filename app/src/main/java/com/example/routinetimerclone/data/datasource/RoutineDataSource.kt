@@ -24,7 +24,7 @@ interface RoutineDataSource {
 
     fun getTasksByRoutineId(id: Long): Flow<List<TaskEntity>>
 
-    fun getTaskById(id: Long): Flow<List<TaskEntity>>
+    fun getTaskByTaskId(id: Long): Flow<TaskEntity>
 
     suspend fun deleteAllTasksByRoutineId(id: Long)
 
