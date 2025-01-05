@@ -352,4 +352,16 @@ class RoutineDaoTest {
             advanceUntilIdle()
             assertEquals(listOf(duplicatedTask.copy(id = 1)), result)
         }
+
+    @Test
+    fun `getRoutinesByName returns routines with the same name`() =
+        runTest(testDispatcher.scheduler) {
+            val routine1 = RoutineEntity(0, "same name")
+            val routine2 = RoutineEntity(0, "same name")
+            dao.insertRoutines(listOf(routine1, routine2))
+            advanceUntilIdle()
+            val result = dao.getRoutinesByName("same name").first()
+            advanceUntilIdle()
+            assertEquals(listOf(routine1.copy(id = 1), routine2.copy(id = 2)), result.map { it.routine })
+        }
 }
