@@ -144,9 +144,9 @@ private fun RoutineListContent(
 @Composable
 fun RoutineCardPreview() {
     Column {
-        RoutineCard(Routine(1,"routine1", emptyList()))
-        RoutineCard(Routine(2,"routine2", emptyList()))
-        RoutineCard(Routine(3,"routine3", emptyList()))
+        RoutineCard(Routine(1, "routine1", emptyList()))
+        RoutineCard(Routine(2, "routine2", emptyList()))
+        RoutineCard(Routine(3, "routine3", emptyList()))
     }
 }
 
