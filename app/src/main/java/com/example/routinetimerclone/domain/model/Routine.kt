@@ -22,4 +22,8 @@ data class Routine(
         newTasks.add(to, task)
         return Routine(id, name, newTasks)
     }
+
+    companion object {
+        val Empty = Routine(0, "", emptyList())
+    }
 }

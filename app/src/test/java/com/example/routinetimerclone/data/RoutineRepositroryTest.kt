@@ -81,7 +81,9 @@ class RoutineRepositroryTest {
         coEvery { routineLocalDataSource.insertRoutineWithTasks(routineEntity1, tasksEntity1) } returns 1L
         coEvery { routineLocalDataSource.insertRoutineWithTasks(routineEntity2, tasksEntity2) } returns 2L
 
-        every { routineLocalDataSource.getAllRoutines() } returns flowOf(listOf(routineWithTasks1, routineWithTasks2))
+        every {
+            routineLocalDataSource.getAllRoutines()
+        } returns flowOf(listOf(routineWithTasks1, routineWithTasks2))
     }
 
     @Test
@@ -165,10 +167,19 @@ class RoutineRepositroryTest {
         runBlocking {
             val newRoutine = Routine(1, "New Routine", tasks1)
             val newRoutineEntity = RoutineEntity(1, "New Routine")
-            coEvery { routineLocalDataSource.updateRoutineWithTasks(newRoutineEntity, tasksEntity1) } returns Unit
-            coEvery { routineModelMapper.toEntity(newRoutine) } returns RoutineWithTasks(newRoutineEntity, tasksEntity1)
+            coEvery {
+                routineLocalDataSource.updateRoutineWithTasks(newRoutineEntity, tasksEntity1)
+            } returns Unit
+            coEvery {
+                routineModelMapper.toEntity(newRoutine)
+            } returns RoutineWithTasks(newRoutineEntity, tasksEntity1)
             routineRepository.updateRoutine(newRoutine)
-            coVerify { routineLocalDataSource.updateRoutineWithTasks(newRoutineEntity, tasksEntity1) }
+            coVerify {
+                routineLocalDataSource.updateRoutineWithTasks(
+                    newRoutineEntity,
+                    tasksEntity1,
+                )
+            }
         }
 
     @Test
@@ -245,7 +256,9 @@ class RoutineRepositroryTest {
     @Test
     fun `insertTasks should return the inserted task ids`() =
         runBlocking {
-            coEvery { routineLocalDataSource.insertTasks(tasksEntity1) } returns listOf(taskEntity1.id, taskEntity2.id)
+            coEvery {
+                routineLocalDataSource.insertTasks(tasksEntity1)
+            } returns listOf(taskEntity1.id, taskEntity2.id)
             val result = routineRepository.insertTasks(tasks1, 1)
             assertEquals(listOf(1L, 2L), result)
         }
@@ -277,7 +290,9 @@ class RoutineRepositroryTest {
     @Test
     fun `getRoutinesByName should call routineLocalDataSource getRoutinesByName`() =
         runBlocking {
-            coEvery { routineLocalDataSource.getRoutinesByName("Routine 1") } returns flowOf(listOf(routineWithTasks1))
+            coEvery {
+                routineLocalDataSource.getRoutinesByName("Routine 1")
+            } returns flowOf(listOf(routineWithTasks1))
             routineRepository.getRoutinesByName("Routine 1")
             coVerify { routineLocalDataSource.getRoutinesByName("Routine 1") }
         }
@@ -285,7 +300,9 @@ class RoutineRepositroryTest {
     @Test
     fun `getRoutineByName should return a list of routines`() =
         runBlocking {
-            coEvery { routineLocalDataSource.getRoutinesByName("Routine 1") } returns flowOf(listOf(routineWithTasks1))
+            coEvery {
+                routineLocalDataSource.getRoutinesByName("Routine 1")
+            } returns flowOf(listOf(routineWithTasks1))
             val result = routineRepository.getRoutinesByName("Routine 1").first()
             val expected = listOf(routine1)
         }

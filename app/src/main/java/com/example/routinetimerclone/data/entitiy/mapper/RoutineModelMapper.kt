@@ -5,9 +5,7 @@ import com.example.routinetimerclone.data.entitiy.RoutineWithTasks
 import com.example.routinetimerclone.data.entitiy.TaskEntity
 import com.example.routinetimerclone.domain.model.Routine
 
-class RoutineModelMapper(
-    private val taskModelMapper: TaskModelMapper,
-) {
+object RoutineModelMapper {
     fun toDomain(
         routineEntity: RoutineEntity,
         tasksEntities: List<TaskEntity>,
@@ -15,14 +13,14 @@ class RoutineModelMapper(
         return Routine(
             routineEntity.id,
             routineEntity.name,
-            tasksEntities.map { taskModelMapper.toDomain(it) },
+            tasksEntities.map { TaskModelMapper.toDomain(it) },
         )
     }
 
     fun toEntity(routine: Routine): RoutineWithTasks {
         return RoutineWithTasks(
             RoutineEntity(routine.id, routine.name),
-            routine.tasks.map { taskModelMapper.toEntity(it, routine.id) },
+            routine.tasks.map { TaskModelMapper.toEntity(it, routine.id) },
         )
     }
 }
