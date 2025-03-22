@@ -47,6 +47,7 @@ android {
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += "META-INF/gradle/incremental.annotation.processors"
         }
     }
     testOptions {
@@ -66,7 +67,10 @@ dependencies {
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.hilt)
+    implementation(libs.hilt.android.v250)
+    implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hiltCompiler)
+    implementation("androidx.navigation:navigation-compose:2.8.9")
     ksp(libs.room.compiler)
     ksp("com.google.dagger:hilt-compiler:2.44")
     testImplementation(libs.junit)

@@ -4,7 +4,7 @@ import com.example.routinetimerclone.data.entitiy.TaskEntity
 import com.example.routinetimerclone.domain.model.Duration
 import com.example.routinetimerclone.domain.model.Task
 
-class TaskModelMapper {
+object TaskModelMapper {
     fun toDomain(taskEntity: TaskEntity): Task {
         return Task(taskEntity.id, taskEntity.name, Duration.fromSeconds(taskEntity.seconds))
     }
