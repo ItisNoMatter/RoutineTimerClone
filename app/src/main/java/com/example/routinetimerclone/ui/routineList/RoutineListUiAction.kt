@@ -1,4 +1,4 @@
-package com.example.routinetimerclone.ui.routineEdit
+package com.example.routinetimerclone.ui.routineList
 
 import com.example.routinetimerclone.domain.model.Routine
 import kotlinx.coroutines.flow.Flow

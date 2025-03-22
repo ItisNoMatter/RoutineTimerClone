@@ -1,4 +1,4 @@
-package com.example.routinetimerclone.ui.routineEdit
+package com.example.routinetimerclone.ui.routineList
 
 import androidx.lifecycle.ViewModel
 import com.example.routinetimerclone.data.repository.FakeRoutineRepository
