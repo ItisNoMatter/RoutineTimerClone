@@ -7,7 +7,7 @@ import com.example.routinetimerclone.domain.model.Task
 import org.junit.Test
 
 class TaskModelMapperTest {
-    val taskModelMapper = TaskModelMapper()
+    val taskModelMapper = TaskModelMapper
 
     @Test
     fun taskModelMapperTest() {
