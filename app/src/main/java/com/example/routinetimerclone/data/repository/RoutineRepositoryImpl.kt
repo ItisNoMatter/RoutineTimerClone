@@ -1,5 +1,6 @@
 package com.example.routinetimerclone.data.repository
 
+import com.example.routinetimerclone.core.LoadedValue
 import com.example.routinetimerclone.data.datasource.RoutineDataSource
 import com.example.routinetimerclone.data.entitiy.mapper.RoutineModelMapper
 import com.example.routinetimerclone.data.entitiy.mapper.TaskModelMapper
@@ -22,9 +23,10 @@ class RoutineRepositoryImpl
             }
         }
 
-        override fun getRoutine(id: Long): Flow<Routine?> {
-            return dataSource.getRoutineById(id).map { routineWithTasks ->
-                routineWithTasks?.let { routineModelMapper.toDomain(it.routine, it.tasks) }
+        override fun getRoutine(id: Long): Flow<LoadedValue<Routine>> {
+            return dataSource.getRoutineById(id).map { it ->
+                if(it != null){LoadedValue.Done(routineModelMapper.toDomain(it.routine, it.tasks))}
+                else{LoadedValue.Error(Exception("Routine not found"))}
             }
         }
 
