@@ -13,6 +13,9 @@ data class Duration(
     fun getTotalSeconds(): Int {
         return minutes * 60 + seconds
     }
+    fun toDisplayString(): String {
+        return String.format("%2d分%02d秒", minutes, seconds)
+    }
 
     companion object {
         fun fromSeconds(seconds: Int): Duration {
