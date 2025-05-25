@@ -2,12 +2,18 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     id("org.jlleitschuh.gradle.ktlint") version "12.1.2"
-    id("com.google.devtools.ksp") version "1.9.0-1.0.13"
+    id("com.google.devtools.ksp") version "2.0.0-1.0.23"
+    kotlin("plugin.serialization") version "2.0.21"
+    alias(libs.plugins.compose.compiler)
+}
+
+configurations.configureEach {
+    exclude(group = "xmlpull", module = "xmlpull")
 }
 
 android {
     namespace = "com.example.routinetimerclone"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.routinetimerclone"
@@ -64,25 +70,30 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.navigation.compose)
     implementation(libs.room.runtime)
     implementation(libs.room.ktx)
     implementation(libs.hilt)
     implementation(libs.hilt.android.v250)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hiltCompiler)
-    implementation("androidx.navigation:navigation-compose:2.8.9")
+    implementation(libs.androidx.navigation.compose)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.androidx.navigation.safe.args.generator)
+
     ksp(libs.room.compiler)
-    ksp("com.google.dagger:hilt-compiler:2.44")
+    ksp(libs.hiltCompiler)
     testImplementation(libs.junit)
     testImplementation(platform(libs.androidx.compose.bom))
     testImplementation(libs.androidx.ui.test.junit4)
     testImplementation(libs.robolectric)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation("io.mockk:mockk:1.13.5")
+    testImplementation(libs.mockk.v1135)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
 }
