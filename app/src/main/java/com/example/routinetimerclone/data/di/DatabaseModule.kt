@@ -6,6 +6,7 @@ import com.example.routinetimerclone.data.database.EEffortDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -14,7 +15,9 @@ import javax.inject.Singleton
 object DatabaseModule {
     @Provides
     @Singleton
-    fun provideDatabase(context: Context): EEffortDatabase {
+    fun provideDatabase(
+        @ApplicationContext context: Context,
+    ): EEffortDatabase {
         return Room.databaseBuilder(
             context,
             EEffortDatabase::class.java,
@@ -25,5 +28,4 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideRoutineDao(database: EEffortDatabase) = database.routineDao()
-
 }
