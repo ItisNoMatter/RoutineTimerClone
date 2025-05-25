@@ -32,17 +32,15 @@ import com.example.routinetimerclone.domain.model.Routine
 import com.example.routinetimerclone.domain.model.Task
 
 @Composable
-fun RoutineEditScreen(
-    viewModel: RoutineEditViewModel = hiltViewModel(),
-) {
+fun RoutineEditScreen(viewModel: RoutineEditViewModel = hiltViewModel()) {
     val routine by viewModel.routine.collectAsState(
-        initial = LoadedValue.Loading
+        initial = LoadedValue.Loading,
     )
     when (routine) {
         is LoadedValue.Done -> {
-            val routine = (routine as LoadedValue.Done<Routine>).value
+            val doneRoutine = (routine as LoadedValue.Done<Routine>).value
             RoutineEditContent(
-                routine = routine,
+                routine = doneRoutine,
                 onRoutineTitleChange = viewModel::onRoutineTitleChange,
                 onClickAddButton = viewModel::onClickAddTaskButton,
                 onClickTaskCard = viewModel::onClickTaskCard,
@@ -67,20 +65,21 @@ fun RoutineEditContent(
             RoutineEditTopBar(
                 routine = routine,
                 routineTitlePlaceHolder = routineTitlePlaceHolder,
-                onRoutineTitleChange = onRoutineTitleChange
+                onRoutineTitleChange = onRoutineTitleChange,
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = onClickAddButton) {
                 Icon(Icons.Filled.Add, "Add Task")
             }
-        }
+        },
     ) { innerPadding ->
         LazyColumn(
             contentPadding = innerPadding,
-            modifier = Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
         ) {
             items(routine.tasks.size) { index ->
                 if (index == 0) {
@@ -102,16 +101,18 @@ fun RoutineEditTopBar(
     onRoutineTitleChange: (String) -> Unit = {},
 ) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(104.dp)
-            .background(color = MaterialTheme.colorScheme.surface)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(104.dp)
+                .background(color = MaterialTheme.colorScheme.surface),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(72.dp),
-            verticalAlignment = Alignment.CenterVertically
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(72.dp),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(
                 onClick = { /*TODO*/ },
@@ -121,22 +122,24 @@ fun RoutineEditTopBar(
             Box {
                 if (routine.name.isEmpty()) {
                     Text(
-                        text = routineTitlePlaceHolder
+                        text = routineTitlePlaceHolder,
                     )
                 }
                 BasicTextField(
                     value = routine.name,
                     onValueChange = onRoutineTitleChange,
-                    modifier = Modifier
-                        .fillMaxWidth(),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth(),
                 )
             }
         }
         Text(
             text = "計 " + routine.getTotalDuration().toDisplayString(),
-            modifier = Modifier
-                .padding(bottom = 8.dp, end = 32.dp)
-                .align(Alignment.BottomEnd),
+            modifier =
+                Modifier
+                    .padding(bottom = 8.dp, end = 32.dp)
+                    .align(Alignment.BottomEnd),
         )
     }
 }
@@ -148,27 +151,28 @@ fun RoutineEditTopBar(
 @Composable
 fun RoutineEditContentPreview() {
     RoutineEditContent(
-        routine = Routine(
-            id = 1,
-            name = "test",
-            tasks = listOf(
-                Task(
-                    id = 1,
-                    name = "test",
-                    duration = Duration(minutes = 1, seconds = 2),
-                ),
-                Task(
-                    id = 2,
-                    name = "test",
-                    duration = Duration(minutes = 3, seconds = 15),
-                ),
-                Task(
-                    id = 3,
-                    name = "test",
-                    duration = Duration(minutes = 4, seconds = 0),
-                ),
-
-                )
-        )
+        routine =
+            Routine(
+                id = 1,
+                name = "test",
+                tasks =
+                    listOf(
+                        Task(
+                            id = 1,
+                            name = "test",
+                            duration = Duration(minutes = 1, seconds = 2),
+                        ),
+                        Task(
+                            id = 2,
+                            name = "test",
+                            duration = Duration(minutes = 3, seconds = 15),
+                        ),
+                        Task(
+                            id = 3,
+                            name = "test",
+                            duration = Duration(minutes = 4, seconds = 0),
+                        ),
+                    ),
+            ),
     )
 }

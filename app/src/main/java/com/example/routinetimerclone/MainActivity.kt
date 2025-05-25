@@ -32,19 +32,16 @@ object RoutineList
 
 @Serializable
 data class RoutineEdit(
-    val routineId: Long? = null
+    val routineId: Long? = null,
 )
 
 @Composable
-fun EEffortNavGraph(
-    startDestination: String = "routineList",
-) {
+fun EEffortNavGraph(startDestination: String = "routineList") {
     val navController = rememberNavController()
-
 
     NavHost(
         navController = navController,
-        startDestination = startDestination
+        startDestination = startDestination,
     ) {
         composable<RoutineList> {
             RoutineListScreen()
@@ -52,6 +49,5 @@ fun EEffortNavGraph(
         composable<RoutineEdit> {
             RoutineEditScreen()
         }
-
     }
 }

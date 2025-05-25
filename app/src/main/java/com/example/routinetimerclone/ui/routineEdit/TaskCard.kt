@@ -41,35 +41,38 @@ fun TaskCard(
     position: NodePosition,
     onClick: () -> Unit = {},
 ) {
-    Box() {
+    Box {
         Card(
-            modifier = Modifier
-                .height(80.dp)
-                .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
-                .clickable {
-                    onClick()
-                },
-            colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
-            )
+            modifier =
+                Modifier
+                    .height(80.dp)
+                    .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
+                    .clickable {
+                        onClick()
+                    },
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLowest,
+                ),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .padding(start = 16.dp, end = 16.dp),
+                modifier =
+                    Modifier
+                        .fillMaxHeight()
+                        .padding(start = 16.dp, end = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
-
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Box(
-                    modifier = Modifier
-                        .size(24.dp)
-                        .clip(CircleShape)
-                        .border(
-                            width = 3.dp,
-                            color = MaterialTheme.colorScheme.secondary,
-                            shape = CircleShape,
-                        )
+                    modifier =
+                        Modifier
+                            .size(24.dp)
+                            .clip(CircleShape)
+                            .border(
+                                width = 3.dp,
+                                color = MaterialTheme.colorScheme.secondary,
+                                shape = CircleShape,
+                            ),
                 )
                 Text(text = task.name)
                 Spacer(modifier = Modifier.weight(1f))
@@ -84,14 +87,15 @@ fun TaskCard(
 fun Connector(position: NodePosition) {
     val lineColor = MaterialTheme.colorScheme.secondary
     Canvas(
-        modifier = Modifier
-            .height(80.dp)
-            .fillMaxWidth()
-            .graphicsLayer {
-                clip = false
-            }
+        modifier =
+            Modifier
+                .height(80.dp)
+                .fillMaxWidth()
+                .graphicsLayer {
+                    clip = false
+                },
     ) {
-        val X = 44.dp.toPx()
+        val x = 44.dp.toPx()
         val upperLineTopY = 0f
         val upperLineBottomY = size.height / 2 - 11.5.dp.toPx()
         val lowerLineTopY = size.height / 2 + 11.5.dp.toPx()
@@ -100,31 +104,31 @@ fun Connector(position: NodePosition) {
             NodePosition.FIRST -> {
                 drawLine(
                     color = lineColor,
-                    start = androidx.compose.ui.geometry.Offset(X, lowerLineTopY),
-                    end = androidx.compose.ui.geometry.Offset(X, lowerLineBottomY),
-                    strokeWidth = 8.dp.toPx()
+                    start = androidx.compose.ui.geometry.Offset(x, lowerLineTopY),
+                    end = androidx.compose.ui.geometry.Offset(x, lowerLineBottomY),
+                    strokeWidth = 8.dp.toPx(),
                 )
             }
             NodePosition.MIDDLE -> {
                 drawLine(
                     color = lineColor,
-                    start = androidx.compose.ui.geometry.Offset(X, upperLineTopY),
-                    end = androidx.compose.ui.geometry.Offset(X, upperLineBottomY),
-                    strokeWidth = 8.dp.toPx()
+                    start = androidx.compose.ui.geometry.Offset(x, upperLineTopY),
+                    end = androidx.compose.ui.geometry.Offset(x, upperLineBottomY),
+                    strokeWidth = 8.dp.toPx(),
                 )
                 drawLine(
                     color = lineColor,
-                    start = androidx.compose.ui.geometry.Offset(X, lowerLineTopY),
-                    end = androidx.compose.ui.geometry.Offset(X, lowerLineBottomY),
-                    strokeWidth = 8.dp.toPx()
+                    start = androidx.compose.ui.geometry.Offset(x, lowerLineTopY),
+                    end = androidx.compose.ui.geometry.Offset(x, lowerLineBottomY),
+                    strokeWidth = 8.dp.toPx(),
                 )
             }
             NodePosition.LAST -> {
                 drawLine(
                     color = lineColor,
-                    start = androidx.compose.ui.geometry.Offset(X, upperLineTopY),
-                    end = androidx.compose.ui.geometry.Offset(X, upperLineBottomY),
-                    strokeWidth = 8.dp.toPx()
+                    start = androidx.compose.ui.geometry.Offset(x, upperLineTopY),
+                    end = androidx.compose.ui.geometry.Offset(x, upperLineBottomY),
+                    strokeWidth = 8.dp.toPx(),
                 )
             }
             NodePosition.MOVING -> {}
@@ -132,38 +136,40 @@ fun Connector(position: NodePosition) {
     }
 }
 
-
 @Preview(
     showBackground = true,
-    backgroundColor = 15525616, // MaterialTheme.colorScheme.surfaceContainerHigh
+    backgroundColor = 15525616,
     device = "spec:width=411dp,height=891dp,dpi=420,isRound=false,chinSize=0dp,orientation=portrait",
 )
 @Composable
 fun TaskCardPreview() {
     Column {
         TaskCard(
-            task = Task(
-                id = 1,
-                name = "test",
-                duration = Duration(minutes = 1, seconds = 2),
-            ),
-            position = NodePosition.FIRST
+            task =
+                Task(
+                    id = 1,
+                    name = "test",
+                    duration = Duration(minutes = 1, seconds = 2),
+                ),
+            position = NodePosition.FIRST,
         )
         TaskCard(
-            task = Task(
-                id = 1,
-                name = "test",
-                duration = Duration(minutes = 1, seconds = 2),
-            ),
-            position = NodePosition.MIDDLE
+            task =
+                Task(
+                    id = 1,
+                    name = "test",
+                    duration = Duration(minutes = 1, seconds = 2),
+                ),
+            position = NodePosition.MIDDLE,
         )
         TaskCard(
-            task = Task(
-                id = 1,
-                name = "test",
-                duration = Duration(minutes = 1, seconds = 2),
-            ),
-            position = NodePosition.LAST
+            task =
+                Task(
+                    id = 1,
+                    name = "test",
+                    duration = Duration(minutes = 1, seconds = 2),
+                ),
+            position = NodePosition.LAST,
         )
     }
 }

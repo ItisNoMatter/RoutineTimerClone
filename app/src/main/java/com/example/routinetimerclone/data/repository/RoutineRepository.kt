@@ -11,7 +11,7 @@ interface RoutineRepository {
 
     fun getRoutine(id: Long): Flow<LoadedValue<Routine>>
 
-    fun getRoutineByName(name: String): Flow<Routine?> //TODO return LoadedValue
+    fun getRoutineByName(name: String): Flow<Routine?> // TODO return LoadedValue
 
     suspend fun insertRoutine(routine: Routine): Long
 
@@ -45,10 +45,6 @@ interface RoutineRepository {
     suspend fun deleteAllTasksByRoutineId(routineId: Long)
 
     fun getRoutinesByName(name: String): Flow<List<Routine>>
-
-    companion object {
-        val Fake = FakeRoutineRepository
-    }
 }
 
 object FakeRoutineRepository : RoutineRepository {
