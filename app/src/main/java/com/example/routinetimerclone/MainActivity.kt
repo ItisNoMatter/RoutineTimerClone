@@ -4,15 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.routinetimerclone.ui.routineEdit.RoutineEditScreen
+import com.example.routinetimerclone.ui.routineList.RoutineListScreen
 import com.example.routinetimerclone.ui.theme.RoutineTimerCloneTheme
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.serialization.Serializable
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -21,34 +21,37 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             RoutineTimerCloneTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding),
-                    )
-                }
+                EEffortNavGraph()
             }
         }
     }
 }
 
-@Suppress("ktlint:standard:function-naming")
-@Composable
-fun Greeting(
-    name: String,
-    modifier: Modifier = Modifier,
-) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier,
-    )
-}
+@Serializable
+object RoutineList
 
-@Suppress("ktlint:standard:function-naming")
-@Preview(showBackground = true)
+@Serializable
+data class RoutineEdit(
+    val routineId: Long? = null
+)
+
 @Composable
-fun GreetingPreview() {
-    RoutineTimerCloneTheme {
-        Greeting("Android")
+fun EEffortNavGraph(
+    startDestination: String = "routineList",
+) {
+    val navController = rememberNavController()
+
+
+    NavHost(
+        navController = navController,
+        startDestination = startDestination
+    ) {
+        composable<RoutineList> {
+            RoutineListScreen()
+        }
+        composable<RoutineEdit> {
+            RoutineEditScreen()
+        }
+
     }
 }

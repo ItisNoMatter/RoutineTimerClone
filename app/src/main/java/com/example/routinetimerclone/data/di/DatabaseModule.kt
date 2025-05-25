@@ -26,7 +26,4 @@ object DatabaseModule {
     @Singleton
     fun provideRoutineDao(database: EEffortDatabase) = database.routineDao()
 
-    @Provides
-    @Singleton
-    fun provideTaskDao(database: EEffortDatabase) = database.routineDao()
 }
