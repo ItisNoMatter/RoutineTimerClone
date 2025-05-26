@@ -30,18 +30,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavHostController
 import com.example.routinetimerclone.domain.model.Routine
 
 @Composable
-fun RoutineListScreen(viewModel: RoutineListViewModel = hiltViewModel()) {
+fun RoutineListScreen(
+    viewModel: RoutineListViewModel = hiltViewModel(),
+    navController: NavHostController,
+    onAddRoutineClick: () -> Unit = {},
+) {
     val routines by viewModel.routines.collectAsState(emptyList())
     RoutineListContent(
         routines = routines,
-        onPlayRoutineClick = viewModel::onPlayRoutineClick,
-        onAddRoutineClick = viewModel::onAddRoutineClick,
+        navController = navController,
+        onAddRoutineClick = onAddRoutineClick,
     )
 }
 
@@ -92,7 +98,7 @@ fun RoutineCard(
 @Composable
 private fun RoutineListContent(
     routines: List<Routine>,
-    onPlayRoutineClick: (routineId: Long) -> Unit = {},
+    navController: NavHostController,
     onAddRoutineClick: () -> Unit = {},
 ) {
     Scaffold(
@@ -129,7 +135,7 @@ private fun RoutineListContent(
             items(routines) { routine ->
                 RoutineCard(
                     routine = routine,
-                    onPlayButtonClick = onPlayRoutineClick,
+                    onPlayButtonClick = { routineId -> navController.navigate("edit/$routineId") },
                 )
                 HorizontalDivider()
             }
@@ -157,6 +163,7 @@ fun RoutineCardPreview() {
 @Composable
 fun RoutineListScreenPreview() {
     RoutineListContent(
+        navController = NavHostController(LocalContext.current),
         routines =
             listOf(
                 Routine(1, "Routine 1", emptyList()),
