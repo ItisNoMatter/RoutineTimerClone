@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">RoutineTimerClone</string>
+    <string name="routine_edit_title_place_holder">ルーチン名を入力</string>
 </resources>

@@ -83,6 +83,15 @@ class RoutineDaoTest {
         }
 
     @Test
+    fun `getRoutineById with InvalidId returns null`() {
+        runTest(testDispatcher.scheduler) {
+            val result = dao.getRoutineById(1).first()
+            advanceUntilIdle()
+            assertEquals(null, result)
+        }
+    }
+
+    @Test
     fun getRoutineByIdTest() =
         runTest(testDispatcher.scheduler) {
             val name = "Test Routine"
@@ -295,7 +304,7 @@ class RoutineDaoTest {
         }
 
     @Test
-    fun `updateRoutineById with InvalidId returns null`() =
+    fun `updateRoutine with InvalidId returns null`() =
         runTest(testDispatcher.scheduler) {
             val routine = RoutineEntity(0, "Test Routine")
             val routineId = dao.insertRoutine(routine)

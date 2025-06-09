@@ -5,11 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import com.example.routinetimerclone.ui.routineEdit.RoutineEditScreen
 import com.example.routinetimerclone.ui.routineList.RoutineListScreen
@@ -30,14 +28,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-sealed interface Route{
+sealed interface Route {
     @Serializable
-    data object RoutineList:Route
+    data object RoutineList : Route
 
     @Serializable
     data class RoutineEdit(
         val routineId: Long,
-    ):Route
+    ) : Route
 }
 
 @Composable
