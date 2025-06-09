@@ -309,18 +309,25 @@ class RoutineDaoTest {
         }
 
     @Test
-    fun `updateTaskById with InvalidId returns null`() =
+    fun `updateTaskById with InvalidId changes nothing`() =
         runTest(testDispatcher.scheduler) {
+            // Insert a routine and a task
             val routine = RoutineEntity(0, "Test Routine")
             val routineId = dao.insertRoutine(routine)
             advanceUntilIdle()
-            val taskId = dao.insertTask(TaskEntity(0, "Test Task", 60, routineId))
+            // Insert a task
+            val task = TaskEntity(0, "Test Task", 60, routineId)
+            val taskId = dao.insertTask(task)
             advanceUntilIdle()
-            val updatedTask = TaskEntity(taskId + 1, "Updated Task", 120, routineId)
+            // Update the task with an invalid ID
+            val invalidId = taskId + 1
+            val updatedTask = TaskEntity(invalidId, "Updated Task", 120, routineId)
             dao.updateTask(updatedTask)
             advanceUntilIdle()
-            val result = dao.getTaskByTaskId(updatedTask.id).first()
+
+            val result = dao.getTaskByTaskId(invalidId).first()
             advanceUntilIdle()
+
             assertEquals(null, result)
         }
 
