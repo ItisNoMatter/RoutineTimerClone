@@ -5,9 +5,11 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.example.routinetimerclone.ui.routineEdit.RoutineEditScreen
 import com.example.routinetimerclone.ui.routineList.RoutineListScreen
 import com.example.routinetimerclone.ui.theme.RoutineTimerCloneTheme
@@ -43,11 +45,20 @@ fun EEffortNavGraph(startDestination: String = "routineList") {
         navController = navController,
         startDestination = startDestination,
     ) {
-        composable<RoutineList> {
-            RoutineListScreen()
+        composable("list") {
+            RoutineListScreen(
+                navController = navController,
+            )
         }
-        composable<RoutineEdit> {
-            RoutineEditScreen()
+        composable(
+            route = "edit/{routineId}",
+            arguments = listOf(navArgument("routineId") { type = NavType.LongType }),
+        ) {
+                backStackEntry ->
+            RoutineEditScreen(
+                navHostController = navController,
+                routineId = backStackEntry.arguments?.getLong("routineId")!!,
+            )
         }
     }
 }
