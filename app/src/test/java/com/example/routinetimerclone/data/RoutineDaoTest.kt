@@ -319,7 +319,7 @@ class RoutineDaoTest {
         }
 
     @Test
-    fun `updateTaskById with InvalidId crush`() =
+    fun `updateTaskById with InvalidId changes nothing`() =
         runTest(testDispatcher.scheduler) {
             // Insert a routine and a task
             val routine = RoutineEntity(0, "Test Routine")
@@ -335,8 +335,8 @@ class RoutineDaoTest {
             dao.updateTask(updatedTask)
             advanceUntilIdle()
             val result =
-                dao.getTaskByTaskId(invalidId).toList()
-            assertEquals(null, result)
+                dao.getTaskByTaskId(taskId).first()
+            assertEquals(task.copy(id = taskId), result)
         }
 
     @Test
