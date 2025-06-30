@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -45,9 +44,8 @@ fun RoutineEditScreen(
         viewModel.fetch(routineId)
     }
     when (val uiState = viewModel.uiState.collectAsState().value) {
-        is RoutineEditUiState.Loading -> {}
-        is RoutineEditUiState.New -> {}
-        is RoutineEditUiState.Done -> {
+        is RoutineCreateUiState.Loading -> {}
+        is RoutineCreateUiState.Done -> {
             val doneRoutine = uiState.routine
             RoutineEditContent(
                 routine = doneRoutine,
@@ -56,7 +54,7 @@ fun RoutineEditScreen(
                 onClickTaskCard = viewModel::onClickTaskCard,
             )
         }
-        is RoutineEditUiState.Error -> {
+        is RoutineCreateUiState.Error -> {
             Log.e("RoutineEditScreen", "Error: ${uiState.e}")
         }
     }
