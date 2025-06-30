@@ -78,7 +78,6 @@ dependencies {
     implementation(libs.hilt.android.v250)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hiltCompiler)
-    implementation(libs.androidx.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.safe.args.generator)
 
