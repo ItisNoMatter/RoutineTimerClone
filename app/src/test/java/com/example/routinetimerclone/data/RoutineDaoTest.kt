@@ -8,11 +8,13 @@ import com.example.routinetimerclone.data.entitiy.RoutineEntity
 import com.example.routinetimerclone.data.entitiy.TaskEntity
 import kotlinx.coroutines.asExecutor
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.runTest
 import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -318,7 +320,7 @@ class RoutineDaoTest {
         }
 
     @Test
-    fun `updateTaskById with InvalidId changes nothing`() =
+    fun `updateTaskById with InvalidId crush`() =
         runTest(testDispatcher.scheduler) {
             // Insert a routine and a task
             val routine = RoutineEntity(0, "Test Routine")
@@ -333,10 +335,8 @@ class RoutineDaoTest {
             val updatedTask = TaskEntity(invalidId, "Updated Task", 120, routineId)
             dao.updateTask(updatedTask)
             advanceUntilIdle()
-
-            val result = dao.getTaskByTaskId(invalidId).first()
-            advanceUntilIdle()
-
+            val result =
+                dao.getTaskByTaskId(invalidId).toList()
             assertEquals(null, result)
         }
 
