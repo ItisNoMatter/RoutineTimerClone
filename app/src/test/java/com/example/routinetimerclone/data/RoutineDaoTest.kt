@@ -334,8 +334,8 @@ class RoutineDaoTest {
             dao.updateTask(updatedTask)
             advanceUntilIdle()
             val result =
-                dao.getTaskByTaskId(taskId).first()
-            assertEquals(task.copy(id = taskId), result)
+                dao.getTasksByRoutineId(routineId).first()
+            assertEquals(listOf(task.copy(id = taskId)), result)
         }
 
     @Test
