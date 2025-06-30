@@ -1,5 +1,6 @@
 package com.example.routinetimerclone.data.repository
 
+import com.example.routinetimerclone.core.LoadedValue
 import com.example.routinetimerclone.domain.model.Routine
 import com.example.routinetimerclone.domain.model.Task
 import kotlinx.coroutines.flow.Flow
@@ -8,9 +9,9 @@ import kotlinx.coroutines.flow.flowOf
 interface RoutineRepository {
     fun getAllRoutines(): Flow<List<Routine>>
 
-    fun getRoutine(id: Long): Flow<Routine?>
+    fun getRoutine(id: Long): Flow<LoadedValue<Routine>>
 
-    fun getRoutineByName(name: String): Flow<Routine?>
+    fun getRoutineByName(name: String): Flow<Routine?> // TODO return LoadedValue
 
     suspend fun insertRoutine(routine: Routine): Long
 
@@ -44,10 +45,6 @@ interface RoutineRepository {
     suspend fun deleteAllTasksByRoutineId(routineId: Long)
 
     fun getRoutinesByName(name: String): Flow<List<Routine>>
-
-    companion object {
-        val Fake = FakeRoutineRepository
-    }
 }
 
 object FakeRoutineRepository : RoutineRepository {
@@ -62,8 +59,8 @@ object FakeRoutineRepository : RoutineRepository {
         return flowOf(routines)
     }
 
-    override fun getRoutine(id: Long): Flow<Routine?> {
-        return flowOf(routines[id.toInt()])
+    override fun getRoutine(id: Long): Flow<LoadedValue<Routine>> {
+        return flowOf(LoadedValue.Done(routines[id.toInt()]))
     }
 
     override fun getRoutineByName(name: String): Flow<Routine?> {

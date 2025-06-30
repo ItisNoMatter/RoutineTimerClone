@@ -1,5 +1,7 @@
 package com.example.routinetimerclone.domain.model
 
+import java.util.Locale
+
 data class Duration(
     val minutes: Int,
     val seconds: Int,
@@ -12,6 +14,10 @@ data class Duration(
 
     fun getTotalSeconds(): Int {
         return minutes * 60 + seconds
+    }
+
+    fun toDisplayString(): String {
+        return String.format(Locale.JAPAN, "%2d分%02d秒", minutes, seconds)
     }
 
     companion object {

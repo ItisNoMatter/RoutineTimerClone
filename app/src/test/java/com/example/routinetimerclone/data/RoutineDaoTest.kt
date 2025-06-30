@@ -83,6 +83,15 @@ class RoutineDaoTest {
         }
 
     @Test
+    fun `getRoutineById with InvalidId returns null`() {
+        runTest(testDispatcher.scheduler) {
+            val result = dao.getRoutineById(1).first()
+            advanceUntilIdle()
+            assertEquals(null, result)
+        }
+    }
+
+    @Test
     fun getRoutineByIdTest() =
         runTest(testDispatcher.scheduler) {
             val name = "Test Routine"
@@ -295,7 +304,7 @@ class RoutineDaoTest {
         }
 
     @Test
-    fun `updateRoutineById with InvalidId returns null`() =
+    fun `updateRoutine with InvalidId returns null`() =
         runTest(testDispatcher.scheduler) {
             val routine = RoutineEntity(0, "Test Routine")
             val routineId = dao.insertRoutine(routine)
@@ -309,19 +318,24 @@ class RoutineDaoTest {
         }
 
     @Test
-    fun `updateTaskById with InvalidId returns null`() =
+    fun `updateTaskById with InvalidId changes nothing`() =
         runTest(testDispatcher.scheduler) {
+            // Insert a routine and a task
             val routine = RoutineEntity(0, "Test Routine")
             val routineId = dao.insertRoutine(routine)
             advanceUntilIdle()
-            val taskId = dao.insertTask(TaskEntity(0, "Test Task", 60, routineId))
+            // Insert a task
+            val task = TaskEntity(0, "Test Task", 60, routineId)
+            val taskId = dao.insertTask(task)
             advanceUntilIdle()
-            val updatedTask = TaskEntity(taskId + 1, "Updated Task", 120, routineId)
+            // Update the task with an invalid ID
+            val invalidId = taskId + 1
+            val updatedTask = TaskEntity(invalidId, "Updated Task", 120, routineId)
             dao.updateTask(updatedTask)
             advanceUntilIdle()
-            val result = dao.getTaskByTaskId(updatedTask.id).first()
-            advanceUntilIdle()
-            assertEquals(null, result)
+            val result =
+                dao.getTasksByRoutineId(routineId).first()
+            assertEquals(listOf(task.copy(id = taskId)), result)
         }
 
     @Test

@@ -10,24 +10,14 @@ import javax.inject.Inject
 class RoutineListViewModel
     @Inject
     constructor(
-        private val uiAction: RoutineListUiAction,
         private val routineRepository: RoutineRepository,
     ) : ViewModel() {
         val routines = routineRepository.getAllRoutines()
 
-        fun onPlayRoutineClick(routineId: Long) {
-            uiAction.onPlayButtonClick(routineId)
-        }
-
-        fun onAddRoutineClick() {
-            uiAction.onAddButtonClick()
-        }
-
         companion object {
             val Noop =
                 RoutineListViewModel(
-                    RoutineListUiAction.Noop,
-                    FakeRoutineRepository,
+                    routineRepository = FakeRoutineRepository,
                 )
         }
     }

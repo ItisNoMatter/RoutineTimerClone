@@ -1,5 +1,6 @@
 package com.example.routinetimerclone.data
 
+import com.example.routinetimerclone.core.LoadedValue
 import com.example.routinetimerclone.data.datasource.RoutineLocalDataSource
 import com.example.routinetimerclone.data.entitiy.RoutineEntity
 import com.example.routinetimerclone.data.entitiy.RoutineWithTasks
@@ -117,7 +118,7 @@ class RoutineRepositroryTest {
             val id = 1L
             every { routineLocalDataSource.getRoutineById(id) } returns flowOf(routineWithTasks1)
             val result = routineRepository.getRoutine(id).first()
-            val expected = flowOf(routine1).first()
+            val expected = flowOf(LoadedValue.Done(routine1)).first()
             assertEquals(expected, result)
         }
 
