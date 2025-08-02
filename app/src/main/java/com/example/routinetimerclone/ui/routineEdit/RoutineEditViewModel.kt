@@ -41,7 +41,10 @@ class RoutineEditViewModel
         }
 
         fun onRoutineTitleChange(title: String) {
+            val state = uiState.value
+            if (state !is RoutineEditUiState.Done) return
             viewModelScope.launch {
+                routineRepository.updateRoutine(state.routine.copy(name = title))
             }
         }
 
