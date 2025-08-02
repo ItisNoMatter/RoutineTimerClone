@@ -1,4 +1,4 @@
-package com.example.routinetimerclone.ui.routineEdit
+package com.example.routinetimerclone.ui.routineCreate
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -37,35 +37,34 @@ import com.example.routinetimerclone.ui.components.NodePosition
 import com.example.routinetimerclone.ui.components.TaskCard
 
 @Composable
-fun RoutineEditScreen(
-    routineId: Long,
+fun RoutineCreateScreen(
     navHostController: NavHostController,
-    viewModel: RoutineEditViewModel = hiltViewModel(),
+    viewModel: RoutineCreateViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
-        viewModel.fetch(routineId)
+        viewModel.create()
     }
     when (val uiState = viewModel.uiState.collectAsState().value) {
-        is RoutineEditUiState.Loading -> {
+        is RoutineCreateUiState.Loading -> {
             Text("Loading ...")
         }
-        is RoutineEditUiState.Done -> {
+        is RoutineCreateUiState.Done -> {
             val doneRoutine = uiState.routine
-            RoutineEditContent(
+            RoutineCreateContent(
                 routine = doneRoutine,
                 onRoutineTitleChange = viewModel::onRoutineTitleChange,
                 onClickAddButton = viewModel::onClickAddTaskButton,
                 onClickTaskCard = viewModel::onClickTaskCard,
             )
         }
-        is RoutineEditUiState.Error -> {
-            Log.e("RoutineEditScreen", "Error: ${uiState.e}")
+        is RoutineCreateUiState.Error -> {
+            Log.e("RoutineCreateScreen", "Error: ${uiState.e}")
         }
     }
 }
 
 @Composable
-fun RoutineEditContent(
+fun RoutineCreateContent(
     routine: Routine,
     onRoutineTitleChange: (String) -> Unit = {},
     onClickAddButton: () -> Unit = {},
@@ -73,7 +72,7 @@ fun RoutineEditContent(
 ) {
     Scaffold(
         topBar = {
-            RoutineEditTopBar(
+            RoutineCreateTopBar(
                 routine = routine,
                 onRoutineTitleChange = onRoutineTitleChange,
             )
@@ -105,7 +104,7 @@ fun RoutineEditContent(
 }
 
 @Composable
-fun RoutineEditTopBar(
+fun RoutineCreateTopBar(
     routine: Routine,
     onRoutineTitleChange: (String) -> Unit = {},
 ) {
@@ -131,7 +130,7 @@ fun RoutineEditTopBar(
             Box {
                 if (routine.name.isEmpty()) {
                     Text(
-                        text = stringResource(R.string.routine_edit_title_place_holder),
+                        text = stringResource(R.string.routine_create_title_place_holder),
                     )
                 }
                 BasicTextField(
@@ -158,8 +157,8 @@ fun RoutineEditTopBar(
     device = "spec:width=411dp,height=891dp,dpi=420,isRound=false,chinSize=0dp,orientation=portrait",
 )
 @Composable
-fun RoutineEditContentPreview() {
-    RoutineEditContent(
+fun RoutineCreateContentPreview() {
+    RoutineCreateContent(
         routine =
             Routine(
                 id = 1,

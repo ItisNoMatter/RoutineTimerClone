@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.routinetimerclone.core.getOrNull
 import com.example.routinetimerclone.data.repository.RoutineRepository
 import com.example.routinetimerclone.domain.model.Routine
-import com.example.routinetimerclone.ui.routineEdit.RoutineCreateUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

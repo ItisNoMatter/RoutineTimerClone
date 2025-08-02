@@ -18,8 +18,8 @@ class RoutineEditViewModel
     constructor(
         private val routineRepository: RoutineRepository,
     ) : ViewModel() {
-        private val _uiState = MutableStateFlow<RoutineCreateUiState>(RoutineCreateUiState.Loading)
-        val uiState: StateFlow<RoutineCreateUiState> = _uiState.asStateFlow()
+        private val _uiState = MutableStateFlow<RoutineEditUiState>(RoutineEditUiState.Loading)
+        val uiState: StateFlow<RoutineEditUiState> = _uiState.asStateFlow()
 
         fun fetch(routineId: Long) {
             viewModelScope.launch {
@@ -28,13 +28,13 @@ class RoutineEditViewModel
                         val routine = value.getOrNull()
                         if (routine != null) {
                             _uiState.update {
-                                RoutineCreateUiState.Done(routine)
+                                RoutineEditUiState.Done(routine)
                             }
                         }
                     }
                 } catch (e: Exception) {
                     _uiState.update {
-                        RoutineCreateUiState.Error(e)
+                        RoutineEditUiState.Error(e)
                     }
                 }
             }

@@ -47,7 +47,7 @@ fun RoutineListScreen(
     RoutineListContent(
         routines = routines,
         onPlayButtonClick = { routineId -> navController.navigate(Route.RoutineEdit(routineId)) },
-        onAddRoutineClick = { navController.navigate(Route.RoutineEdit(0)) },
+        onAddRoutineClick = { navController.navigate(Route.RoutineCreate) },
     )
 }
 

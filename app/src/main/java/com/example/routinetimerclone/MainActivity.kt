@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.example.routinetimerclone.ui.routineCreate.RoutineCreateScreen
 import com.example.routinetimerclone.ui.routineEdit.RoutineEditScreen
 import com.example.routinetimerclone.ui.routineList.RoutineListScreen
 import com.example.routinetimerclone.ui.theme.RoutineTimerCloneTheme
@@ -36,6 +37,9 @@ sealed interface Route {
     data class RoutineEdit(
         val routineId: Long,
     ) : Route
+
+    @Serializable
+    data object RoutineCreate : Route
 }
 
 @Composable
@@ -56,6 +60,12 @@ fun EEffortNavGraph() {
             RoutineEditScreen(
                 navHostController = navController,
                 routineId = backStackEntry.toRoute<Route.RoutineEdit>().routineId,
+            )
+        }
+        composable<Route.RoutineCreate> {
+                backStackEntry ->
+            RoutineCreateScreen(
+                navHostController = navController,
             )
         }
     }
