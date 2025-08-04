@@ -15,12 +15,12 @@ class RoutineTest {
     }
 
     @Test
-    fun taskMovedTest() {
+    fun taskSwapTest() {
         val task1 = Task(1, "Task 1", 1, 30)
         val task2 = Task(2, "Task 2", 2, 0)
         val task3 = Task(3, "Task 3", 3, 30)
         val routine = Routine(1, "Test Routine", listOf(task1, task2, task3))
-        val movedRoutine = routine.taskMoved(0, 1)
+        val movedRoutine = routine.taskSwap(0, 1)
         assertEquals(movedRoutine.tasks[0], task2)
         assertEquals(movedRoutine.tasks[1], task1)
         assertEquals(movedRoutine.tasks[2], task3)

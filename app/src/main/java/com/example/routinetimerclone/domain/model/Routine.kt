@@ -13,7 +13,7 @@ data class Routine(
         return Duration(totalseconds / 60, totalseconds % 60)
     }
 
-    fun taskMoved(
+    fun taskSwap(
         from: Int,
         to: Int,
     ): Routine {
