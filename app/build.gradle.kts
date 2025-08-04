@@ -13,11 +13,11 @@ configurations.configureEach {
 }
 
 android {
-    namespace = "com.example.routineTimerClone"
+    namespace = "jp.itIsNoMatter.routineTimerClone"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.routineTimerClone"
+        applicationId = "jp.itIsNoMatter.routineTimerClone"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
