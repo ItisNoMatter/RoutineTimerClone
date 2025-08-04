@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.routinetimerclone.core.getOrNull
 import com.example.routinetimerclone.data.repository.RoutineRepository
 import com.example.routinetimerclone.domain.model.Routine
+import com.example.routinetimerclone.ui.navigation.NavEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +25,7 @@ class RoutineCreateViewModel
         private val _uiState = MutableStateFlow<RoutineCreateUiState>(RoutineCreateUiState.Loading)
         val uiState: StateFlow<RoutineCreateUiState> = _uiState.asStateFlow()
 
-        private val _navigateTo = MutableSharedFlow<String>()
+        private val _navigateTo = MutableSharedFlow<NavEvent>()
         val navigateTo = _navigateTo.asSharedFlow()
 
         fun create() {
@@ -85,9 +86,14 @@ class RoutineCreateViewModel
             }
         }
 
-    fun onClickBackButton(){
-        viewModelScope.launch {
-            _navigateTo.emit("")
+        fun onClickBackButton() {
+            val state = uiState.value
+
+            viewModelScope.launch {
+                if (state is RoutineCreateUiState.Done && state.routine.isInitial()) {
+                    routineRepository.deleteRoutineById(state.routine.id)
+                }
+                _navigateTo.emit(NavEvent.NavigateBack)
+            }
         }
-    }
     }

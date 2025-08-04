@@ -34,8 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.routinetimerclone.Route
 import com.example.routinetimerclone.domain.model.Routine
+import com.example.routinetimerclone.ui.navigation.Route
 
 @Composable
 fun RoutineListScreen(

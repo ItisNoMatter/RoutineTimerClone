@@ -8,6 +8,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.example.routinetimerclone.ui.components.RoutineEditContent
+import com.example.routinetimerclone.ui.navigation.NavEvent
 
 @Composable
 fun RoutineCreateScreen(
@@ -16,6 +17,14 @@ fun RoutineCreateScreen(
 ) {
     LaunchedEffect(Unit) {
         viewModel.create()
+    }
+    LaunchedEffect(Unit) {
+        viewModel.navigateTo.collect { event ->
+            when (event) {
+                is NavEvent.NavigateBack -> navHostController.popBackStack()
+                is NavEvent.NavigateTo -> navHostController.navigate(event.route)
+            }
+        }
     }
     when (val uiState = viewModel.uiState.collectAsState().value) {
         is RoutineCreateUiState.Loading -> {
@@ -28,7 +37,7 @@ fun RoutineCreateScreen(
                 onRoutineTitleChange = viewModel::onRoutineTitleChange,
                 onClickAddButton = viewModel::onClickAddTaskButton,
                 onClickTaskCard = viewModel::onClickTaskCard,
-                onClickBackButton = { navHostController.popBackStack() },
+                onClickBackButton = viewModel::onClickBackButton,
             )
         }
         is RoutineCreateUiState.Error -> {

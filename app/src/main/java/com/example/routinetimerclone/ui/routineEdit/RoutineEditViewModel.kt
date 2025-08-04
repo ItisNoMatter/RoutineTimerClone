@@ -4,9 +4,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.routinetimerclone.core.getOrNull
 import com.example.routinetimerclone.data.repository.RoutineRepository
+import com.example.routinetimerclone.ui.navigation.NavEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -20,6 +23,8 @@ class RoutineEditViewModel
     ) : ViewModel() {
         private val _uiState = MutableStateFlow<RoutineEditUiState>(RoutineEditUiState.Loading)
         val uiState: StateFlow<RoutineEditUiState> = _uiState.asStateFlow()
+        private val _navigateTo = MutableSharedFlow<NavEvent>()
+        val navigateTo = _navigateTo.asSharedFlow()
 
         fun fetch(routineId: Long) {
             viewModelScope.launch {
@@ -55,6 +60,12 @@ class RoutineEditViewModel
 
         fun onClickTaskCard() {
             viewModelScope.launch {
+            }
+        }
+
+        fun onClickBackButton() {
+            viewModelScope.launch {
+                _navigateTo.emit(NavEvent.NavigateBack)
             }
         }
     }
