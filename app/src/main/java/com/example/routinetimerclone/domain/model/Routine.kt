@@ -13,7 +13,11 @@ data class Routine(
         return Duration(totalseconds / 60, totalseconds % 60)
     }
 
-    fun taskMoved(
+    fun isInitial(): Boolean {
+        return tasks.isEmpty() && name.isEmpty()
+    }
+
+    fun taskSwap(
         from: Int,
         to: Int,
     ): Routine {

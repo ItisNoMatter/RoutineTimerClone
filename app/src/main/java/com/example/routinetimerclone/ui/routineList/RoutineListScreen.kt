@@ -34,8 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
-import com.example.routinetimerclone.Route
 import com.example.routinetimerclone.domain.model.Routine
+import com.example.routinetimerclone.ui.navigation.Route
 
 @Composable
 fun RoutineListScreen(
@@ -47,7 +47,7 @@ fun RoutineListScreen(
     RoutineListContent(
         routines = routines,
         onPlayButtonClick = { routineId -> navController.navigate(Route.RoutineEdit(routineId)) },
-        onAddRoutineClick = { navController.navigate(Route.RoutineEdit(0)) },
+        onAddRoutineClick = { navController.navigate(Route.RoutineCreate) },
     )
 }
 

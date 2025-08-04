@@ -8,6 +8,4 @@ sealed interface RoutineEditUiState {
     data class Done(val routine: Routine) : RoutineEditUiState
 
     data class Error(val e: Exception) : RoutineEditUiState
-
-    data object New : RoutineEditUiState
 }

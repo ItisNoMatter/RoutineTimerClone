@@ -1,4 +1,4 @@
-package com.example.routinetimerclone.ui.routineEdit
+package com.example.routinetimerclone.ui.routineCreate
 
 import android.util.Log
 import androidx.compose.material3.Text
@@ -11,13 +11,12 @@ import com.example.routinetimerclone.ui.components.RoutineEditContent
 import com.example.routinetimerclone.ui.navigation.NavEvent
 
 @Composable
-fun RoutineEditScreen(
-    routineId: Long,
+fun RoutineCreateScreen(
     navHostController: NavHostController,
-    viewModel: RoutineEditViewModel = hiltViewModel(),
+    viewModel: RoutineCreateViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
-        viewModel.fetch(routineId)
+        viewModel.create()
     }
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collect { event ->
@@ -27,12 +26,11 @@ fun RoutineEditScreen(
             }
         }
     }
-
     when (val uiState = viewModel.uiState.collectAsState().value) {
-        is RoutineEditUiState.Loading -> {
+        is RoutineCreateUiState.Loading -> {
             Text("Loading ...")
         }
-        is RoutineEditUiState.Done -> {
+        is RoutineCreateUiState.Done -> {
             val doneRoutine = uiState.routine
             RoutineEditContent(
                 routine = doneRoutine,
@@ -42,8 +40,8 @@ fun RoutineEditScreen(
                 onClickBackButton = viewModel::onClickBackButton,
             )
         }
-        is RoutineEditUiState.Error -> {
-            Log.e("RoutineEditScreen", "Error: ${uiState.e}")
+        is RoutineCreateUiState.Error -> {
+            Log.e("RoutineCreateScreen", "Error: ${uiState.e}")
         }
     }
 }
