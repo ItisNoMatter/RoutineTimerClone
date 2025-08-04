@@ -6,8 +6,10 @@ import com.example.routinetimerclone.core.getOrNull
 import com.example.routinetimerclone.data.repository.RoutineRepository
 import com.example.routinetimerclone.domain.model.Routine
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -21,6 +23,9 @@ class RoutineCreateViewModel
     ) : ViewModel() {
         private val _uiState = MutableStateFlow<RoutineCreateUiState>(RoutineCreateUiState.Loading)
         val uiState: StateFlow<RoutineCreateUiState> = _uiState.asStateFlow()
+
+        private val _navigateTo = MutableSharedFlow<String>()
+        val navigateTo = _navigateTo.asSharedFlow()
 
         fun create() {
             viewModelScope.launch {
@@ -79,4 +84,10 @@ class RoutineCreateViewModel
             viewModelScope.launch {
             }
         }
+
+    fun onClickBackButton(){
+        viewModelScope.launch {
+            _navigateTo.emit("")
+        }
+    }
     }
