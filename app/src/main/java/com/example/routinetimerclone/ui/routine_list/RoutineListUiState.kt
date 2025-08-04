@@ -1,4 +1,4 @@
-package com.example.routinetimerclone.ui.routineList
+package com.example.routinetimerclone.ui.routine_list
 
 import com.example.routinetimerclone.domain.model.Routine
 

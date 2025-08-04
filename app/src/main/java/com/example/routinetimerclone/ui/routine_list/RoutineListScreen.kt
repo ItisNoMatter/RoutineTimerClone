@@ -1,4 +1,4 @@
-package com.example.routinetimerclone.ui.routineList
+package com.example.routinetimerclone.ui.routine_list
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

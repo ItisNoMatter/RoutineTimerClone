@@ -1,4 +1,4 @@
-package com.example.routinetimerclone.ui.routineCreate
+package com.example.routinetimerclone.ui.routine_create
 
 import android.util.Log
 import androidx.compose.material3.Text
