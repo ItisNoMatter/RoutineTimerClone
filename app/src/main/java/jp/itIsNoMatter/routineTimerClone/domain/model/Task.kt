@@ -4,6 +4,7 @@ data class Task(
     val id: Long,
     val name: String,
     val duration: Duration,
+    val announceRemainingTimeFlag: Boolean = true,
 ) {
     constructor(
         id: Long,
