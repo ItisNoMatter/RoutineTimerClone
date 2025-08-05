@@ -4,13 +4,14 @@ data class Task(
     val id: Long,
     val name: String,
     val duration: Duration,
+    val announceRemainingTimeFlag: Boolean,
 ) {
     constructor(
         id: Long,
         name: String,
         minutes: Int,
         seconds: Int,
-    ) : this(id, name, Duration(minutes, seconds))
+    ) : this(id, name, Duration(minutes, seconds), true)
 
     val minutes: Int
         get() = duration.minutes
