@@ -17,4 +17,8 @@ data class Task(
         get() = duration.minutes
     val seconds: Int
         get() = duration.seconds
+
+    companion object {
+        val Empty = Task(0, "", Duration(0, 0))
+    }
 }
