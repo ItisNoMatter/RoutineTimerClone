@@ -11,7 +11,17 @@ data class Task(
         name: String,
         minutes: Int,
         seconds: Int,
-    ) : this(id, name, Duration(minutes, seconds))
+        announceRemainingTimeFlag: Boolean = true,
+    ) : this(
+        id = id,
+        name = name,
+        duration =
+            Duration(
+                minutes,
+                seconds,
+            ),
+        announceRemainingTimeFlag = announceRemainingTimeFlag,
+    )
 
     val minutes: Int
         get() = duration.minutes
@@ -19,6 +29,12 @@ data class Task(
         get() = duration.seconds
 
     companion object {
-        val Empty = Task(0, "", Duration(0, 0))
+        val Empty =
+            Task(
+                id = 0,
+                name = "",
+                duration = Duration(0, 0),
+                announceRemainingTimeFlag = false,
+            )
     }
 }
