@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
-import jp.itIsNoMatter.routineTimerClone.core.getOrNull
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepository
 import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
@@ -61,62 +60,50 @@ class TaskCreateViewModel
             }
         }
 
-        fun onTaskTitleChange(title: String) {
-            when (val task = uiState.value.task) {
-                is LoadedValue.Done -> {
-                    viewModelScope.launch {
-                        routineRepository.updateTask(
-                            task.value.copy(name = title),
-                            parentRoutineId,
-                        )
-                    }
-                }
-                else -> {}
+        fun onTaskTitleChange(
+            task: Task,
+            title: String,
+        ) {
+            viewModelScope.launch {
+                routineRepository.updateTask(
+                    task.copy(name = title),
+                    parentRoutineId,
+                )
             }
         }
 
-        fun onTaskDurationMinutesChange(int: Int) {
-            when (val task = uiState.value.task) {
-                is LoadedValue.Done -> {
-                    val task = task.value
-                    viewModelScope.launch {
-                        val duration = task.duration.copy(minutes = int)
-                        routineRepository.updateTask(
-                            task.copy(duration = duration),
-                            parentRoutineId,
-                        )
-                    }
-                }
-                else -> {}
+        fun onTaskDurationMinutesChange(
+            task: Task,
+            int: Int,
+        ) {
+            viewModelScope.launch {
+                val duration = task.duration.copy(minutes = int)
+                routineRepository.updateTask(
+                    task.copy(duration = duration),
+                    parentRoutineId,
+                )
             }
         }
 
-        fun onTaskDurationSecondsChange(int: Int) {
-            when (val task = uiState.value.task) {
-                is LoadedValue.Done -> {
-                    viewModelScope.launch {
-                        val duration = task.value.duration.copy(seconds = int)
-                        routineRepository.updateTask(
-                            task.value.copy(duration = duration),
-                            parentRoutineId,
-                        )
-                    }
-                }
-                else -> {}
+        fun onTaskDurationSecondsChange(
+            task: Task,
+            int: Int,
+        ) {
+            viewModelScope.launch {
+                val duration = task.duration.copy(seconds = int)
+                routineRepository.updateTask(
+                    task.copy(duration = duration),
+                    parentRoutineId,
+                )
             }
         }
 
         fun onToggleAnnounceRemainingTime(task: Task) {
-            when (val task = uiState.value.task) {
-                is LoadedValue.Done -> {
-                    viewModelScope.launch {
-                        routineRepository.updateTask(
-                            task.value.copy(announceRemainingTimeFlag = !task.value.announceRemainingTimeFlag),
-                            parentRoutineId,
-                        )
-                    }
-                }
-                else -> {}
+            viewModelScope.launch {
+                routineRepository.updateTask(
+                    task.copy(announceRemainingTimeFlag = !task.announceRemainingTimeFlag),
+                    parentRoutineId,
+                )
             }
         }
 
@@ -126,11 +113,13 @@ class TaskCreateViewModel
             }
         }
 
-        fun updateDuration(duration: Duration) {
-            if (uiState.value.task !is LoadedValue.Done) return
+        fun updateDuration(
+            task: Task,
+            duration: Duration,
+        ) {
             viewModelScope.launch {
                 routineRepository.updateTask(
-                    uiState.value.task.getOrNull() ?: Task.Empty,
+                    task,
                     parentRoutineId,
                 )
             }
