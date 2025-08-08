@@ -27,7 +27,6 @@ fun RoutineEditScreen(
             }
         }
     }
-
     when (val uiState = viewModel.uiState.collectAsState().value) {
         is RoutineEditUiState.Loading -> {
             Text("Loading ...")
