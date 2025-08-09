@@ -18,4 +18,10 @@ sealed interface Route {
     data class TaskCreate(
         val routineId: Long,
     )
+
+    @Serializable
+    data class TaskEdit(
+        val parentRoutineId: Long,
+        val taskId: Long,
+    )
 }
