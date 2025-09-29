@@ -9,6 +9,7 @@ import androidx.navigation.toRoute
 import jp.itIsNoMatter.routineTimerClone.ui.routineCreate.RoutineCreateScreen
 import jp.itIsNoMatter.routineTimerClone.ui.routineEdit.RoutineEditScreen
 import jp.itIsNoMatter.routineTimerClone.ui.routineList.RoutineListScreen
+import jp.itIsNoMatter.routineTimerClone.ui.task.create.TaskCreateScreen
 
 @Composable
 fun EEffortNavGraph() {
@@ -37,6 +38,11 @@ fun EEffortNavHost(navController: NavHostController) {
         composable<Route.RoutineCreate> {
                 backStackEntry ->
             RoutineCreateScreen(
+                navHostController = navController,
+            )
+        }
+        composable<Route.TaskCreate>{
+            TaskCreateScreen(
                 navHostController = navController,
             )
         }
