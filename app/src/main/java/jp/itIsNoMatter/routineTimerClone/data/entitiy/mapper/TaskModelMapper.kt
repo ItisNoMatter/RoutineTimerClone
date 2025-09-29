@@ -13,6 +13,11 @@ object TaskModelMapper {
         task: Task,
         parentRoutineId: Long,
     ): TaskEntity {
-        return TaskEntity(task.id, task.name, task.duration.getTotalSeconds(), parentRoutineId)
+        return TaskEntity(
+            id = task.id,
+            name = task.name,
+            seconds = task.duration.getTotalSeconds(),
+            parentRoutineId = parentRoutineId,
+        )
     }
 }

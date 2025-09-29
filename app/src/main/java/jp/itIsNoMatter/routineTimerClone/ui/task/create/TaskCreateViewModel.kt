@@ -27,7 +27,7 @@ class TaskCreateViewModel
         private val routineRepository: RoutineRepository,
         savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
-        private val parentRoutineId: Long by lazy { savedStateHandle.toRoute<Route.TaskCreate>().routineId }
+        private val parentRoutineId: Long = savedStateHandle.toRoute<Route.TaskCreate>().routineId
         private val _uiState: MutableStateFlow<TaskCreateUiState> =
             MutableStateFlow(
                 TaskCreateUiState.InitialState,
@@ -36,7 +36,7 @@ class TaskCreateViewModel
         private val _navigateTo = MutableSharedFlow<NavEvent>()
         val navigateTo = _navigateTo.asSharedFlow()
 
-        fun create(parentRoutineId: Long) {
+        fun create() {
             viewModelScope.launch {
                 val taskId =
                     routineRepository.insertTask(
@@ -61,14 +61,14 @@ class TaskCreateViewModel
         }
 
         fun onTaskTitleChange(title: String) {
+            _uiState.update { it.copy(taskTitle = title) }
+            val state = uiState.value
+            if (state.task !is LoadedValue.Done) return
             viewModelScope.launch {
-                val task = uiState.value.task
-                if (task is LoadedValue.Done) {
-                    routineRepository.updateTask(
-                        task.value.copy(name = title),
-                        parentRoutineId,
-                    )
-                }
+                routineRepository.updateTask(
+                    state.task.value.copy(name = title),
+                    parentRoutineId,
+                )
             }
         }
 
@@ -107,7 +107,7 @@ class TaskCreateViewModel
             }
         }
 
-        fun openDurationInput() {
+        fun openDurationInputDialog() {
             _uiState.update {
                 it.copy(showDurationInputDialog = true)
             }
@@ -125,7 +125,7 @@ class TaskCreateViewModel
             }
         }
 
-        fun closeDurationInput() {
+        fun closeDurationInputDialog() {
             _uiState.update {
                 it.copy(showDurationInputDialog = false)
             }

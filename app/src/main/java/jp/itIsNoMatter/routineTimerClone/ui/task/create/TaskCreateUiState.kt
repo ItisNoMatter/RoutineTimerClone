@@ -6,6 +6,7 @@ import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 data class TaskCreateUiState(
     val task: LoadedValue<Task>,
     val showDurationInputDialog: Boolean,
+    val taskTitle: String = "",
 ) {
     companion object {
         val InitialState =

@@ -12,6 +12,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -31,11 +32,10 @@ import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 @Composable
 fun TaskCreateScreen(
     navHostController: NavHostController,
-    parentRoutineId: Long,
     viewmodel: TaskCreateViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
-        viewmodel.create(parentRoutineId)
+        viewmodel.create()
     }
     LaunchedEffect(Unit) {
         viewmodel.navigateTo.collect { event ->
@@ -43,6 +43,7 @@ fun TaskCreateScreen(
                 is NavEvent.NavigateBack -> {
                     navHostController.popBackStack()
                 }
+
                 is NavEvent.NavigateTo -> {
                     navHostController.navigate(event.route)
                 }
@@ -55,10 +56,24 @@ fun TaskCreateScreen(
         uiActions =
             TaskCreateUiActions(
                 onClickBackButton = { viewmodel.onClickBackButton() },
-                onTaskNameChange = { text -> viewmodel.onTaskTitleChange(text) },
-                onTaskMinuteChange = { task, minute -> viewmodel.onTaskDurationMinutesChange(task, minute) },
-                onTaskSecondChange = { task, second -> viewmodel.onTaskDurationSecondsChange(task, second) },
-                onToggleAnnounceRemainingTimeFlag = { task -> viewmodel.onToggleAnnounceRemainingTime(task) },
+                onTaskNameChange = viewmodel::onTaskTitleChange,
+                onTaskMinuteChange = { task, minute ->
+                    viewmodel.onTaskDurationMinutesChange(
+                        task,
+                        minute,
+                    )
+                },
+                onTaskSecondChange = { task, second ->
+                    viewmodel.onTaskDurationSecondsChange(
+                        task,
+                        second,
+                    )
+                },
+                onToggleAnnounceRemainingTimeFlag = { task ->
+                    viewmodel.onToggleAnnounceRemainingTime(
+                        task,
+                    )
+                },
             ),
     )
 }
@@ -84,6 +99,7 @@ fun TaskCreateContent(
                     .padding(innerPadding)
                     .background(color = MaterialTheme.colorScheme.surfaceContainerLow),
         ) {
+            Text(uiState.task.toString())
         }
     }
 }
@@ -101,12 +117,7 @@ fun TaskCreateTopBar(
         TopAppBar(
             title = {
                 TextField(
-                    value =
-                        if (uiState.task is LoadedValue.Done) {
-                            uiState.task.value.name
-                        } else {
-                            "作業と所要時間"
-                        },
+                    value = uiState.taskTitle,
                     onValueChange = onTitleChange,
                     colors =
                         TextFieldDefaults.colors(
