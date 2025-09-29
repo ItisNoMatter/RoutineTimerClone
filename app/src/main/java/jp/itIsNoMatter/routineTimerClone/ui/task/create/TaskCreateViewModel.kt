@@ -27,7 +27,7 @@ class TaskCreateViewModel
         private val routineRepository: RoutineRepository,
         savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
-        private val parentRoutineId: Long = savedStateHandle.toRoute<Route.TaskCreate>().routineId
+        private val parentRoutineId: Long by lazy { savedStateHandle.toRoute<Route.TaskCreate>().routineId }
         private val _uiState: MutableStateFlow<TaskCreateUiState> =
             MutableStateFlow(
                 TaskCreateUiState.InitialState,
@@ -36,7 +36,7 @@ class TaskCreateViewModel
         private val _navigateTo = MutableSharedFlow<NavEvent>()
         val navigateTo = _navigateTo.asSharedFlow()
 
-        fun create() {
+        fun create(parentRoutineId: Long) {
             viewModelScope.launch {
                 val taskId =
                     routineRepository.insertTask(
@@ -60,15 +60,15 @@ class TaskCreateViewModel
             }
         }
 
-        fun onTaskTitleChange(
-            task: Task,
-            title: String,
-        ) {
+        fun onTaskTitleChange(title: String) {
             viewModelScope.launch {
-                routineRepository.updateTask(
-                    task.copy(name = title),
-                    parentRoutineId,
-                )
+                val task = uiState.value.task
+                if (task is LoadedValue.Done) {
+                    routineRepository.updateTask(
+                        task.value.copy(name = title),
+                        parentRoutineId,
+                    )
+                }
             }
         }
 
@@ -109,7 +109,7 @@ class TaskCreateViewModel
 
         fun openDurationInput() {
             _uiState.update {
-                it.copy(showDurationInput = true)
+                it.copy(showDurationInputDialog = true)
             }
         }
 
@@ -127,7 +127,7 @@ class TaskCreateViewModel
 
         fun closeDurationInput() {
             _uiState.update {
-                it.copy(showDurationInput = false)
+                it.copy(showDurationInputDialog = false)
             }
         }
     }

@@ -56,7 +56,11 @@ class RoutineEditViewModel
 
         fun onClickAddTaskButton() {
             viewModelScope.launch {
-                _navigateTo.emit(NavEvent.NavigateTo(route = Route.TaskCreate(0)))
+                if (uiState.value is RoutineEditUiState.Done)
+                    {
+                        val routineId = (uiState.value as RoutineEditUiState.Done).routine.id
+                        _navigateTo.emit(NavEvent.NavigateTo(route = Route.TaskCreate(routineId)))
+                    }
             }
         }
 

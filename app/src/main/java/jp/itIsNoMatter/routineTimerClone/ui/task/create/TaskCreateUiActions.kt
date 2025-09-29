@@ -4,7 +4,7 @@ import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 
 data class TaskCreateUiActions(
     val onClickBackButton: () -> Unit,
-    val onTaskNameChange: (Task, String) -> Unit,
+    val onTaskNameChange: (String) -> Unit,
     val onTaskMinuteChange: (Task, Int) -> Unit,
     val onTaskSecondChange: (Task, Int) -> Unit,
     val onToggleAnnounceRemainingTimeFlag: (Task) -> Unit,
@@ -13,7 +13,7 @@ data class TaskCreateUiActions(
         val Noop =
             TaskCreateUiActions(
                 onClickBackButton = {},
-                onTaskNameChange = { _, _ -> },
+                onTaskNameChange = {},
                 onTaskMinuteChange = { _, _ -> },
                 onTaskSecondChange = { _, _ -> },
                 onToggleAnnounceRemainingTimeFlag = {},

@@ -12,7 +12,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
@@ -32,8 +31,12 @@ import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 @Composable
 fun TaskCreateScreen(
     navHostController: NavHostController,
+    parentRoutineId: Long,
     viewmodel: TaskCreateViewModel = hiltViewModel(),
 ) {
+    LaunchedEffect(Unit) {
+        viewmodel.create(parentRoutineId)
+    }
     LaunchedEffect(Unit) {
         viewmodel.navigateTo.collect { event ->
             when (event) {
@@ -52,7 +55,7 @@ fun TaskCreateScreen(
         uiActions =
             TaskCreateUiActions(
                 onClickBackButton = { viewmodel.onClickBackButton() },
-                onTaskNameChange = { task, text -> viewmodel.onTaskTitleChange(task, text) },
+                onTaskNameChange = { text -> viewmodel.onTaskTitleChange(text) },
                 onTaskMinuteChange = { task, minute -> viewmodel.onTaskDurationMinutesChange(task, minute) },
                 onTaskSecondChange = { task, second -> viewmodel.onTaskDurationSecondsChange(task, second) },
                 onToggleAnnounceRemainingTimeFlag = { task -> viewmodel.onToggleAnnounceRemainingTime(task) },
@@ -70,6 +73,7 @@ fun TaskCreateContent(
             TaskCreateTopBar(
                 uiState = uiState,
                 onClickBackButton = uiActions.onClickBackButton,
+                onTitleChange = uiActions.onTaskNameChange,
             )
         },
     ) { innerPadding ->
@@ -98,19 +102,17 @@ fun TaskCreateTopBar(
             title = {
                 TextField(
                     value =
-                        if (uiState.task is LoadedValue.Done)
-                            {
-                                uiState.task.value.name
-                            } else
-                            {
-                                "作業と所要時間"
-                            },
+                        if (uiState.task is LoadedValue.Done) {
+                            uiState.task.value.name
+                        } else {
+                            "作業と所要時間"
+                        },
                     onValueChange = onTitleChange,
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = Color.Transparent,
-                        focusedContainerColor = Color.Transparent,
-
-                    )
+                    colors =
+                        TextFieldDefaults.colors(
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedContainerColor = Color.Transparent,
+                        ),
                 )
             },
             navigationIcon = {
@@ -140,7 +142,7 @@ fun TaskCreateContentPreview() {
                         announceRemainingTimeFlag = true,
                     ),
                 ),
-            showDurationInput = true,
+            showDurationInputDialog = true,
         ),
         uiActions = TaskCreateUiActions.Noop,
     )

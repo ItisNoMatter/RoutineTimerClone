@@ -17,11 +17,11 @@ sealed interface Route {
     @Serializable
     data class TaskCreate(
         val routineId: Long,
-    ): Route
+    ) : Route
 
     @Serializable
     data class TaskEdit(
         val parentRoutineId: Long,
         val taskId: Long,
-    ):Route
+    ) : Route
 }

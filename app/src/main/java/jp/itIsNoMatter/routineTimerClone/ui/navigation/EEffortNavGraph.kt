@@ -41,9 +41,11 @@ fun EEffortNavHost(navController: NavHostController) {
                 navHostController = navController,
             )
         }
-        composable<Route.TaskCreate>{
+        composable<Route.TaskCreate> {
+                backStackEntry ->
             TaskCreateScreen(
                 navHostController = navController,
+                parentRoutineId = backStackEntry.toRoute<Route.TaskCreate>().routineId,
             )
         }
     }
