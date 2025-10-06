@@ -1,6 +1,5 @@
 package jp.itIsNoMatter.routineTimerClone.ui.task.create
 
-import androidx.compose.ui.platform.LocalView
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -45,13 +44,14 @@ class TaskCreateViewModel
                         parentRoutineId,
                     )
                 routineRepository.getTaskByTaskId(taskId).collect { task ->
-                    if(task != null){
-                        _uiState.update {
-                            it.copy(
-                                task = LoadedValue.Done(value = task)
-                            )
+                    if (task != null)
+                        {
+                            _uiState.update {
+                                it.copy(
+                                    task = LoadedValue.Done(value = task),
+                                )
+                            }
                         }
-                    }
                 }
             }
         }
