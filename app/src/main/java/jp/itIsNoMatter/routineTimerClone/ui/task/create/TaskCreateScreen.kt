@@ -86,9 +86,7 @@ fun TaskCreateContent(
     Scaffold(
         topBar = {
             TaskCreateTopBar(
-                uiState = uiState,
                 onClickBackButton = uiActions.onClickBackButton,
-                onTitleChange = uiActions.onTaskNameChange,
             )
         },
     ) { innerPadding ->
@@ -100,6 +98,11 @@ fun TaskCreateContent(
                     .background(color = MaterialTheme.colorScheme.surfaceContainerLow),
         ) {
             Text(uiState.task.toString())
+            Text(text = "作業の名前")
+            TextField(
+                value = uiState.taskTitle,
+                onValueChange = uiActions.onTaskNameChange,
+            )
         }
     }
 }
@@ -107,24 +110,14 @@ fun TaskCreateContent(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskCreateTopBar(
-    uiState: TaskCreateUiState,
     onClickBackButton: () -> Unit = {},
-    onTitleChange: (String) -> Unit = {},
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
     ) {
         TopAppBar(
             title = {
-                TextField(
-                    value = uiState.taskTitle,
-                    onValueChange = onTitleChange,
-                    colors =
-                        TextFieldDefaults.colors(
-                            unfocusedContainerColor = Color.Transparent,
-                            focusedContainerColor = Color.Transparent,
-                        ),
-                )
+                Text("作業と所要時間")
             },
             navigationIcon = {
                 IconButton(onClick = onClickBackButton) {
