@@ -7,8 +7,9 @@ import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepository
-import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
+import jp.itIsNoMatter.routineTimerClone.domain.model.toMinutes
+import jp.itIsNoMatter.routineTimerClone.domain.model.toSeconds
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.Route
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -44,14 +45,13 @@ class TaskCreateViewModel
                         parentRoutineId,
                     )
                 routineRepository.getTaskByTaskId(taskId).collect { task ->
-                    if (task != null)
-                        {
-                            _uiState.update {
-                                it.copy(
-                                    task = LoadedValue.Done(value = task),
-                                )
-                            }
+                    if (task != null) {
+                        _uiState.update {
+                            it.copy(
+                                task = LoadedValue.Done(value = task),
+                            )
                         }
+                    }
                 }
             }
         }
@@ -74,27 +74,31 @@ class TaskCreateViewModel
             }
         }
 
-        fun onTaskDurationMinutesChange(
-            task: Task,
-            int: Int,
-        ) {
+        fun onTaskDurationMinutesChange(minutes: Int) {
+            val formatedMinutes = minutes.toMinutes()
+            _uiState.update { it.copy(taskDuration = it.taskDuration.copy(minutes = formatedMinutes)) }
+            val state = uiState.value
+            if (state.task !is LoadedValue.Done) return
             viewModelScope.launch {
-                val duration = task.duration.copy(minutes = int)
                 routineRepository.updateTask(
-                    task.copy(duration = duration),
+                    state.task.value.copy(
+                        duration = uiState.value.taskDuration.copy(minutes = formatedMinutes),
+                    ),
                     parentRoutineId,
                 )
             }
         }
 
-        fun onTaskDurationSecondsChange(
-            task: Task,
-            int: Int,
-        ) {
+        fun onTaskDurationSecondsChange(seconds: Int) {
+            val formatedSeconds = seconds.toSeconds()
+            _uiState.update { it.copy(taskDuration = it.taskDuration.copy(seconds = formatedSeconds)) }
+            val state = uiState.value
+            if (state.task !is LoadedValue.Done) return
             viewModelScope.launch {
-                val duration = task.duration.copy(seconds = int)
                 routineRepository.updateTask(
-                    task.copy(duration = duration),
+                    state.task.value.copy(
+                        duration = uiState.value.taskDuration.copy(seconds = formatedSeconds),
+                    ),
                     parentRoutineId,
                 )
             }
@@ -106,30 +110,6 @@ class TaskCreateViewModel
                     task.copy(announceRemainingTimeFlag = !task.announceRemainingTimeFlag),
                     parentRoutineId,
                 )
-            }
-        }
-
-        fun openDurationInputDialog() {
-            _uiState.update {
-                it.copy(showDurationInputDialog = true)
-            }
-        }
-
-        fun updateDuration(
-            task: Task,
-            duration: Duration,
-        ) {
-            viewModelScope.launch {
-                routineRepository.updateTask(
-                    task,
-                    parentRoutineId,
-                )
-            }
-        }
-
-        fun closeDurationInputDialog() {
-            _uiState.update {
-                it.copy(showDurationInputDialog = false)
             }
         }
     }

@@ -5,8 +5,8 @@ import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 data class TaskCreateUiActions(
     val onClickBackButton: () -> Unit,
     val onTaskNameChange: (String) -> Unit,
-    val onTaskMinuteChange: (Task, Int) -> Unit,
-    val onTaskSecondChange: (Task, Int) -> Unit,
+    val onTaskMinuteChange: (Int) -> Unit,
+    val onTaskSecondChange: (Int) -> Unit,
     val onToggleAnnounceRemainingTimeFlag: (Task) -> Unit,
 ) {
     companion object {
@@ -14,8 +14,8 @@ data class TaskCreateUiActions(
             TaskCreateUiActions(
                 onClickBackButton = {},
                 onTaskNameChange = {},
-                onTaskMinuteChange = { _, _ -> },
-                onTaskSecondChange = { _, _ -> },
+                onTaskMinuteChange = {},
+                onTaskSecondChange = {},
                 onToggleAnnounceRemainingTimeFlag = {},
             )
     }

@@ -24,5 +24,20 @@ data class Duration(
         fun fromSeconds(seconds: Int): Duration {
             return Duration(seconds / 60, seconds % 60)
         }
+
+        val Zero =
+            Duration(
+                minutes = 0,
+                seconds = 0,
+            )
     }
+}
+
+fun Int.toMinutes(): Int {
+    return if (this >= 0) this else 0
+}
+
+fun Int.toSeconds(): Int {
+    if (this in 0..59) return this
+    return if (this < 0) 0 else 59
 }

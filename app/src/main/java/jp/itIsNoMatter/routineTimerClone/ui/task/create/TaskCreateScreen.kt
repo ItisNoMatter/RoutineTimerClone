@@ -3,8 +3,11 @@ package jp.itIsNoMatter.routineTimerClone.ui.task.create
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,11 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
+import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 
@@ -55,16 +61,14 @@ fun TaskCreateScreen(
             TaskCreateUiActions(
                 onClickBackButton = { viewmodel.onClickBackButton() },
                 onTaskNameChange = viewmodel::onTaskTitleChange,
-                onTaskMinuteChange = { task, minute ->
+                onTaskMinuteChange = { minutes ->
                     viewmodel.onTaskDurationMinutesChange(
-                        task,
-                        minute,
+                        minutes,
                     )
                 },
-                onTaskSecondChange = { task, second ->
+                onTaskSecondChange = { seconds ->
                     viewmodel.onTaskDurationSecondsChange(
-                        task,
-                        second,
+                        seconds,
                     )
                 },
                 onToggleAnnounceRemainingTimeFlag = { task ->
@@ -96,12 +100,71 @@ fun TaskCreateContent(
                     .background(color = MaterialTheme.colorScheme.surfaceContainerLow),
         ) {
             Text(uiState.task.toString())
-            Text(text = "作業の名前")
-            TextField(
-                value = uiState.taskTitle,
-                onValueChange = uiActions.onTaskNameChange,
+            TaskNameInput(
+                taskTitle = uiState.taskTitle,
+                onTaskNameChange = uiActions.onTaskNameChange,
+            )
+            TaskDurationInput(
+                duration = uiState.taskDuration,
+                onTaskMinutesChange = uiActions.onTaskMinuteChange,
+                onTaskSecondChange = uiActions.onTaskSecondChange,
             )
         }
+    }
+}
+
+@Composable
+private fun TaskDurationInput(
+    duration: Duration,
+    onTaskMinutesChange: (Int) -> Unit,
+    onTaskSecondChange: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.padding(8.dp),
+    ) {
+        Row(
+            verticalAlignment = Alignment.Bottom,
+        ) {
+            TextField(
+                value = duration.minutes.toString(),
+                onValueChange = { value ->
+                    val newMinutes = value.toIntOrNull() ?: 0
+                    onTaskMinutesChange(newMinutes)
+                },
+                modifier =
+                    Modifier
+                        .width(64.dp),
+            )
+            Text("分")
+            TextField(
+                value = duration.seconds.toString(),
+                onValueChange = { value ->
+                    val newSeconds = value.toIntOrNull() ?: 0
+                    onTaskSecondChange(newSeconds)
+                },
+                modifier = Modifier.width(64.dp),
+            )
+            Text("秒")
+        }
+    }
+}
+
+@Composable
+private fun TaskNameInput(
+    taskTitle: String,
+    onTaskNameChange: (String) -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier = modifier.padding(8.dp),
+    ) {
+        Text(text = "作業の名前")
+        TextField(
+            value = taskTitle,
+            onValueChange = onTaskNameChange,
+            modifier = Modifier.fillMaxWidth(),
+        )
     }
 }
 
@@ -142,7 +205,6 @@ fun TaskCreateContentPreview() {
                         announceRemainingTimeFlag = true,
                     ),
                 ),
-            showDurationInputDialog = true,
         ),
         uiActions = TaskCreateUiActions.Noop,
     )
