@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,6 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -126,27 +128,41 @@ private fun TaskDurationInput(
         Row(
             verticalAlignment = Alignment.Bottom,
         ) {
-            TextField(
-                value = duration.minutes.toString(),
-                onValueChange = { value ->
-                    val newMinutes = value.toIntOrNull() ?: 0
-                    onTaskMinutesChange(newMinutes)
-                },
-                modifier =
-                    Modifier
-                        .width(64.dp),
+            NumberInput(
+                value = duration.minutes, // Durationから分を取得
+                onValueChange = onTaskMinutesChange,
+                suffix = "分",
             )
-            Text("分")
-            TextField(
-                value = duration.seconds.toString(),
-                onValueChange = { value ->
-                    val newSeconds = value.toIntOrNull() ?: 0
-                    onTaskSecondChange(newSeconds)
-                },
-                modifier = Modifier.width(64.dp),
+            NumberInput(
+                value = (duration.seconds).toInt(),
+                onValueChange = onTaskSecondChange,
+                suffix = "秒",
             )
-            Text("秒")
         }
+    }
+}
+
+@Composable
+private fun NumberInput(
+    value: Int,
+    onValueChange: (Int) -> Unit,
+    suffix: String,
+    modifier: Modifier = Modifier,
+) {
+    Row(verticalAlignment = Alignment.CenterVertically) {
+        TextField(
+            value = if (value == 0) "" else value.toString(),
+            onValueChange = { stringValue ->
+                if (stringValue.all { it.isDigit() }) {
+                    val newValue = stringValue.toIntOrNull() ?: 0
+                    onValueChange(newValue)
+                }
+            },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            singleLine = true,
+            modifier = modifier.width(64.dp),
+        )
+        Text(text = suffix)
     }
 }
 
