@@ -150,6 +150,7 @@ fun TaskCardPreview() {
                     id = 1,
                     name = "test",
                     duration = Duration(minutes = 1, seconds = 2),
+                    announceRemainingTimeFlag = true,
                 ),
             position = NodePosition.FIRST,
         )
@@ -159,6 +160,7 @@ fun TaskCardPreview() {
                     id = 1,
                     name = "test",
                     duration = Duration(minutes = 1, seconds = 2),
+                    announceRemainingTimeFlag = true,
                 ),
             position = NodePosition.MIDDLE,
         )
@@ -168,6 +170,7 @@ fun TaskCardPreview() {
                     id = 1,
                     name = "test",
                     duration = Duration(minutes = 1, seconds = 2),
+                    announceRemainingTimeFlag = true,
                 ),
             position = NodePosition.LAST,
         )

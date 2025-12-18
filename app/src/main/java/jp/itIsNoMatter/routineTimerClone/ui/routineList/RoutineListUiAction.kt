@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.emptyFlow
 data class RoutineListUiAction(
     val onPlayButtonClick: (routineId: Long) -> Unit,
     val onAddButtonClick: () -> Unit,
+    val onRoutineClick: () -> Unit,
     val getAllRoutines: () -> Flow<List<Routine>>,
 ) {
     companion object {
@@ -14,6 +15,7 @@ data class RoutineListUiAction(
             RoutineListUiAction(
                 onPlayButtonClick = {},
                 onAddButtonClick = {},
+                onRoutineClick = {},
                 getAllRoutines = { emptyFlow() },
             )
     }

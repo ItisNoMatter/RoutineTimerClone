@@ -104,12 +104,28 @@ class TaskCreateViewModel
             }
         }
 
-        fun onToggleAnnounceRemainingTime(task: Task) {
+        fun onToggleAnnounceRemainingTime(checked: Boolean) {
+            val state = uiState.value
+            // まだタスクのロードが完了していなければ何もしない
+            if (state.task !is LoadedValue.Done) return
+
             viewModelScope.launch {
+                // 現在の「編集中の値」を使って保存用タスクを作る
+                val currentTask =
+                    state.task.value.copy(
+                        announceRemainingTimeFlag = checked,
+                    )
                 routineRepository.updateTask(
-                    task.copy(announceRemainingTimeFlag = !task.announceRemainingTimeFlag),
+                    currentTask,
                     parentRoutineId,
                 )
+
+                _uiState.update {
+                    it.copy(
+                        announceFlag = checked,
+                        task = LoadedValue.Done(currentTask),
+                    )
+                }
             }
         }
     }

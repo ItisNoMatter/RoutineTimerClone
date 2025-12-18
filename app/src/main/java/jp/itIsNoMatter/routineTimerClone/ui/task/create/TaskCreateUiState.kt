@@ -8,6 +8,7 @@ data class TaskCreateUiState(
     val task: LoadedValue<Task>,
     val taskTitle: String = "",
     val taskDuration: Duration = Duration.Zero,
+    val announceFlag: Boolean = true,
 ) {
     companion object {
         val InitialState =

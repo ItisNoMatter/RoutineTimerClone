@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
@@ -16,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -73,9 +75,9 @@ fun TaskCreateScreen(
                         seconds,
                     )
                 },
-                onToggleAnnounceRemainingTimeFlag = { task ->
+                onToggleAnnounceRemainingTimeFlag = { checked ->
                     viewmodel.onToggleAnnounceRemainingTime(
-                        task,
+                        checked,
                     )
                 },
             ),
@@ -111,6 +113,10 @@ fun TaskCreateContent(
                 onTaskMinutesChange = uiActions.onTaskMinuteChange,
                 onTaskSecondChange = uiActions.onTaskSecondChange,
             )
+            AnnounceToggle(
+                checked = uiState.announceFlag,
+                onToggleAnnounceRemainingTimeFlag = uiActions.onToggleAnnounceRemainingTimeFlag,
+            )
         }
     }
 }
@@ -129,12 +135,12 @@ private fun TaskDurationInput(
             verticalAlignment = Alignment.Bottom,
         ) {
             NumberInput(
-                value = duration.minutes, // Durationから分を取得
+                value = duration.minutes,
                 onValueChange = onTaskMinutesChange,
                 suffix = "分",
             )
             NumberInput(
-                value = (duration.seconds).toInt(),
+                value = (duration.seconds),
                 onValueChange = onTaskSecondChange,
                 suffix = "秒",
             )
@@ -180,6 +186,31 @@ private fun TaskNameInput(
             value = taskTitle,
             onValueChange = onTaskNameChange,
             modifier = Modifier.fillMaxWidth(),
+        )
+    }
+}
+
+@Composable
+fun AnnounceToggle(
+    checked: Boolean = false,
+    onToggleAnnounceRemainingTimeFlag: (Boolean) -> Unit = {},
+) {
+    Row(
+        modifier =
+            Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+                .height(40.dp)
+                .background(color = MaterialTheme.colorScheme.surfaceContainerHigh),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            text = "残り時間をアナウンスする",
+            modifier = Modifier.padding(horizontal = 16.dp),
+        )
+        Switch(
+            checked = checked,
+            onCheckedChange = onToggleAnnounceRemainingTimeFlag,
         )
     }
 }
