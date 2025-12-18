@@ -1,5 +1,6 @@
 package jp.itIsNoMatter.routineTimerClone.ui.components
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -82,7 +84,8 @@ fun RoutineEditTopBar(
             Modifier
                 .fillMaxWidth()
                 .height(104.dp)
-                .background(color = MaterialTheme.colorScheme.surface),
+                .background(color = MaterialTheme.colorScheme.surface)
+                .statusBarsPadding(),
     ) {
         Row(
             modifier =
@@ -92,11 +95,14 @@ fun RoutineEditTopBar(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(
-                onClick = { onClickBackButton() },
+                onClick = {
+                    onClickBackButton()
+                    Log.d("debug", "clicked")
+                },
             ) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
             }
-            Box {
+            Box(modifier = Modifier.weight(1f)) {
                 if (routine.name.isEmpty()) {
                     Text(
                         text = stringResource(R.string.routine_edit_title_place_holder),
