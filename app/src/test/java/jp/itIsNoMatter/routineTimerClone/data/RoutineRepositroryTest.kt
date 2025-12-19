@@ -30,10 +30,10 @@ class RoutineRepositroryTest {
     private lateinit var taskModelMapper: TaskModelMapper
     private lateinit var routineLocalDataSource: RoutineLocalDataSource
 
-    private val task1 = Task(1, "Task 1", 1, 30)
-    private val task2 = Task(2, "Task 2", 2, 30)
-    private val task3 = Task(3, "Task 3", 3, 30)
-    private val task4 = Task(4, "Task 4", 4, 30)
+    private val task1 = Task(id = 1, name = "Task 1", minutes = 1, seconds = 30, announceRemainingTimeFlag = true)
+    private val task2 = Task(id = 2, name = "Task 2", minutes = 2, seconds = 0, announceRemainingTimeFlag = true)
+    private val task3 = Task(id = 3, name = "Task 3", minutes = 3, seconds = 30, announceRemainingTimeFlag = true)
+    private val task4 = Task(id = 4, name = "Task 4", minutes = 4, seconds = 0, announceRemainingTimeFlag = true)
     private val tasks1 = listOf(task1, task2)
     private val tasks2 = listOf(task3, task4)
 

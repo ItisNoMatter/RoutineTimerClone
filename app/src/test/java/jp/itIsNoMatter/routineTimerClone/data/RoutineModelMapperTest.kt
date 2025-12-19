@@ -13,8 +13,8 @@ class RoutineModelMapperTest {
 
     @Test
     fun routineModelMapperTest() {
-        val task1 = Task(1, "Task 1", Duration(1, 30))
-        val task2 = Task(2, "Task 2", Duration(2, 0))
+        val task1 = Task(id = 1, name = "Task 1", minutes = 1, seconds = 30, announceRemainingTimeFlag = true)
+        val task2 = Task(id = 2, name = "Task 2", minutes = 2, seconds = 0, announceRemainingTimeFlag = true)
         val routine = Routine(1, "Test Routine", listOf(task1, task2))
 
         val routineWithTasks = routineModelMapper.toEntity(routine)
@@ -33,7 +33,7 @@ class RoutineModelMapperTest {
             Routine(
                 1,
                 "Test Routine",
-                listOf(Task(1, "Task 1", Duration(1, 30)), Task(2, "Task 2", Duration(2, 0))),
+                listOf(Task(1, "Task 1", Duration(1, 30), true), Task(2, "Task 2", Duration(2, 0), true)),
             )
         val routine = routineModelMapper.toDomain(routineEntity, listOf(taskEntity1, taskEntity2))
 
@@ -42,8 +42,8 @@ class RoutineModelMapperTest {
 
     @Test
     fun routineModelMapper_toEntityTest() {
-        val task1 = Task(1, "Task 1", Duration(1, 30))
-        val task2 = Task(2, "Task 2", Duration(2, 0))
+        val task1 = Task(1, "Task 1", Duration(1, 30), true)
+        val task2 = Task(2, "Task 2", Duration(2, 0), true)
         val routine = Routine(1, "Test Routine", listOf(task1, task2))
 
         val routineWithTasks = routineModelMapper.toEntity(routine)

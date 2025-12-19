@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -82,7 +83,8 @@ fun RoutineEditTopBar(
             Modifier
                 .fillMaxWidth()
                 .height(104.dp)
-                .background(color = MaterialTheme.colorScheme.surface),
+                .background(color = MaterialTheme.colorScheme.surface)
+                .statusBarsPadding(),
     ) {
         Row(
             modifier =
@@ -92,11 +94,13 @@ fun RoutineEditTopBar(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(
-                onClick = { onClickBackButton() },
+                onClick = {
+                    onClickBackButton()
+                },
             ) {
                 Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
             }
-            Box {
+            Box(modifier = Modifier.weight(1f)) {
                 if (routine.name.isEmpty()) {
                     Text(
                         text = stringResource(R.string.routine_edit_title_place_holder),
@@ -138,16 +142,19 @@ fun RoutineEditContentPreview() {
                             id = 1,
                             name = "test",
                             duration = Duration(minutes = 1, seconds = 2),
+                            announceRemainingTimeFlag = true,
                         ),
                         Task(
                             id = 2,
                             name = "test",
                             duration = Duration(minutes = 3, seconds = 15),
+                            announceRemainingTimeFlag = true,
                         ),
                         Task(
                             id = 3,
                             name = "test",
                             duration = Duration(minutes = 4, seconds = 0),
+                            announceRemainingTimeFlag = true,
                         ),
                     ),
             ),

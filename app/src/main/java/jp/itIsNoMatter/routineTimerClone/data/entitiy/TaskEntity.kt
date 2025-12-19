@@ -21,4 +21,5 @@ data class TaskEntity(
     val name: String,
     val seconds: Int,
     val parentRoutineId: Long,
+    val announceRemainingTimeFlag: Boolean = true,
 )

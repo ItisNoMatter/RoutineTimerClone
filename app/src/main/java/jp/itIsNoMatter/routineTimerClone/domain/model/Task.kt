@@ -4,14 +4,14 @@ data class Task(
     val id: Long,
     val name: String,
     val duration: Duration,
-    val announceRemainingTimeFlag: Boolean = true,
+    val announceRemainingTimeFlag: Boolean,
 ) {
     constructor(
         id: Long,
         name: String,
         minutes: Int,
         seconds: Int,
-        announceRemainingTimeFlag: Boolean = true,
+        announceRemainingTimeFlag: Boolean,
     ) : this(
         id = id,
         name = name,
@@ -34,7 +34,7 @@ data class Task(
                 id = 0,
                 name = "",
                 duration = Duration(0, 0),
-                announceRemainingTimeFlag = false,
+                announceRemainingTimeFlag = true,
             )
     }
 }
