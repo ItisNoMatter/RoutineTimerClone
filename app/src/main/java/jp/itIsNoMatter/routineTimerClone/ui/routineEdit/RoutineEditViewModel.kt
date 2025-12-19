@@ -63,8 +63,10 @@ class RoutineEditViewModel
             }
         }
 
-        fun onClickTaskCard() {
+        fun onClickTaskCard(taskId: Long) {
             viewModelScope.launch {
+                val parentRoutineId = (uiState.value as RoutineEditUiState.Done).routine.id
+                _navigateTo.emit(NavEvent.NavigateTo(route = Route.TaskEdit(parentRoutineId, taskId)))
             }
         }
 

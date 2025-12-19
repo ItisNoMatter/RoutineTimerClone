@@ -10,6 +10,7 @@ import jp.itIsNoMatter.routineTimerClone.ui.routineCreate.RoutineCreateScreen
 import jp.itIsNoMatter.routineTimerClone.ui.routineEdit.RoutineEditScreen
 import jp.itIsNoMatter.routineTimerClone.ui.routineList.RoutineListScreen
 import jp.itIsNoMatter.routineTimerClone.ui.task.create.TaskCreateScreen
+import jp.itIsNoMatter.routineTimerClone.ui.task.edit.TaskEditScreen
 
 @Composable
 fun EEffortNavGraph() {
@@ -43,6 +44,11 @@ fun EEffortNavHost(navController: NavHostController) {
         }
         composable<Route.TaskCreate> {
             TaskCreateScreen(
+                navHostController = navController,
+            )
+        }
+        composable<Route.TaskEdit> {
+            TaskEditScreen(
                 navHostController = navController,
             )
         }

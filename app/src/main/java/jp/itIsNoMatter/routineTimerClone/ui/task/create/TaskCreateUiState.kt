@@ -17,3 +17,10 @@ data class TaskCreateUiState(
             )
     }
 }
+
+interface TaskEditUiState {
+    val task: LoadedValue<Task>
+    val taskTitle: String
+    val taskDuration: Duration
+    val announceFlag: Boolean
+}

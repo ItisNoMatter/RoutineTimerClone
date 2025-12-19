@@ -7,6 +7,8 @@ import jp.itIsNoMatter.routineTimerClone.core.getOrNull
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepository
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
+import jp.itIsNoMatter.routineTimerClone.ui.navigation.Route
+import jp.itIsNoMatter.routineTimerClone.ui.routineEdit.RoutineEditUiState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -81,8 +83,10 @@ class RoutineCreateViewModel
             }
         }
 
-        fun onClickTaskCard() {
+        fun onClickTaskCard(taskId: Long) {
             viewModelScope.launch {
+                val parentRoutineId = (uiState.value as RoutineEditUiState.Done).routine.id
+                _navigateTo.emit(NavEvent.NavigateTo(route = Route.TaskEdit(parentRoutineId, taskId)))
             }
         }
 

@@ -9,6 +9,8 @@ import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepository
 import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
+import jp.itIsNoMatter.routineTimerClone.domain.model.toMinutes
+import jp.itIsNoMatter.routineTimerClone.domain.model.toSeconds
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.Route
 import kotlinx.coroutines.Job
@@ -50,6 +52,9 @@ class TaskEditViewModel
                             _uiState.update {
                                 it.copy(
                                     task = LoadedValue.Done(value),
+                                    taskTitle = value.name,
+                                    taskDuration = value.duration,
+                                    announceFlag = value.announceRemainingTimeFlag,
                                 )
                             }
                         }
@@ -63,56 +68,66 @@ class TaskEditViewModel
             }
         }
 
-        fun onTaskTitleChange(
-            task: Task,
-            title: String,
-        ) {
+        fun onTaskTitleChange(title: String) {
+            _uiState.update { it.copy(taskTitle = title) }
+            val state = uiState.value
+            if (state.task !is LoadedValue.Done) return
             viewModelScope.launch {
                 routineRepository.updateTask(
-                    task.copy(name = title),
+                    state.task.value.copy(name = title),
                     parentRoutineId,
                 )
             }
         }
 
-        fun onTaskDurationMinutesChange(
-            task: Task,
-            int: Int,
-        ) {
+        fun onTaskDurationMinutesChange(minutes: Int) {
+            val formatedMinutes = minutes.toMinutes()
+            _uiState.update { it.copy(taskDuration = it.taskDuration.copy(minutes = formatedMinutes)) }
+            val state = uiState.value
+            if (state.task !is LoadedValue.Done) return
             viewModelScope.launch {
-                val duration = task.duration.copy(minutes = int)
                 routineRepository.updateTask(
-                    task.copy(duration = duration),
+                    state.task.value.copy(
+                        duration = uiState.value.taskDuration.copy(minutes = formatedMinutes),
+                    ),
                     parentRoutineId,
                 )
             }
         }
 
-        fun onTaskDurationSecondsChange(
-            task: Task,
-            int: Int,
-        ) {
+        fun onTaskDurationSecondsChange(seconds: Int) {
+            val formatedSeconds = seconds.toSeconds()
+            _uiState.update { it.copy(taskDuration = it.taskDuration.copy(seconds = formatedSeconds)) }
+            val state = uiState.value
+            if (state.task !is LoadedValue.Done) return
             viewModelScope.launch {
-                val duration = task.duration.copy(seconds = int)
                 routineRepository.updateTask(
-                    task.copy(duration = duration),
+                    state.task.value.copy(
+                        duration = uiState.value.taskDuration.copy(seconds = formatedSeconds),
+                    ),
                     parentRoutineId,
                 )
             }
         }
 
-        fun onToggleAnnounceRemainingTime(task: Task) {
+        fun onToggleAnnounceRemainingTime(checked: Boolean) {
+            val state = uiState.value
+            if (state.task !is LoadedValue.Done) return
             viewModelScope.launch {
+                val currentTask =
+                    state.task.value.copy(
+                        announceRemainingTimeFlag = checked,
+                    )
                 routineRepository.updateTask(
-                    task.copy(announceRemainingTimeFlag = !task.announceRemainingTimeFlag),
+                    currentTask,
                     parentRoutineId,
                 )
-            }
-        }
-
-        fun openDurationInput() {
-            _uiState.update {
-                it.copy(showDurationInput = true)
+                _uiState.update {
+                    it.copy(
+                        announceFlag = checked,
+                        task = LoadedValue.Done(currentTask),
+                    )
+                }
             }
         }
 
@@ -125,12 +140,6 @@ class TaskEditViewModel
                     task,
                     parentRoutineId,
                 )
-            }
-        }
-
-        fun closeDurationInput() {
-            _uiState.update {
-                it.copy(showDurationInput = false)
             }
         }
     }
