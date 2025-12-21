@@ -1,5 +1,6 @@
 package jp.itIsNoMatter.routineTimerClone.ui.routineList
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,7 +47,8 @@ fun RoutineListScreen(
     val routines by viewModel.routines.collectAsState(emptyList())
     RoutineListContent(
         routines = routines,
-        onPlayButtonClick = { routineId -> navController.navigate(Route.RoutineEdit(routineId)) },
+        onRoutineClick = { routineId -> navController.navigate(Route.RoutineEdit(routineId)) },
+        onPlayButtonClick = { },
         onAddRoutineClick = { navController.navigate(Route.RoutineCreate) },
     )
 }
@@ -54,6 +56,7 @@ fun RoutineListScreen(
 @Composable
 fun RoutineCard(
     routine: Routine,
+    onCardClick: (routineId: Long) -> Unit = {},
     onPlayButtonClick: (routineId: Long) -> Unit = {},
 ) {
     Card(
@@ -65,7 +68,10 @@ fun RoutineCard(
             Modifier
                 .padding(16.dp)
                 .height(80.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .clickable(
+                    onClick = { onCardClick(routine.id) },
+                ),
         border = CardDefaults.outlinedCardBorder(),
     ) {
         Row(
@@ -98,6 +104,7 @@ fun RoutineCard(
 @Composable
 private fun RoutineListContent(
     routines: List<Routine>,
+    onRoutineClick: (routineId: Long) -> Unit = {},
     onPlayButtonClick: (routineId: Long) -> Unit = {},
     onAddRoutineClick: () -> Unit = {},
 ) {
@@ -136,6 +143,7 @@ private fun RoutineListContent(
                 RoutineCard(
                     routine = routine,
                     onPlayButtonClick = onPlayButtonClick,
+                    onCardClick = onRoutineClick,
                 )
                 HorizontalDivider()
             }

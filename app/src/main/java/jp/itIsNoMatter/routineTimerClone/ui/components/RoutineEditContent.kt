@@ -35,7 +35,7 @@ fun RoutineEditContent(
     routine: Routine,
     onRoutineTitleChange: (String) -> Unit = {},
     onClickAddButton: () -> Unit = {},
-    onClickTaskCard: () -> Unit = {},
+    onClickTaskCard: (taskId: Long) -> Unit = {},
     onClickBackButton: () -> Unit = {},
 ) {
     Scaffold(
@@ -61,11 +61,11 @@ fun RoutineEditContent(
         ) {
             items(routine.tasks.size) { index ->
                 if (index == 0) {
-                    TaskCard(routine.tasks[index], NodePosition.FIRST)
+                    TaskCard(routine.tasks[index], NodePosition.FIRST, onClick = { onClickTaskCard(routine.tasks[index].id) })
                 } else if (index == routine.tasks.size - 1) {
-                    TaskCard(routine.tasks[index], NodePosition.LAST)
+                    TaskCard(routine.tasks[index], NodePosition.LAST, onClick = { onClickTaskCard(routine.tasks[index].id) })
                 } else {
-                    TaskCard(routine.tasks[index], NodePosition.MIDDLE)
+                    TaskCard(routine.tasks[index], NodePosition.MIDDLE, onClick = { onClickTaskCard(routine.tasks[index].id) })
                 }
             }
         }
