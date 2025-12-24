@@ -28,6 +28,9 @@ data class Task(
     val seconds: Int
         get() = duration.seconds
 
+    val isInvalidValue: Boolean
+        get() = name.isEmpty() || duration == Duration.Zero
+
     companion object {
         val Empty =
             Task(

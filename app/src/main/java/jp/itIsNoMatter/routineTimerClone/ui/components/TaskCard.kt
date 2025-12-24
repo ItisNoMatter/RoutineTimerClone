@@ -47,6 +47,7 @@ fun TaskCard(
                 Modifier
                     .height(80.dp)
                     .padding(start = 16.dp, end = 16.dp, top = 8.dp, bottom = 8.dp)
+                    .graphicsLayer { alpha = if (task.isInvalidValue) 0.5f else 1f }
                     .clickable {
                         onClick()
                     },

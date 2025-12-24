@@ -61,7 +61,7 @@ class RoutineLocalDataSource
         }
 
         override suspend fun deleteTaskById(id: Long) {
-            deleteTaskById(id)
+            dao.deleteTaskById(id)
         }
 
         override suspend fun updateRoutine(routine: RoutineEntity) {

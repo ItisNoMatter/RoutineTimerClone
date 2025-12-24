@@ -70,9 +70,20 @@ class RoutineEditViewModel
             }
         }
 
-        fun onClickBackButton() {
+        fun onBackScreen() {
             viewModelScope.launch {
+                deleteInvalidTasks()
                 _navigateTo.emit(NavEvent.NavigateBack)
+            }
+        }
+
+        private suspend fun deleteInvalidTasks() {
+            val state = uiState.value
+            if (state !is RoutineEditUiState.Done) return
+            state.routine.tasks.forEach { task ->
+                if (task.isInvalidValue) {
+                    routineRepository.deleteTaskById(task.id)
+                }
             }
         }
     }

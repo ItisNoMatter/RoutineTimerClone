@@ -1,6 +1,7 @@
 package jp.itIsNoMatter.routineTimerClone.ui.routineEdit
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,6 +17,9 @@ fun RoutineEditScreen(
     navHostController: NavHostController,
     viewModel: RoutineEditViewModel = hiltViewModel(),
 ) {
+    BackHandler {
+        viewModel.onBackScreen()
+    }
     LaunchedEffect(Unit) {
         viewModel.fetch(routineId)
     }
@@ -27,6 +31,7 @@ fun RoutineEditScreen(
             }
         }
     }
+
     when (val uiState = viewModel.uiState.collectAsState().value) {
         is RoutineEditUiState.Loading -> {
             Text("Loading ...")
@@ -38,7 +43,7 @@ fun RoutineEditScreen(
                 onRoutineTitleChange = viewModel::onRoutineTitleChange,
                 onClickAddButton = viewModel::onClickAddTaskButton,
                 onClickTaskCard = viewModel::onClickTaskCard,
-                onClickBackButton = viewModel::onClickBackButton,
+                onClickBackButton = viewModel::onBackScreen,
             )
         }
         is RoutineEditUiState.Error -> {
