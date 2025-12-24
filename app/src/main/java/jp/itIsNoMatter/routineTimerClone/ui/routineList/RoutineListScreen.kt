@@ -42,13 +42,12 @@ import jp.itIsNoMatter.routineTimerClone.ui.navigation.Route
 fun RoutineListScreen(
     viewModel: RoutineListViewModel = hiltViewModel(),
     navController: NavHostController,
-    onAddRoutineClick: () -> Unit = {},
 ) {
     val routines by viewModel.routines.collectAsState(emptyList())
     RoutineListContent(
         routines = routines,
         onRoutineClick = { routineId -> navController.navigate(Route.RoutineEdit(routineId)) },
-        onPlayButtonClick = { },
+        onPlayButtonClick = { routineId -> navController.navigate(Route.RunRoutine(routineId)) },
         onAddRoutineClick = { navController.navigate(Route.RoutineCreate) },
     )
 }

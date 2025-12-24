@@ -9,6 +9,7 @@ import androidx.navigation.toRoute
 import jp.itIsNoMatter.routineTimerClone.ui.routineCreate.RoutineCreateScreen
 import jp.itIsNoMatter.routineTimerClone.ui.routineEdit.RoutineEditScreen
 import jp.itIsNoMatter.routineTimerClone.ui.routineList.RoutineListScreen
+import jp.itIsNoMatter.routineTimerClone.ui.runRoutine.runRoutineScreen
 import jp.itIsNoMatter.routineTimerClone.ui.task.create.TaskCreateScreen
 import jp.itIsNoMatter.routineTimerClone.ui.task.edit.TaskEditScreen
 
@@ -37,7 +38,6 @@ fun EEffortNavHost(navController: NavHostController) {
             )
         }
         composable<Route.RoutineCreate> {
-                backStackEntry ->
             RoutineCreateScreen(
                 navHostController = navController,
             )
@@ -50,6 +50,11 @@ fun EEffortNavHost(navController: NavHostController) {
         composable<Route.TaskEdit> {
             TaskEditScreen(
                 navHostController = navController,
+            )
+        }
+        composable<Route.RunRoutine> {
+            runRoutineScreen(
+                navController = navController,
             )
         }
     }
