@@ -9,42 +9,34 @@ class TimerStateTest {
     fun startTest() {
         val timerState = TimerState()
         assert(!timerState.isRunning)
-        timerState.start()
-        assert(timerState.isRunning)
+        assert(timerState.start().isRunning)
     }
 
     @Test
     fun pauseTest_beforeStart() {
         val timerState = TimerState(isRunning = true)
-        timerState.pause()
-        assert(!timerState.isRunning)
+
+        assert(!timerState.pause().isRunning)
     }
 
     @Test
     fun tickTest() {
-        val timerState = TimerState(isRunning = true, remainqSeconds = 10)
-        timerState.tick()
-        assert(timerState.remainingDuration == Duration(0, 9))
+        val timerState = TimerState(isRunning = true, remainSeconds = 10)
+
+        assert(timerState.tick().remainingDuration == Duration(0, 9))
     }
 
     @Test
     fun tickTest_0sec() {
-        val timerState = TimerState(isRunning = true, remainqSeconds = 0)
-        timerState.tick()
-        assert(!timerState.isRunning)
+        val timerState = TimerState(isRunning = true, remainSeconds = 0)
+
+        assert(!timerState.tick().isRunning)
     }
 
-    @Test
-    fun resetTest() {
-        val timerState = TimerState(isRunning = true, remainqSeconds = 10)
-        timerState.reset()
-        assert(!timerState.isRunning)
-        assert(timerState.remainingDuration == Duration(0, 0))
-    }
 
     @Test
     fun remainingDurationTest() {
-        val timerState = TimerState(isRunning = true, remainqSeconds = 10)
+        val timerState = TimerState(isRunning = true, remainSeconds = 10)
         assert(timerState.remainingDuration == Duration(0, 10))
     }
 
@@ -56,7 +48,7 @@ class TimerStateTest {
 
     @Test
     fun percentageTest() {
-        val timerState = TimerState(isRunning = true, remainqSeconds = 10, totalSeconds = 20)
+        val timerState = TimerState(isRunning = true, remainSeconds = 10, totalSeconds = 20)
         assert(timerState.percentage == 0.5f)
     }
 }
