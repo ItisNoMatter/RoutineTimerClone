@@ -80,6 +80,7 @@ dependencies {
     implementation(libs.hiltCompiler)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.safe.args.generator)
+    implementation(libs.androidx.compose.foundation.layout)
 
     ksp(libs.room.compiler)
     ksp(libs.hiltCompiler)

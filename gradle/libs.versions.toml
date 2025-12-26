@@ -20,6 +20,7 @@ mockK = "1.13.14"
 hilt = "2.56.2"
 navigationSafeArgsGenerator = "2.8.9"
 ksp = "2.1.21-2.0.1"
+foundationLayout = "1.10.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -50,6 +51,7 @@ hiltCompiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt
 mockK = {group = "io.mockk:mockk",name="mockK",version.ref="mockK"}
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 androidx-navigation-safe-args-generator = { group = "androidx.navigation", name = "navigation-safe-args-generator", version.ref = "navigationSafeArgsGenerator" }
+androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 
 [plugins]
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
