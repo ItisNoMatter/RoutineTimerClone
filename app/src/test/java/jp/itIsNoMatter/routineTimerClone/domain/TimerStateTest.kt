@@ -33,7 +33,6 @@ class TimerStateTest {
         assert(!timerState.tick().isRunning)
     }
 
-
     @Test
     fun remainingDurationTest() {
         val timerState = TimerState(isRunning = true, remainSeconds = 10)

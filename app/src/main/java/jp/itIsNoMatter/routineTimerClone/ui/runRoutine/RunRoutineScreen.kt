@@ -19,9 +19,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -33,6 +35,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
@@ -48,9 +51,16 @@ fun runRoutineScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     val routine = uiState.routine
-    if (routine is LoadedValue.Done) {
+    if (uiState.finished && routine is LoadedValue.Done) {
+        finishedContent(
+            routine = routine.value,
+            onClickPrevious = viewModel::onClickPrevious,
+            onClickPlay = viewModel::onClickPlay,
+        )
+    } else if (routine is LoadedValue.Done) {
         runRoutineContent(
             routine = routine.value,
+            currentTaskIndex = uiState.currentTaskIndex,
             remainSeconds = uiState.timerState.remainingDuration.getTotalSeconds(),
             onClickNext = viewModel::onClickNext,
             onClickPrevious = viewModel::onClickPrevious,
@@ -72,6 +82,7 @@ fun runRoutineScreen(
 fun runRoutineContent(
     routine: Routine,
     remainSeconds: Int,
+    currentTaskIndex: Int,
     onClickNext: () -> Unit = {},
     onClickPrevious: () -> Unit = {},
     onClickPlay: () -> Unit = {},
@@ -87,7 +98,15 @@ fun runRoutineContent(
     ) { innerPadding ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
+            Text(
+                text = routine.tasks[currentTaskIndex].name,
+                fontSize = 32.sp,
+            )
             Box(
                 modifier =
                     Modifier
@@ -96,7 +115,10 @@ fun runRoutineContent(
                         .padding(innerPadding),
                 contentAlignment = Alignment.Center,
             ) {
-                Text(text = Duration.fromSeconds(remainSeconds).toDisplayString())
+                Text(
+                    text = Duration.fromSeconds(remainSeconds).toDisplayString(),
+                    fontSize = 32.sp,
+                )
             }
             ControlButtons(
                 onClickNext = onClickNext,
@@ -165,12 +187,16 @@ private fun ControlButtons(
             onClick = onClickPrevious,
             modifier = Modifier.size(64.dp),
             enabled = isEnabledPreviousButton,
+            colors =
+                IconButtonDefaults.iconButtonColors(
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                ),
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowLeft,
                 contentDescription = "Previous",
                 modifier = Modifier.size(64.dp),
-                tint = MaterialTheme.colorScheme.primary,
             )
         }
 
@@ -200,13 +226,68 @@ private fun ControlButtons(
             onClick = onClickNext,
             modifier = Modifier.size(64.dp),
             enabled = isEnabledNextButton,
+            colors =
+                IconButtonDefaults.iconButtonColors(
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    disabledContentColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                ),
         ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Filled.KeyboardArrowRight,
                 contentDescription = "Next",
                 modifier = Modifier.size(64.dp),
-                tint = MaterialTheme.colorScheme.primary,
             )
+        }
+    }
+}
+
+@Composable
+fun finishedContent(
+    routine: Routine,
+    onClickPrevious: () -> Unit = {},
+    onClickPlay: () -> Unit = {},
+) {
+    Scaffold(
+        topBar = {
+            RunRoutineTopBar(
+                routine = routine,
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+        ) {
+            Text(
+                text = "お疲れさまでした！",
+                fontSize = 24.sp,
+            )
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(innerPadding),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = "done",
+                    modifier = Modifier.size(64.dp),
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            }
+            ControlButtons(
+                onClickNext = {},
+                onClickPrevious = onClickPrevious,
+                onClickPlay = onClickPlay,
+                isEnabledPreviousButton = true,
+                isEnabledNextButton = false,
+            )
+            Spacer(modifier = Modifier.height(64.dp))
         }
     }
 }
@@ -234,6 +315,7 @@ fun runRoutineContentPreview() {
                     ),
             ),
         remainSeconds = 100,
+        currentTaskIndex = 0,
         onClickNext = {},
         onClickPrevious = {},
         onClickPlay = {},

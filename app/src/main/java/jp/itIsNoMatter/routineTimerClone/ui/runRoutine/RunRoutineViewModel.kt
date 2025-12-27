@@ -67,15 +67,30 @@ class RunRoutineViewModel
 
         fun onClickNext() {
             val state = uiState.value
-            if (state.routine is LoadedValue.Done && uiState.value.currentTaskIndex < state.routine.value.tasks.size - 1) {
+            if (state.routine is LoadedValue.Done && uiState.value.currentTaskIndex == state.routine.value.tasks.size - 1) {
                 _uiState.update { currentState ->
                     currentState.copy(
-                        currentTaskIndex = currentState.currentTaskIndex + 1,
+                        currentTaskIndex = state.routine.value.tasks.size,
+                        finished = true,
                         timerState =
-                            TimerState(
+                            currentState.timerState.copy(
+                                isRunning = false,
+                            ),
+                    )
+                }
+                return
+            }
+
+            if (state.routine is LoadedValue.Done && uiState.value.currentTaskIndex < state.routine.value.tasks.size - 1) {
+                _uiState.update { currentState ->
+                    val nextTaskIndex = currentState.currentTaskIndex + 1
+                    currentState.copy(
+                        currentTaskIndex = nextTaskIndex,
+                        timerState =
+                            currentState.timerState.copy(
                                 remainSeconds =
                                     (uiState.value.routine as LoadedValue.Done<Routine>).value
-                                        .tasks[currentState.currentTaskIndex + 1]
+                                        .tasks[nextTaskIndex]
                                         .duration.getTotalSeconds(),
                             ).start(),
                     )
@@ -91,12 +106,13 @@ class RunRoutineViewModel
                         currentState.copy(
                             currentTaskIndex = currentState.currentTaskIndex - 1,
                             timerState =
-                                TimerState(
+                                currentState.timerState.copy(
                                     remainSeconds =
                                         state.routine.value
                                             .tasks[currentState.currentTaskIndex - 1]
                                             .duration.getTotalSeconds(),
                                 ),
+                            finished = false,
                         )
                     }
                 }
