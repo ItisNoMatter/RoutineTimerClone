@@ -34,11 +34,12 @@ data class TimerState(
         get() = remainSeconds.toFloat() / totalSeconds.toFloat()
 
     companion object {
-        val Unload = TimerState(
-            isRunning = false,
-            remainSeconds = 0,
-            totalSeconds = 0,
-            onTimeOver = {},
-        )
+        val Unload =
+            TimerState(
+                isRunning = false,
+                remainSeconds = 0,
+                totalSeconds = 0,
+                onTimeOver = {},
+            )
     }
 }
