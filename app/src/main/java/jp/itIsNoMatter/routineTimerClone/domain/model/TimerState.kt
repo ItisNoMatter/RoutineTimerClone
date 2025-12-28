@@ -1,10 +1,10 @@
 package jp.itIsNoMatter.routineTimerClone.domain.model
 
 data class TimerState(
-    val isRunning: Boolean = false,
-    private val remainSeconds: Int = 0,
-    private val totalSeconds: Int = 0,
-    val onTimeOver: () -> Unit = {},
+    val isRunning: Boolean,
+    private val remainSeconds: Int,
+    private val totalSeconds: Int,
+    val onTimeOver: () -> Unit,
 ) {
     fun start(): TimerState {
         if (isRunning) return this
@@ -32,4 +32,13 @@ data class TimerState(
         get() = Duration(totalSeconds / 60, totalSeconds % 60)
     val percentage
         get() = remainSeconds.toFloat() / totalSeconds.toFloat()
+
+    companion object {
+        val Unload = TimerState(
+            isRunning = false,
+            remainSeconds = 0,
+            totalSeconds = 0,
+            onTimeOver = {},
+        )
+    }
 }
