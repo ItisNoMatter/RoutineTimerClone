@@ -1,7 +1,8 @@
 package jp.itIsNoMatter.routineTimerClone.ui.runRoutine
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,9 +26,10 @@ import javax.inject.Inject
 class RunRoutineViewModel
     @Inject
     constructor(
+        application: Application,
         private val routineRepository: RoutineRepository,
         savedStateHandle: SavedStateHandle,
-    ) : ViewModel() {
+    ) : AndroidViewModel(application) {
         private val routineId: Long = savedStateHandle.toRoute<Route.RunRoutine>().routineId
 
         private val _uiState: MutableStateFlow<RunRoutineUiState> =
@@ -88,21 +90,24 @@ class RunRoutineViewModel
         private fun goToNextTask() {
             _uiState.update { currentState ->
                 val nextTaskIndex = currentState.currentTaskIndex + 1
-                val newState = currentState.copy(
-                    currentTaskIndex = nextTaskIndex,
-                    timerState =
-                        currentState.timerState.copy(
-                            remainSeconds =
-                                (uiState.value.routine as LoadedValue.Done<Routine>).value
-                                    .tasks[nextTaskIndex]
-                                    .duration.getTotalSeconds(),
-                        )
-                )
-                if(currentState.timerState.isRunning) {
+                val newState =
+                    currentState.copy(
+                        currentTaskIndex = nextTaskIndex,
+                        timerState =
+                            currentState.timerState.copy(
+                                remainSeconds =
+                                    (uiState.value.routine as LoadedValue.Done<Routine>).value
+                                        .tasks[nextTaskIndex]
+                                        .duration.getTotalSeconds(),
+                            ),
+                    )
+                if (currentState.timerState.isRunning) {
                     newState.copy(
                         timerState = newState.timerState.start(),
                     )
-                }else newState
+                } else {
+                    newState
+                }
             }
         }
 

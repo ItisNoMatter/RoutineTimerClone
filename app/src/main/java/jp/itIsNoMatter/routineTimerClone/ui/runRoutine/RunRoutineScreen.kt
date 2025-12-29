@@ -59,6 +59,20 @@ fun runRoutineScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    LaunchedEffect(Unit) {
+        viewModel.navigateTo.collect { event ->
+            when (event) {
+                is NavEvent.NavigateBack -> {
+                    navHostController.popBackStack()
+                }
+
+                is NavEvent.NavigateTo -> {
+                    navHostController.navigate(event.route)
+                }
+            }
+        }
+    }
+
     val routine = uiState.routine
     if (uiState.finishedAllTasks && routine is LoadedValue.Done) {
         finishedContent(
