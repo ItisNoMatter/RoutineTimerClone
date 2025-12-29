@@ -8,7 +8,7 @@ data class RunRoutineUiState(
     val routine: LoadedValue<Routine>,
     val timerState: TimerState,
     val currentTaskIndex: Int,
-    val finished: Boolean = false,
+    val finishedAllTasks: Boolean = false,
 ) {
     val isEnabledPreviousButton: Boolean
         get() = currentTaskIndex > 0

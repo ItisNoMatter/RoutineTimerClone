@@ -9,9 +9,12 @@ import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepository
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 import jp.itIsNoMatter.routineTimerClone.domain.model.TimerState
+import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.Route
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
@@ -38,6 +41,9 @@ class RunRoutineViewModel
 
         val uiState = _uiState.asStateFlow()
 
+        private val _navigateTo = MutableSharedFlow<NavEvent>()
+        val navigateTo = _navigateTo.asSharedFlow()
+
         init {
             viewModelScope.launch {
                 routineRepository.getRoutine(routineId).collect { routine ->
@@ -47,7 +53,7 @@ class RunRoutineViewModel
                                 val firstTask = routine.value.tasks.firstOrNull()
                                 if (firstTask != null) {
                                     TimerState(
-                                        isRunning = true,
+                                        isRunning = false,
                                         totalSeconds = firstTask.duration.getTotalSeconds(),
                                         remainSeconds = firstTask.duration.getTotalSeconds(),
                                         onTimeOver = { onClickNext() },
@@ -70,7 +76,7 @@ class RunRoutineViewModel
         private fun onFinishLastTask() {
             _uiState.update { currentState ->
                 currentState.copy(
-                    finished = true,
+                    finishedAllTasks = true,
                     timerState =
                         currentState.timerState.copy(
                             isRunning = false,
@@ -79,10 +85,10 @@ class RunRoutineViewModel
             }
         }
 
-        private fun goToNextTask()  {
+        private fun goToNextTask() {
             _uiState.update { currentState ->
                 val nextTaskIndex = currentState.currentTaskIndex + 1
-                currentState.copy(
+                val newState = currentState.copy(
                     currentTaskIndex = nextTaskIndex,
                     timerState =
                         currentState.timerState.copy(
@@ -90,8 +96,13 @@ class RunRoutineViewModel
                                 (uiState.value.routine as LoadedValue.Done<Routine>).value
                                     .tasks[nextTaskIndex]
                                     .duration.getTotalSeconds(),
-                        ).start(),
+                        )
                 )
+                if(currentState.timerState.isRunning) {
+                    newState.copy(
+                        timerState = newState.timerState.start(),
+                    )
+                }else newState
             }
         }
 
@@ -126,7 +137,7 @@ class RunRoutineViewModel
                                             .tasks[currentState.currentTaskIndex - 1]
                                             .duration.getTotalSeconds(),
                                 ),
-                            finished = false,
+                            finishedAllTasks = false,
                         )
                     }
                 }
@@ -134,8 +145,6 @@ class RunRoutineViewModel
         }
 
         fun onClickPlay() {
-            if (_uiState.value.timerState.isRunning) return
-
             _uiState.update { currentState ->
                 currentState.copy(
                     timerState = currentState.timerState.start(),
@@ -150,6 +159,20 @@ class RunRoutineViewModel
                         )
                     }
                 }
+            }
+        }
+
+        fun onClickPause() {
+            _uiState.update { currentState ->
+                currentState.copy(
+                    timerState = currentState.timerState.pause(),
+                )
+            }
+        }
+
+        fun onClickBackButton() {
+            viewModelScope.launch {
+                _navigateTo.emit(NavEvent.NavigateBack)
             }
         }
     }

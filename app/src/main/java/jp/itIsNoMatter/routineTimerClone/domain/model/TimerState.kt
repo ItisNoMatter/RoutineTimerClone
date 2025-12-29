@@ -7,7 +7,6 @@ data class TimerState(
     val onTimeOver: () -> Unit,
 ) {
     fun start(): TimerState {
-        if (isRunning) return this
         return this.copy(isRunning = true)
     }
 

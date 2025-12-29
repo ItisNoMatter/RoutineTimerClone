@@ -13,6 +13,7 @@ activityCompose = "1.10.1"
 composeBom = "2025.04.01"
 mockkVersion = "1.13.5"
 navigationCompose = "2.8.9"
+materialIconsExtended = "1.7.6"
 robolectric = "4.14.1"
 room = "2.7.1"
 kotlinx-coroutines = "1.7.3"
@@ -52,7 +53,7 @@ mockK = {group = "io.mockk:mockk",name="mockK",version.ref="mockK"}
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 androidx-navigation-safe-args-generator = { group = "androidx.navigation", name = "navigation-safe-args-generator", version.ref = "navigationSafeArgsGenerator" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
-
+androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 [plugins]
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 android-application = { id = "com.android.application", version.ref = "agp" }

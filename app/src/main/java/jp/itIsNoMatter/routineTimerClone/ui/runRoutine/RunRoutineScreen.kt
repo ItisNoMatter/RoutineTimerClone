@@ -1,5 +1,6 @@
 package jp.itIsNoMatter.routineTimerClone.ui.runRoutine
 
+import android.media.SoundPool
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -20,6 +21,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -28,34 +30,42 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import jp.itIsNoMatter.routineTimerClone.R
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
+import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
+import kotlin.contracts.contract
 
 @Composable
 fun runRoutineScreen(
     viewModel: RunRoutineViewModel = hiltViewModel(),
-    navController: NavHostController,
+    navHostController: NavHostController,
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
     val routine = uiState.routine
-    if (uiState.finished && routine is LoadedValue.Done) {
+    if (uiState.finishedAllTasks && routine is LoadedValue.Done) {
         finishedContent(
             routine = routine.value,
             onClickPrevious = viewModel::onClickPrevious,
             onClickPlay = viewModel::onClickPlay,
+            onClickBackButton = viewModel::onClickBackButton,
         )
     } else if (routine is LoadedValue.Done) {
         runRoutineContent(
@@ -65,8 +75,11 @@ fun runRoutineScreen(
             onClickNext = viewModel::onClickNext,
             onClickPrevious = viewModel::onClickPrevious,
             onClickPlay = viewModel::onClickPlay,
+            onClickPause = viewModel::onClickPause,
+            onClickBackButton = viewModel::onClickBackButton,
             isEnabledPreviousButton = uiState.isEnabledPreviousButton,
             isEnabledNextButton = uiState.isEnabledNextButton,
+            isRunning = uiState.timerState.isRunning,
         )
     } else {
         Box(
@@ -86,13 +99,17 @@ fun runRoutineContent(
     onClickNext: () -> Unit = {},
     onClickPrevious: () -> Unit = {},
     onClickPlay: () -> Unit = {},
+    onClickPause: () -> Unit = {},
+    onClickBackButton: () -> Unit = {},
     isEnabledPreviousButton: Boolean,
     isEnabledNextButton: Boolean,
+    isRunning: Boolean,
 ) {
     Scaffold(
         topBar = {
             RunRoutineTopBar(
                 routine = routine,
+                onClickBackButton = onClickBackButton,
             )
         },
     ) { innerPadding ->
@@ -124,8 +141,10 @@ fun runRoutineContent(
                 onClickNext = onClickNext,
                 onClickPrevious = onClickPrevious,
                 onClickPlay = onClickPlay,
+                onClickPause = onClickPause,
                 isEnabledPreviousButton = isEnabledPreviousButton,
                 isEnabledNextButton = isEnabledNextButton,
+                isRunning = isRunning,
             )
             Spacer(modifier = Modifier.height(64.dp))
         }
@@ -171,9 +190,55 @@ private fun ControlButtons(
     onClickNext: () -> Unit = {},
     onClickPrevious: () -> Unit = {},
     onClickPlay: () -> Unit = {},
+    onClickPause: () -> Unit = {},
     isEnabledPreviousButton: Boolean,
     isEnabledNextButton: Boolean,
+    isRunning: Boolean,
 ) {
+    @Composable
+    fun PlayButton() {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier =
+                Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                    .clickable {
+                        onClickPlay()
+                    },
+        ) {
+            Icon(
+                imageVector = Icons.Filled.PlayArrow,
+                contentDescription = "Play",
+                modifier = Modifier.size(40.dp),
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+    }
+
+    @Composable
+    fun PauseButton() {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier =
+                Modifier
+                    .size(64.dp)
+                    .clip(CircleShape)
+                    .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
+                    .clickable {
+                        onClickPause()
+                    },
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Pause,
+                contentDescription = "Pause",
+                modifier = Modifier.size(40.dp),
+                tint = MaterialTheme.colorScheme.primary,
+            )
+        }
+    }
+
     Row(
         modifier =
             Modifier
@@ -201,29 +266,18 @@ private fun ControlButtons(
         }
 
         Spacer(modifier = Modifier.width(8.dp))
-        Box(
-            contentAlignment = Alignment.Center,
-            modifier =
-                Modifier
-                    .size(64.dp)
-                    .clip(CircleShape)
-                    .background(color = MaterialTheme.colorScheme.surfaceContainerHighest)
-                    .clickable {
-                        onClickPlay()
-                    },
-        ) {
-            Icon(
-                imageVector = Icons.Filled.PlayArrow,
-                contentDescription = "Play",
-                modifier = Modifier.size(40.dp),
-                tint = MaterialTheme.colorScheme.primary,
-            )
+        if (!isRunning) {
+            PlayButton()
+        } else {
+            PauseButton()
         }
 
         Spacer(modifier = Modifier.width(8.dp))
 
         IconButton(
-            onClick = onClickNext,
+            onClick = {
+                onClickNext()
+                      },
             modifier = Modifier.size(64.dp),
             enabled = isEnabledNextButton,
             colors =
@@ -246,11 +300,13 @@ fun finishedContent(
     routine: Routine,
     onClickPrevious: () -> Unit = {},
     onClickPlay: () -> Unit = {},
+    onClickBackButton: () -> Unit,
 ) {
     Scaffold(
         topBar = {
             RunRoutineTopBar(
                 routine = routine,
+                onClickBackButton = onClickBackButton,
             )
         },
     ) { innerPadding ->
@@ -286,6 +342,7 @@ fun finishedContent(
                 onClickPlay = onClickPlay,
                 isEnabledPreviousButton = true,
                 isEnabledNextButton = false,
+                isRunning = false,
             )
             Spacer(modifier = Modifier.height(64.dp))
         }
@@ -321,5 +378,6 @@ fun runRoutineContentPreview() {
         onClickPlay = {},
         isEnabledPreviousButton = false,
         isEnabledNextButton = true,
+        isRunning = true,
     )
 }

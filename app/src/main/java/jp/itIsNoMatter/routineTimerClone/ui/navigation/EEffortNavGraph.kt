@@ -54,7 +54,7 @@ fun EEffortNavHost(navController: NavHostController) {
         }
         composable<Route.RunRoutine> {
             runRoutineScreen(
-                navController = navController,
+                navHostController = navController,
             )
         }
     }
