@@ -52,16 +52,10 @@ class RunRoutineViewModel
         private val _navigateTo = MutableSharedFlow<NavEvent>()
         val navigateTo = _navigateTo.asSharedFlow()
 
-        private val soundPool: SoundPool by lazy {
+        private val soundPool: SoundPool =
             SoundPool.Builder().setMaxStreams(1).build()
-        }
-
-        // 音声IDも lazy でロード
-        private val soundId: Int by lazy {
+        private val soundId =
             soundPool.load(getApplication(), R.raw.task_finish, 1)
-        }
-
-        // TextToSpeech: 定義だけしておく
         private lateinit var textToSpeech: TextToSpeech
         private var isTextToSpeechReady = false
 
@@ -135,6 +129,7 @@ class RunRoutineViewModel
         }
 
         private fun onFinishLastTask() {
+            speak("お疲れ様でした。")
             _uiState.update { currentState ->
                 currentState.copy(
                     finishedAllTasks = true,
@@ -213,11 +208,10 @@ class RunRoutineViewModel
         }
 
         fun onClickPlay() {
-            if (uiState.value.timerState.remainingDuration == uiState.value.timerState.totalDuration)
-                {
-                    val task = (uiState.value.routine as LoadedValue.Done<Routine>).value.tasks[uiState.value.currentTaskIndex]
-                    speakTaskInstruction(task)
-                }
+            if (uiState.value.timerState.remainingDuration == uiState.value.timerState.totalDuration) {
+                val task = (uiState.value.routine as LoadedValue.Done<Routine>).value.tasks[uiState.value.currentTaskIndex]
+                speakTaskInstruction(task)
+            }
 
             _uiState.update { currentState ->
                 currentState.copy(
