@@ -1,6 +1,6 @@
 package jp.itIsNoMatter.routineTimerClone.ui.routineList
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
@@ -26,9 +27,13 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,6 +54,7 @@ fun RoutineListScreen(
         onRoutineClick = { routineId -> navController.navigate(Route.RoutineEdit(routineId)) },
         onPlayButtonClick = { routineId -> navController.navigate(Route.RunRoutine(routineId)) },
         onAddRoutineClick = { navController.navigate(Route.RoutineCreate) },
+        onDeleteRoutine = viewModel::deleteRoutine,
     )
 }
 
@@ -56,6 +62,7 @@ fun RoutineListScreen(
 fun RoutineCard(
     routine: Routine,
     onCardClick: (routineId: Long) -> Unit = {},
+    onCardLongClick: (routineId: Long) -> Unit = {},
     onPlayButtonClick: (routineId: Long) -> Unit = {},
 ) {
     Card(
@@ -68,8 +75,9 @@ fun RoutineCard(
                 .padding(16.dp)
                 .height(80.dp)
                 .fillMaxWidth()
-                .clickable(
+                .combinedClickable(
                     onClick = { onCardClick(routine.id) },
+                    onLongClick = { onCardLongClick(routine.id) },
                 ),
         border = CardDefaults.outlinedCardBorder(),
     ) {
@@ -106,7 +114,33 @@ private fun RoutineListContent(
     onRoutineClick: (routineId: Long) -> Unit = {},
     onPlayButtonClick: (routineId: Long) -> Unit = {},
     onAddRoutineClick: () -> Unit = {},
+    onDeleteRoutine: (routineId: Long) -> Unit = {},
 ) {
+    var routineToDelete by remember { mutableStateOf<Routine?>(null) }
+
+    if (routineToDelete != null) {
+        val routine = routineToDelete!!
+        AlertDialog(
+            onDismissRequest = { routineToDelete = null },
+            title = { Text(text = "ルーチンの削除") },
+            text = { Text(text = "「${routine.name}」を削除してもよろしいですか？") },
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        onDeleteRoutine(routine.id)
+                        routineToDelete = null
+                    },
+                ) {
+                    Text("削除")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { routineToDelete = null }) {
+                    Text("キャンセル")
+                }
+            },
+        )
+    }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -143,6 +177,7 @@ private fun RoutineListContent(
                     routine = routine,
                     onPlayButtonClick = onPlayButtonClick,
                     onCardClick = onRoutineClick,
+                    onCardLongClick = { routineToDelete = routine },
                 )
                 HorizontalDivider()
             }
