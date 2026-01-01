@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -47,7 +48,11 @@ fun RoutineEditContent(
             )
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = onClickAddButton) {
+            FloatingActionButton(
+                modifier = Modifier
+                    .padding(bottom = 16.dp)
+                    .imePadding(),
+                onClick = onClickAddButton) {
                 Icon(Icons.Filled.Add, "Add Task")
             }
         },
