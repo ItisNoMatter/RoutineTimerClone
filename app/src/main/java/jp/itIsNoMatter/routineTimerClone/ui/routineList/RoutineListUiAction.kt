@@ -15,8 +15,8 @@ data class RoutineListUiAction(
             RoutineListUiAction(
                 onPlayButtonClick = {},
                 onAddButtonClick = {},
-                onRoutineClick = {},
                 getAllRoutines = { emptyFlow() },
+                onRoutineClick = {},
             )
     }
 }
