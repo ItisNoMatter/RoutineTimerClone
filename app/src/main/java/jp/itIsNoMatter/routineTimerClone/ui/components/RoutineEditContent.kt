@@ -49,10 +49,12 @@ fun RoutineEditContent(
         },
         floatingActionButton = {
             FloatingActionButton(
-                modifier = Modifier
-                    .padding(bottom = 16.dp)
-                    .imePadding(),
-                onClick = onClickAddButton) {
+                modifier =
+                    Modifier
+                        .padding(bottom = 16.dp)
+                        .imePadding(),
+                onClick = onClickAddButton,
+            ) {
                 Icon(Icons.Filled.Add, "Add Task")
             }
         },
