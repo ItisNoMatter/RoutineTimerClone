@@ -1,6 +1,7 @@
 package jp.itIsNoMatter.routineTimerClone.ui.routineCreate
 
 import android.util.Log
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +32,7 @@ fun RoutineCreateScreen(
             Text("Loading ...")
         }
         is RoutineCreateUiState.Done -> {
+            BackHandler(onBack = viewModel::onClickBackButton)
             val doneRoutine = uiState.routine
             RoutineEditContent(
                 routine = doneRoutine,
