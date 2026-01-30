@@ -56,12 +56,10 @@ class RunRoutineViewModel
             SoundPool.Builder().setMaxStreams(1).build()
         private val soundId =
             soundPool.load(getApplication(), R.raw.task_finish, 1)
-        private lateinit var textToSpeech: TextToSpeech
+        private var textToSpeech: TextToSpeech = TextToSpeech(getApplication(), this)
         private var isTextToSpeechReady = false
 
         init {
-            textToSpeech = TextToSpeech(getApplication(), this)
-
             viewModelScope.launch {
                 routineRepository.getRoutine(routineId).collect { routine ->
                     _uiState.update { currentState ->
@@ -115,17 +113,15 @@ class RunRoutineViewModel
         }
 
         fun speakTaskInstruction(task: Task) {
-            speak("今から${task.minutes}分${task.seconds}秒間、${task.name}をしてください")
+            speak("今から${task.minutes}分${task.seconds}秒間、${task.name}を始めてください")
         }
 
         override fun onCleared() {
             super.onCleared()
 
             soundPool.release()
-            if (::textToSpeech.isInitialized) {
-                textToSpeech.stop()
-                textToSpeech.shutdown()
-            }
+            textToSpeech.stop()
+            textToSpeech.shutdown()
         }
 
         private fun onFinishLastTask() {
