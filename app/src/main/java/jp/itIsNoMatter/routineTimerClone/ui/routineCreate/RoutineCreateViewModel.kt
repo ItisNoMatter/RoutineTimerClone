@@ -30,6 +30,7 @@ class RoutineCreateViewModel
         val navigateTo = _navigateTo.asSharedFlow()
 
         fun create() {
+            if (uiState.value is RoutineCreateUiState.Done) return
             viewModelScope.launch {
                 try {
                     val routineId = routineRepository.insertRoutine(Routine.Empty)
@@ -100,7 +101,7 @@ class RoutineCreateViewModel
         fun onClickBackButton() {
             val state = uiState.value
             viewModelScope.launch {
-                if (state is RoutineCreateUiState.Done && state.routine.isInitial()) {
+                if (state is RoutineCreateUiState.Done && state.routine.name.isBlank()) {
                     routineRepository.deleteRoutineById(state.routine.id)
                 }
                 _navigateTo.emit(NavEvent.NavigateBack)
