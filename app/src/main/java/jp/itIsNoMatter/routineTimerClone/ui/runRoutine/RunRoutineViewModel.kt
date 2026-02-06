@@ -72,6 +72,7 @@ class RunRoutineViewModel
                                         totalSeconds = firstTask.duration.getTotalSeconds(),
                                         remainSeconds = firstTask.duration.getTotalSeconds(),
                                         onTimeOver = { onClickNext() },
+                                        onHalfTime = { onHalfTime() },
                                     )
                                 } else {
                                     currentState.timerState
@@ -92,9 +93,8 @@ class RunRoutineViewModel
             if (status == TextToSpeech.SUCCESS) {
                 val result = textToSpeech.setLanguage(Locale.JAPAN)
 
-                if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-                } else {
-                    isTextToSpeechReady = true // 準備OK
+                if (result != TextToSpeech.LANG_MISSING_DATA && result != TextToSpeech.LANG_NOT_SUPPORTED) {
+                    isTextToSpeechReady = true
                 }
             } else {
                 Log.e("TTS", "初期化に失敗しました")
@@ -223,6 +223,21 @@ class RunRoutineViewModel
                         )
                     }
                 }
+            }
+        }
+
+        fun onHalfTime() {
+            val state = uiState.value
+            if (state.routine is LoadedValue.Done) {
+                if (!(uiState.value.routine as LoadedValue.Done<Routine>)
+                        .value
+                        .tasks[uiState.value.currentTaskIndex]
+                        .announceRemainingTimeFlag
+                )
+                    {
+                        return
+                    }
+                speak("残り${uiState.value.timerState.remainingDuration.minutes}分${uiState.value.timerState.remainingDuration.seconds}秒です")
             }
         }
 
