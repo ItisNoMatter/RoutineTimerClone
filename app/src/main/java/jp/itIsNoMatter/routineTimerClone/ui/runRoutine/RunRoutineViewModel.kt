@@ -233,10 +233,9 @@ class RunRoutineViewModel
                         .value
                         .tasks[uiState.value.currentTaskIndex]
                         .announceRemainingTimeFlag
-                )
-                    {
-                        return
-                    }
+                ) {
+                    return
+                }
                 speak("残り${uiState.value.timerState.remainingDuration.minutes}分${uiState.value.timerState.remainingDuration.seconds}秒です")
             }
         }
