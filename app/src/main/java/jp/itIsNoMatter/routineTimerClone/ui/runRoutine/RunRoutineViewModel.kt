@@ -36,7 +36,7 @@ class RunRoutineViewModel
         private val routineRepository: RoutineRepository,
         savedStateHandle: SavedStateHandle,
     ) : AndroidViewModel(application), TextToSpeech.OnInitListener {
-        private val routineId: Long = savedStateHandle.toRoute<Route.RunRoutine>().routineId
+        private val routineId: String = savedStateHandle.toRoute<Route.RunRoutine>().routineId
 
         private val _uiState: MutableStateFlow<RunRoutineUiState> =
             MutableStateFlow(

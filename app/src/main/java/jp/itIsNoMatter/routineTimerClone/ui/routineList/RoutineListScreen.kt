@@ -61,9 +61,9 @@ fun RoutineListScreen(
 @Composable
 fun RoutineCard(
     routine: Routine,
-    onCardClick: (routineId: Long) -> Unit = {},
-    onCardLongClick: (routineId: Long) -> Unit = {},
-    onPlayButtonClick: (routineId: Long) -> Unit = {},
+    onCardClick: (routineId: String) -> Unit = {},
+    onCardLongClick: (routineId: String) -> Unit = {},
+    onPlayButtonClick: (routineId: String) -> Unit = {},
 ) {
     Card(
         colors =
@@ -111,10 +111,10 @@ fun RoutineCard(
 @Composable
 private fun RoutineListContent(
     routines: List<Routine>,
-    onRoutineClick: (routineId: Long) -> Unit = {},
-    onPlayButtonClick: (routineId: Long) -> Unit = {},
+    onRoutineClick: (routineId: String) -> Unit = {},
+    onPlayButtonClick: (routineId: String) -> Unit = {},
     onAddRoutineClick: () -> Unit = {},
-    onDeleteRoutine: (routineId: Long) -> Unit = {},
+    onDeleteRoutine: (routineId: String) -> Unit = {},
 ) {
     var routineToDelete by remember { mutableStateOf<Routine?>(null) }
 
@@ -192,9 +192,9 @@ private fun RoutineListContent(
 @Composable
 fun RoutineCardPreview() {
     Column {
-        RoutineCard(Routine(1, "routine1", emptyList()))
-        RoutineCard(Routine(2, "routine2", emptyList()))
-        RoutineCard(Routine(3, "routine3", emptyList()))
+        RoutineCard(Routine("1", "routine1", emptyList()))
+        RoutineCard(Routine("2", "routine2", emptyList()))
+        RoutineCard(Routine("3", "routine3", emptyList()))
     }
 }
 
@@ -207,9 +207,9 @@ fun RoutineListScreenPreview() {
     RoutineListContent(
         routines =
             listOf(
-                Routine(1, "Routine 1", emptyList()),
-                Routine(2, "Routine 2", emptyList()),
-                Routine(3, "Routine 3", emptyList()),
+                Routine("1", "Routine 1", emptyList()),
+                Routine("2", "Routine 2", emptyList()),
+                Routine("3", "Routine 3", emptyList()),
             ),
     )
 }

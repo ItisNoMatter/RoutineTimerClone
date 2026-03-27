@@ -82,6 +82,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.navigation.safe.args.generator)
     implementation(libs.androidx.compose.foundation.layout)
+    implementation(libs.androidx.junit.ktx)
 
     ksp(libs.room.compiler)
     ksp(libs.hiltCompiler)

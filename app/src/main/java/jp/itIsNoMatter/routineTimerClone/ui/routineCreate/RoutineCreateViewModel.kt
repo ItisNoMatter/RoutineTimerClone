@@ -33,7 +33,11 @@ class RoutineCreateViewModel
             if (uiState.value is RoutineCreateUiState.Done) return
             viewModelScope.launch {
                 try {
-                    val routineId = routineRepository.insertRoutine(Routine.Empty)
+                    val newRoutine = Routine(name = "", tasks = emptyList())
+
+                    val routineId = newRoutine.id
+
+                    routineRepository.insertRoutine(newRoutine)
 
                     routineRepository.getRoutine(routineId).collect { value ->
                         val routine = value.getOrNull()
@@ -51,7 +55,7 @@ class RoutineCreateViewModel
             }
         }
 
-        fun fetch(routineId: Long) {
+        fun fetch(routineId: String) {
             viewModelScope.launch {
                 try {
                     routineRepository.getRoutine(routineId).collect { value ->
@@ -89,7 +93,7 @@ class RoutineCreateViewModel
             }
         }
 
-        fun onClickTaskCard(taskId: Long) {
+        fun onClickTaskCard(taskId: String) {
             val state = uiState.value
             if (state !is RoutineCreateUiState.Done) return
             val parentRoutineId = state.routine.id

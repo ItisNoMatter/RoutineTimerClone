@@ -8,30 +8,32 @@ import kotlinx.coroutines.flow.Flow
 interface RoutineDataSource {
     fun getAllRoutines(): Flow<List<RoutineWithTasks>>
 
-    fun getRoutineById(id: Long): Flow<RoutineWithTasks?>
+    fun getRoutineById(id: String): Flow<RoutineWithTasks?>
 
     fun getRoutineByName(name: String): Flow<RoutineWithTasks?>
 
     fun getRoutinesByName(name: String): Flow<List<RoutineWithTasks>>
 
-    suspend fun insertRoutine(routine: RoutineEntity): Long
+    suspend fun insertRoutine(routine: RoutineEntity)
 
-    suspend fun insertRoutines(routines: List<RoutineEntity>): List<Long>
+    suspend fun insertRoutines(routines: List<RoutineEntity>)
 
-    suspend fun insertTask(task: TaskEntity): Long
+    suspend fun insertTask(task: TaskEntity)
 
-    suspend fun insertTasks(tasks: List<TaskEntity>): List<Long>
+    suspend fun insertTasks(tasks: List<TaskEntity>)
 
-    fun getTasksByRoutineId(id: Long): Flow<List<TaskEntity>>
+    fun getTasksByRoutineId(id: String): Flow<List<TaskEntity>>
 
-    fun getTaskByTaskId(id: Long): Flow<TaskEntity>
+    fun getTaskByTaskId(id: String): Flow<TaskEntity>
 
-    suspend fun deleteAllTasksByRoutineId(id: Long)
+    suspend fun deleteAllTasksByRoutineId(id: String)
 
-    suspend fun deleteRoutineById(id: Long)
+    suspend fun deleteRoutineById(id: String)
 
-    suspend fun deleteTaskById(id: Long)
+    suspend fun deleteTaskById(id: String)
 
+    // ※ DAO側ではInt（更新行数）を返していましたが、
+    // DataSourceやRepositoryで使わないなら Unit のままで全く問題ありません。
     suspend fun updateRoutine(routine: RoutineEntity)
 
     suspend fun updateTask(task: TaskEntity)
@@ -39,7 +41,7 @@ interface RoutineDataSource {
     suspend fun insertRoutineWithTasks(
         routine: RoutineEntity,
         tasks: List<TaskEntity>,
-    ): Long
+    ): String
 
     suspend fun updateRoutineWithTasks(
         routine: RoutineEntity,

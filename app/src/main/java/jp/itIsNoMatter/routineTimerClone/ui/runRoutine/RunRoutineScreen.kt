@@ -366,12 +366,12 @@ fun runRoutineContentPreview() {
     runRoutineContent(
         routine =
             Routine(
-                id = 0,
+                id = "0",
                 name = "testRoutine",
                 tasks =
                     listOf(
                         Task(
-                            id = 0,
+                            id = "0",
                             name = "testTask",
                             minutes = 1,
                             seconds = 0,

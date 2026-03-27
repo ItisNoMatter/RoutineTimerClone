@@ -13,9 +13,9 @@ class RoutineModelMapperTest {
 
     @Test
     fun routineModelMapperTest() {
-        val task1 = Task(id = 1, name = "Task 1", minutes = 1, seconds = 30, announceRemainingTimeFlag = true)
-        val task2 = Task(id = 2, name = "Task 2", minutes = 2, seconds = 0, announceRemainingTimeFlag = true)
-        val routine = Routine(1, "Test Routine", listOf(task1, task2))
+        val task1 = Task(id = "1", name = "Task 1", minutes = 1, seconds = 30, announceRemainingTimeFlag = true)
+        val task2 = Task(id = "2", name = "Task 2", minutes = 2, seconds = 0, announceRemainingTimeFlag = true)
+        val routine = Routine("1", "Test Routine", listOf(task1, task2))
 
         val routineWithTasks = routineModelMapper.toEntity(routine)
         val routine2 = routineModelMapper.toDomain(routineWithTasks.routine, routineWithTasks.tasks)
@@ -25,15 +25,15 @@ class RoutineModelMapperTest {
 
     @Test
     fun routineModelMapper_toDomainTest() {
-        val taskEntity1 = TaskEntity(1, "Task 1", 90, 1)
-        val taskEntity2 = TaskEntity(2, "Task 2", 120, 1)
-        val routineEntity = RoutineEntity(1, "Test Routine")
+        val taskEntity1 = TaskEntity("1", "Task 1", 90, "1")
+        val taskEntity2 = TaskEntity("2", "Task 2", 120, "1")
+        val routineEntity = RoutineEntity("1", "Test Routine")
 
         val expectedRoutine =
             Routine(
-                1,
+                "1",
                 "Test Routine",
-                listOf(Task(1, "Task 1", Duration(1, 30), true), Task(2, "Task 2", Duration(2, 0), true)),
+                listOf(Task("1", "Task 1", Duration(1, 30), true), Task("2", "Task 2", Duration(2, 0), true)),
             )
         val routine = routineModelMapper.toDomain(routineEntity, listOf(taskEntity1, taskEntity2))
 
@@ -42,14 +42,14 @@ class RoutineModelMapperTest {
 
     @Test
     fun routineModelMapper_toEntityTest() {
-        val task1 = Task(1, "Task 1", Duration(1, 30), true)
-        val task2 = Task(2, "Task 2", Duration(2, 0), true)
-        val routine = Routine(1, "Test Routine", listOf(task1, task2))
+        val task1 = Task("1", "Task 1", Duration(1, 30), true)
+        val task2 = Task("2", "Task 2", Duration(2, 0), true)
+        val routine = Routine("1", "Test Routine", listOf(task1, task2))
 
         val routineWithTasks = routineModelMapper.toEntity(routine)
         val expectedTasksEntities =
-            listOf(TaskEntity(1, "Task 1", 90, 1), TaskEntity(2, "Task 2", 120, 1))
-        val expectedRoutineEntity = RoutineEntity(1, "Test Routine")
+            listOf(TaskEntity("1", "Task 1", 90, "1"), TaskEntity("2", "Task 2", 120, "1"))
+        val expectedRoutineEntity = RoutineEntity("1", "Test Routine")
 
         assert(routineWithTasks.tasks == expectedTasksEntities)
         assert(routineWithTasks.routine == expectedRoutineEntity)

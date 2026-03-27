@@ -1,7 +1,9 @@
 package jp.itIsNoMatter.routineTimerClone.domain.model
 
+import java.util.UUID
+
 data class Routine(
-    val id: Long,
+    val id: String = UUID.randomUUID().toString(),
     val name: String,
     var tasks: List<Task>,
 ) {
@@ -28,6 +30,6 @@ data class Routine(
     }
 
     companion object {
-        val Empty = Routine(0, "", emptyList())
+        val Empty = Routine("", "", emptyList())
     }
 }

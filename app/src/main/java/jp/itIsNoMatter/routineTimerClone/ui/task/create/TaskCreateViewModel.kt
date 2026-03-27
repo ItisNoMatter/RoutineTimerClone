@@ -7,6 +7,7 @@ import androidx.navigation.toRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepository
+import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 import jp.itIsNoMatter.routineTimerClone.domain.model.toMinutes
 import jp.itIsNoMatter.routineTimerClone.domain.model.toSeconds
@@ -28,7 +29,7 @@ class TaskCreateViewModel
         private val routineRepository: RoutineRepository,
         savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
-        private val parentRoutineId: Long = savedStateHandle.toRoute<Route.TaskCreate>().routineId
+        private val parentRoutineId: String = savedStateHandle.toRoute<Route.TaskCreate>().routineId
         private val _uiState: MutableStateFlow<TaskCreateUiState> =
             MutableStateFlow(
                 TaskCreateUiState.InitialState,
@@ -39,11 +40,13 @@ class TaskCreateViewModel
 
         fun create() {
             viewModelScope.launch {
-                val taskId =
-                    routineRepository.insertTask(
-                        Task.Empty,
-                        parentRoutineId,
-                    )
+                val newTask = Task(name = "", duration = Duration.Zero, announceRemainingTimeFlag = true)
+
+                val taskId = newTask.id
+                routineRepository.insertTask(
+                    newTask,
+                    parentRoutineId,
+                )
                 routineRepository.getTaskByTaskId(taskId).collect { task ->
                     if (task != null) {
                         _uiState.update {

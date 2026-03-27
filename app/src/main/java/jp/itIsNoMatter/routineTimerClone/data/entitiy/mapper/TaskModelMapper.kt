@@ -16,7 +16,7 @@ object TaskModelMapper {
 
     fun toEntity(
         task: Task,
-        parentRoutineId: Long,
+        parentRoutineId: String,
     ): TaskEntity {
         return TaskEntity(
             id = task.id,

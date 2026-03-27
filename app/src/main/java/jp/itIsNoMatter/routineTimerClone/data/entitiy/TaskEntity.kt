@@ -3,6 +3,7 @@ package jp.itIsNoMatter.routineTimerClone.data.entitiy
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import java.util.UUID
 
 @Entity(
     tableName = "task",
@@ -17,9 +18,9 @@ import androidx.room.PrimaryKey
     indices = [androidx.room.Index("parentRoutineId")],
 )
 data class TaskEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey val id: String = UUID.randomUUID().toString(),
     val name: String,
     val seconds: Int,
-    val parentRoutineId: Long,
+    val parentRoutineId: String,
     val announceRemainingTimeFlag: Boolean = true,
 )

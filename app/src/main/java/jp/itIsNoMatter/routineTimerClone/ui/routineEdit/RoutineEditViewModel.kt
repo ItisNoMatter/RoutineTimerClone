@@ -27,7 +27,7 @@ class RoutineEditViewModel
         private val _navigateTo = MutableSharedFlow<NavEvent>()
         val navigateTo = _navigateTo.asSharedFlow()
 
-        fun fetch(routineId: Long) {
+        fun fetch(routineId: String) {
             viewModelScope.launch {
                 try {
                     routineRepository.getRoutine(routineId).collect { value ->
@@ -63,7 +63,7 @@ class RoutineEditViewModel
             }
         }
 
-        fun onClickTaskCard(taskId: Long) {
+        fun onClickTaskCard(taskId: String) {
             viewModelScope.launch {
                 val parentRoutineId = (uiState.value as RoutineEditUiState.Done).routine.id
                 _navigateTo.emit(NavEvent.NavigateTo(route = Route.TaskEdit(parentRoutineId, taskId)))
