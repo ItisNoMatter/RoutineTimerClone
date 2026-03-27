@@ -148,7 +148,7 @@ fun TaskCardPreview() {
         TaskCard(
             task =
                 Task(
-                    id = 1,
+                    id = "1",
                     name = "test",
                     duration = Duration(minutes = 1, seconds = 2),
                     announceRemainingTimeFlag = true,
@@ -158,7 +158,7 @@ fun TaskCardPreview() {
         TaskCard(
             task =
                 Task(
-                    id = 1,
+                    id = "1",
                     name = "test",
                     duration = Duration(minutes = 1, seconds = 2),
                     announceRemainingTimeFlag = true,
@@ -168,7 +168,7 @@ fun TaskCardPreview() {
         TaskCard(
             task =
                 Task(
-                    id = 1,
+                    id = "1",
                     name = "test",
                     duration = Duration(minutes = 1, seconds = 2),
                     announceRemainingTimeFlag = true,

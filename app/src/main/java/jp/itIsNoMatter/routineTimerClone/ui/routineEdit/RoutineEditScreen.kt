@@ -13,7 +13,7 @@ import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 
 @Composable
 fun RoutineEditScreen(
-    routineId: Long,
+    routineId: String,
     navHostController: NavHostController,
     viewModel: RoutineEditViewModel = hiltViewModel(),
 ) {

@@ -19,7 +19,7 @@ interface RoutineDao {
 
     @Transaction
     @Query("SELECT * FROM routine WHERE id = :id")
-    fun getRoutineById(id: Long): Flow<RoutineWithTasks?>
+    fun getRoutineById(id: String): Flow<RoutineWithTasks?>
 
     @Transaction
     @Query("SELECT * FROM routine WHERE name = :name")
@@ -30,28 +30,28 @@ interface RoutineDao {
     fun getRoutinesByName(name: String): Flow<List<RoutineWithTasks>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRoutine(routine: RoutineEntity): Long
+    suspend fun insertRoutine(routine: RoutineEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRoutines(routines: List<RoutineEntity>): List<Long>
+    suspend fun insertRoutines(routines: List<RoutineEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertTask(task: TaskEntity): Long
+    suspend fun insertTask(task: TaskEntity)
 
     @Query("SELECT * FROM task WHERE parentRoutineId = :id")
-    fun getTasksByRoutineId(id: Long): Flow<List<TaskEntity>>
+    fun getTasksByRoutineId(id: String): Flow<List<TaskEntity>>
 
     @Query("SELECT * FROM task WHERE id = :id")
-    fun getTaskByTaskId(id: Long): Flow<TaskEntity>
+    fun getTaskByTaskId(id: String): Flow<TaskEntity>
 
     @Query("DELETE FROM task WHERE parentRoutineId = :id")
-    suspend fun deleteAllTasksByRoutineId(id: Long)
+    suspend fun deleteAllTasksByRoutineId(id: String)
 
     @Query("DELETE FROM routine WHERE id = :id")
-    suspend fun deleteRoutineById(id: Long)
+    suspend fun deleteRoutineById(id: String)
 
     @Query("DELETE FROM task WHERE id = :id")
-    suspend fun deleteTaskById(id: Long)
+    suspend fun deleteTaskById(id: String)
 
     @Update
     suspend fun updateRoutine(routine: RoutineEntity): Int
@@ -63,12 +63,13 @@ interface RoutineDao {
     suspend fun insertRoutineWithTasks(
         routine: RoutineEntity,
         tasks: List<TaskEntity>,
-    ): Long {
-        val routineId = insertRoutine(routine)
+    ): String {
+        insertRoutine(routine)
         for (task in tasks) {
-            insertTask(task.copy(parentRoutineId = routineId))
+            // routineのインスタンスには既にUUIDが入っているので、そのまま routine.id を使えばOK！
+            insertTask(task.copy(parentRoutineId = routine.id))
         }
-        return routineId
+        return routine.id
     }
 
     @Transaction
@@ -81,6 +82,6 @@ interface RoutineDao {
         for (task in tasks) {
             insertTask(task.copy(parentRoutineId = routine.id))
         }
-        return updatedRows
+        return updatedRows // 更新された行数を返す
     }
 }

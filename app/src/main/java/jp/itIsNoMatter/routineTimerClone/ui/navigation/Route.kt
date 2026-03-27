@@ -8,7 +8,7 @@ sealed interface Route {
 
     @Serializable
     data class RoutineEdit(
-        val routineId: Long,
+        val routineId: String,
     ) : Route
 
     @Serializable
@@ -16,17 +16,17 @@ sealed interface Route {
 
     @Serializable
     data class TaskCreate(
-        val routineId: Long,
+        val routineId: String,
     ) : Route
 
     @Serializable
     data class TaskEdit(
-        val parentRoutineId: Long,
-        val taskId: Long,
+        val parentRoutineId: String,
+        val taskId: String,
     ) : Route
 
     @Serializable
     data class RunRoutine(
-        val routineId: Long,
+        val routineId: String,
     ) : Route
 }

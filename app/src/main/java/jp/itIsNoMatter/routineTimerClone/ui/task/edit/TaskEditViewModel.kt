@@ -31,8 +31,8 @@ class TaskEditViewModel
         private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
         private val args = savedStateHandle.toRoute<Route.TaskEdit>()
-        val parentRoutineId: Long = args.parentRoutineId
-        private val taskId: Long = args.taskId
+        val parentRoutineId: String = args.parentRoutineId
+        private val taskId: String = args.taskId
         private val _uiState = MutableStateFlow(TaskEditUiState.InitialState)
         val uiState: StateFlow<TaskEditUiState> = _uiState.asStateFlow()
         private val _navigateTo = MutableSharedFlow<NavEvent>()

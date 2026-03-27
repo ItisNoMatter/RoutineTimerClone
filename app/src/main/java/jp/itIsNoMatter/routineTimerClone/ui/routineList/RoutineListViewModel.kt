@@ -23,7 +23,7 @@ class RoutineListViewModel
                 )
         }
 
-        fun deleteRoutine(routineId: Long) {
+        fun deleteRoutine(routineId: String) {
             viewModelScope.launch {
                 routineRepository.deleteRoutineById(routineId)
             }

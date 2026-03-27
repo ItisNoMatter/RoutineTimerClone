@@ -47,7 +47,7 @@ fun RoutineEditContent(
     routine: Routine,
     onRoutineTitleChange: (String) -> Unit = {},
     onClickAddButton: () -> Unit = {},
-    onClickTaskCard: (taskId: Long) -> Unit = {},
+    onClickTaskCard: (taskId: String) -> Unit = {},
     onClickBackButton: () -> Unit = {},
 ) {
     Scaffold(
@@ -185,24 +185,24 @@ fun RoutineEditContentPreview() {
     RoutineEditContent(
         routine =
             Routine(
-                id = 1,
+                id = "1",
                 name = "test",
                 tasks =
                     listOf(
                         Task(
-                            id = 1,
+                            id = "1",
                             name = "test",
                             duration = Duration(minutes = 1, seconds = 2),
                             announceRemainingTimeFlag = true,
                         ),
                         Task(
-                            id = 2,
+                            id = "2",
                             name = "test",
                             duration = Duration(minutes = 3, seconds = 15),
                             announceRemainingTimeFlag = true,
                         ),
                         Task(
-                            id = 3,
+                            id = "3",
                             name = "test",
                             duration = Duration(minutes = 4, seconds = 0),
                             announceRemainingTimeFlag = true,

@@ -14,7 +14,7 @@ class RoutineLocalDataSource
             return dao.getAllRoutines()
         }
 
-        override fun getRoutineById(id: Long): Flow<RoutineWithTasks?> {
+        override fun getRoutineById(id: String): Flow<RoutineWithTasks?> {
             return dao.getRoutineById(id)
         }
 
@@ -26,41 +26,41 @@ class RoutineLocalDataSource
             return dao.getRoutinesByName(name)
         }
 
-        override suspend fun insertRoutine(routine: RoutineEntity): Long {
-            return dao.insertRoutine(routine)
+        override suspend fun insertRoutine(routine: RoutineEntity) {
+            dao.insertRoutine(routine)
         }
 
-        override suspend fun insertRoutines(routines: List<RoutineEntity>): List<Long> {
-            return insertRoutines(routines)
+        override suspend fun insertRoutines(routines: List<RoutineEntity>) {
+            return dao.insertRoutines(routines)
         }
 
-        override suspend fun insertTask(task: TaskEntity): Long {
+        override suspend fun insertTask(task: TaskEntity) {
             return dao.insertTask(task)
         }
 
-        override suspend fun insertTasks(tasks: List<TaskEntity>): List<Long> {
-            return tasks.map {
+        override suspend fun insertTasks(tasks: List<TaskEntity>) {
+            tasks.forEach {
                 insertTask(it)
             }
         }
 
-        override fun getTasksByRoutineId(id: Long): Flow<List<TaskEntity>> {
+        override fun getTasksByRoutineId(id: String): Flow<List<TaskEntity>> {
             return dao.getTasksByRoutineId(id)
         }
 
-        override fun getTaskByTaskId(id: Long): Flow<TaskEntity> {
+        override fun getTaskByTaskId(id: String): Flow<TaskEntity> {
             return dao.getTaskByTaskId(id)
         }
 
-        override suspend fun deleteAllTasksByRoutineId(id: Long) {
+        override suspend fun deleteAllTasksByRoutineId(id: String) {
             dao.deleteAllTasksByRoutineId(id)
         }
 
-        override suspend fun deleteRoutineById(id: Long) {
+        override suspend fun deleteRoutineById(id: String) {
             dao.deleteRoutineById(id)
         }
 
-        override suspend fun deleteTaskById(id: Long) {
+        override suspend fun deleteTaskById(id: String) {
             dao.deleteTaskById(id)
         }
 
@@ -75,7 +75,7 @@ class RoutineLocalDataSource
         override suspend fun insertRoutineWithTasks(
             routine: RoutineEntity,
             tasks: List<TaskEntity>,
-        ): Long {
+        ): String {
             return dao.insertRoutineWithTasks(routine, tasks)
         }
 

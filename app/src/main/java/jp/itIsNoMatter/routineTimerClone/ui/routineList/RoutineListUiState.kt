@@ -9,9 +9,9 @@ data class RoutineListUiState(
         val Dummy =
             RoutineListUiState(
                 listOf(
-                    Routine(1, "Routine 1", emptyList()),
-                    Routine(2, "Routine 2", emptyList()),
-                    Routine(3, "Routine 3", emptyList()),
+                    Routine("1", "Routine 1", emptyList()),
+                    Routine("2", "Routine 2", emptyList()),
+                    Routine("3", "Routine 3", emptyList()),
                 ),
             )
     }

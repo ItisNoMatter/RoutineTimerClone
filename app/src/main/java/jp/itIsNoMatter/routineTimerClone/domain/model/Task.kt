@@ -1,13 +1,15 @@
 package jp.itIsNoMatter.routineTimerClone.domain.model
 
+import java.util.UUID
+
 data class Task(
-    val id: Long,
+    val id: String = UUID.randomUUID().toString(),
     val name: String,
     val duration: Duration,
     val announceRemainingTimeFlag: Boolean,
 ) {
     constructor(
-        id: Long,
+        id: String = UUID.randomUUID().toString(),
         name: String,
         minutes: Int,
         seconds: Int,
@@ -34,7 +36,7 @@ data class Task(
     companion object {
         val Empty =
             Task(
-                id = 0,
+                id = "",
                 name = "",
                 duration = Duration(0, 0),
                 announceRemainingTimeFlag = true,
