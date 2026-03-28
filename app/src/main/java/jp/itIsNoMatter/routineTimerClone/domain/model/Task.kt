@@ -7,6 +7,7 @@ data class Task(
     val name: String,
     val duration: Duration,
     val announceRemainingTimeFlag: Boolean,
+    val orderIndex: Int = 0,
 ) {
     constructor(
         id: String = UUID.randomUUID().toString(),
