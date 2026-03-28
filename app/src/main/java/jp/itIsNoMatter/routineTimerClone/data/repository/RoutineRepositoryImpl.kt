@@ -7,6 +7,7 @@ import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.TaskModelMapper
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
@@ -76,7 +77,10 @@ class RoutineRepositoryImpl
             task: Task,
             parentRoutineId: String,
         ) {
-            dataSource.insertTask(taskModelMapper.toEntity(task, parentRoutineId))
+            val currentTasks = dataSource.getTasksByRoutineId(parentRoutineId).first()
+            val nextIndex = (currentTasks.maxOfOrNull { it.orderIndex } ?: -1) + 1
+            val taskWithIndex = task.copy(orderIndex = nextIndex)
+            dataSource.insertTask(taskModelMapper.toEntity(taskWithIndex, parentRoutineId))
         }
 
         override suspend fun insertTasks(

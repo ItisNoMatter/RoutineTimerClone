@@ -3,6 +3,7 @@ import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
+import io.mockk.verify
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.datasource.RoutineDataSource
 import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineEntity
@@ -11,6 +12,7 @@ import jp.itIsNoMatter.routineTimerClone.data.entitiy.TaskEntity
 import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.RoutineModelMapper
 import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.TaskModelMapper
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepositoryImpl
+import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 import kotlinx.coroutines.flow.first
@@ -105,18 +107,32 @@ class RoutineRepositoryTest {
     @Test
     fun `insertTask - タスクが正しい親IDと共に保存されること`() =
         runTest {
-            // 準備
-            val task = mockk<Task>()
+            val task = Task(id = "task-1", name = "New Task", duration = Duration(1, 0), announceRemainingTimeFlag = true, orderIndex = 0)
             val parentId = "parent-uuid"
             val taskEntity = mockk<TaskEntity>()
 
-            every { taskMapper.toEntity(task, parentId) } returns taskEntity
+            val existingTasks =
+                listOf(
+                    TaskEntity(
+                        id = "old-1",
+                        name = "Old",
+                        seconds = 90,
+                        parentRoutineId = parentId,
+                        orderIndex = 0,
+                    ),
+                )
+            every { dataSource.getTasksByRoutineId(parentId) } returns flowOf(existingTasks)
+            every { taskMapper.toEntity(any(), parentId) } returns taskEntity
             coEvery { dataSource.insertTask(taskEntity) } returns Unit
 
-            // 実行
+            // 2. 実行
             repository.insertTask(task, parentId)
 
-            // 検証
+            // 3. 検証
+            // getTasksByRoutineId が呼ばれたか
+            verify(exactly = 1) { dataSource.getTasksByRoutineId(parentId) }
+
+            // 最終的に Entity が保存されたか
             coVerify(exactly = 1) { dataSource.insertTask(taskEntity) }
         }
 }
