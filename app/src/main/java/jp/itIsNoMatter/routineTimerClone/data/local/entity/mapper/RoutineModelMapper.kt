@@ -1,8 +1,8 @@
-package jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper
+package jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper
 
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineEntity
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineWithTasks
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.TaskEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineWithTasks
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.TaskEntity
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 
 object RoutineModelMapper {

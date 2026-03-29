@@ -23,6 +23,7 @@ navigationSafeArgsGenerator = "2.8.9"
 ksp = "2.1.21-2.0.1"
 foundationLayout = "1.10.0"
 junitKtx = "1.3.0"
+ktor = "3.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -49,13 +50,17 @@ room-runtime = {module = "androidx.room:room-runtime", version.ref = "room"}
 room-ktx = {module = "androidx.room:room-ktx", version.ref = "room"}
 room-compiler = {module  = "androidx.room:room-compiler",version.ref = "room"}
 hilt = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
-hiltCompiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
+    hiltCompiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hilt" }
 mockK = {group = "io.mockk:mockk",name="mockK",version.ref="mockK"}
 robolectric = { group = "org.robolectric", name = "robolectric", version.ref = "robolectric" }
 androidx-navigation-safe-args-generator = { group = "androidx.navigation", name = "navigation-safe-args-generator", version.ref = "navigationSafeArgsGenerator" }
 androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout", version.ref = "foundationLayout" }
 androidx-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended", version.ref = "materialIconsExtended" }
 androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-android = { group = "io.ktor", name = "ktor-client-android", version.ref = "ktor" }
+ktor-client-content-negotiation = { group = "io.ktor", name = "ktor-client-content-negotiation", version.ref = "ktor" }
+ktor-serialization-kotlinx-json = { group = "io.ktor", name = "ktor-serialization-kotlinx-json", version.ref = "ktor" }
 [plugins]
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 android-application = { id = "com.android.application", version.ref = "agp" }

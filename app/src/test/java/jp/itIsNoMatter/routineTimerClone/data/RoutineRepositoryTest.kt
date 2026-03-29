@@ -5,12 +5,13 @@ import io.mockk.every
 import io.mockk.mockk
 import io.mockk.verify
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
-import jp.itIsNoMatter.routineTimerClone.data.datasource.RoutineDataSource
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineEntity
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineWithTasks
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.TaskEntity
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.RoutineModelMapper
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.local.datasource.RoutineLocalDataSource
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineWithTasks
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.TaskEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.RoutineModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.remote.datasource.RoutineRemoteDataSource
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepositoryImpl
 import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
@@ -26,7 +27,8 @@ import java.util.UUID
 
 class RoutineRepositoryTest {
     // モック対象
-    private val dataSource = mockk<RoutineDataSource>()
+    private val localDataSource = mockk<RoutineLocalDataSource>()
+    private val remoteDataSource = mockk<RoutineRemoteDataSource>()
     private val routineMapper = mockk<RoutineModelMapper>()
     private val taskMapper = mockk<TaskModelMapper>()
 
@@ -35,7 +37,7 @@ class RoutineRepositoryTest {
 
     @Before
     fun setup() {
-        repository = RoutineRepositoryImpl(dataSource, routineMapper, taskMapper)
+        repository = RoutineRepositoryImpl(localDataSource, remoteDataSource, routineMapper, taskMapper)
     }
 
     @Test
@@ -51,7 +53,7 @@ class RoutineRepositoryTest {
             val mockDomain = mockk<Routine>()
 
             // DataSourceが本物のEntityを流すように設定
-            every { dataSource.getRoutineById(routineId) } returns flowOf(realEntity)
+            every { localDataSource.getRoutineById(routineId) } returns flowOf(realEntity)
 
             // Mapperにこの実体が渡ってきたら、このモックDomainを返すように設定
             every { routineMapper.toDomain(routineEntity, taskEntities) } returns mockDomain
@@ -69,7 +71,7 @@ class RoutineRepositoryTest {
         runTest {
             // 準備
             val routineId = "non-existent-id"
-            every { dataSource.getRoutineById(routineId) } returns flowOf(null)
+            every { localDataSource.getRoutineById(routineId) } returns flowOf(null)
 
             // 実行
             val result = repository.getRoutine(routineId).first()
@@ -93,14 +95,14 @@ class RoutineRepositoryTest {
             every { mockMappedResult.tasks } returns taskEntities
 
             every { routineMapper.toEntity(routine) } returns mockMappedResult
-            coEvery { dataSource.insertRoutineWithTasks(any(), any()) } returns "new-id" // 戻り値は無視されるが定義は必要
+            coEvery { localDataSource.insertRoutineWithTasks(any(), any()) } returns "new-id" // 戻り値は無視されるが定義は必要
 
             // 実行
             repository.insertRoutine(routine)
 
             // 検証: 正しい引数でDataSourceのメソッドが1回呼ばれたかを確認
             coVerify(exactly = 1) {
-                dataSource.insertRoutineWithTasks(routineEntity, taskEntities)
+                localDataSource.insertRoutineWithTasks(routineEntity, taskEntities)
             }
         }
 
@@ -121,18 +123,18 @@ class RoutineRepositoryTest {
                         orderIndex = 0,
                     ),
                 )
-            every { dataSource.getTasksByRoutineId(parentId) } returns flowOf(existingTasks)
+            every { localDataSource.getTasksByRoutineId(parentId) } returns flowOf(existingTasks)
             every { taskMapper.toEntity(any(), parentId) } returns taskEntity
-            coEvery { dataSource.insertTask(taskEntity) } returns Unit
+            coEvery { localDataSource.insertTask(taskEntity) } returns Unit
 
             // 2. 実行
             repository.insertTask(task, parentId)
 
             // 3. 検証
             // getTasksByRoutineId が呼ばれたか
-            verify(exactly = 1) { dataSource.getTasksByRoutineId(parentId) }
+            verify(exactly = 1) { localDataSource.getTasksByRoutineId(parentId) }
 
             // 最終的に Entity が保存されたか
-            coVerify(exactly = 1) { dataSource.insertTask(taskEntity) }
+            coVerify(exactly = 1) { localDataSource.insertTask(taskEntity) }
         }
 }

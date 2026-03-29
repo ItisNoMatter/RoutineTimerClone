@@ -45,6 +45,8 @@ interface RoutineRepository {
     suspend fun deleteAllTasksByRoutineId(routineId: String)
 
     fun getRoutinesByName(name: String): Flow<List<Routine>>
+
+    suspend fun syncRoutines()
 }
 
 object FakeRoutineRepository : RoutineRepository {
@@ -115,5 +117,8 @@ object FakeRoutineRepository : RoutineRepository {
 
     override fun getRoutinesByName(name: String): Flow<List<Routine>> {
         return flowOf(emptyList())
+    }
+
+    override suspend fun syncRoutines() {
     }
 }

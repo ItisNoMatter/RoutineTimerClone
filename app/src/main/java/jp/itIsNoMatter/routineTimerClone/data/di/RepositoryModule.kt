@@ -4,9 +4,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import jp.itIsNoMatter.routineTimerClone.data.datasource.RoutineDataSource
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.RoutineModelMapper
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.local.datasource.RoutineLocalDataSource
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.RoutineModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.remote.datasource.RoutineRemoteDataSource
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepository
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepositoryImpl
 import javax.inject.Singleton
@@ -16,9 +17,13 @@ import javax.inject.Singleton
 object RepositoryModule {
     @Provides
     @Singleton
-    fun provideRoutineRepository(routineDataSource: RoutineDataSource): RoutineRepository {
+    fun provideRoutineRepository(
+        routineLocalDataSource: RoutineLocalDataSource,
+        routineRemoteDataSource: RoutineRemoteDataSource,
+    ): RoutineRepository {
         return RoutineRepositoryImpl(
-            dataSource = routineDataSource,
+            localDataSource = routineLocalDataSource,
+            remoteDataSource = routineRemoteDataSource,
             routineModelMapper = RoutineModelMapper,
             taskModelMapper = TaskModelMapper,
         )

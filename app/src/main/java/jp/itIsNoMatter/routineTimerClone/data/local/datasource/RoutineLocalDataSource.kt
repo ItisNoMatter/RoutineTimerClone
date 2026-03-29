@@ -1,11 +1,11 @@
-package jp.itIsNoMatter.routineTimerClone.data.datasource
+package jp.itIsNoMatter.routineTimerClone.data.local.datasource
 
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineEntity
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineWithTasks
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.TaskEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineWithTasks
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
 
-interface RoutineDataSource {
+interface RoutineLocalDataSource {
     fun getAllRoutines(): Flow<List<RoutineWithTasks>>
 
     fun getRoutineById(id: String): Flow<RoutineWithTasks?>

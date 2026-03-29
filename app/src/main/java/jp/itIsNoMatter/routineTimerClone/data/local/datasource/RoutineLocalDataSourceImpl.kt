@@ -1,15 +1,15 @@
-package jp.itIsNoMatter.routineTimerClone.data.datasource
+package jp.itIsNoMatter.routineTimerClone.data.local.datasource
 
-import jp.itIsNoMatter.routineTimerClone.data.dao.RoutineDao
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineEntity
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineWithTasks
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.TaskEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.dao.RoutineDao
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineWithTasks
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class RoutineLocalDataSource
+class RoutineLocalDataSourceImpl
     @Inject
-    constructor(private val dao: RoutineDao) : RoutineDataSource {
+    constructor(private val dao: RoutineDao) : RoutineLocalDataSource {
         override fun getAllRoutines(): Flow<List<RoutineWithTasks>> {
             return dao.getAllRoutines()
         }

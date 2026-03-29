@@ -1,9 +1,11 @@
 package jp.itIsNoMatter.routineTimerClone.data.repository
 
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
-import jp.itIsNoMatter.routineTimerClone.data.datasource.RoutineDataSource
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.RoutineModelMapper
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.local.datasource.RoutineLocalDataSource
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.RoutineModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.remote.datasource.RoutineRemoteDataSource
+import jp.itIsNoMatter.routineTimerClone.data.remote.toEntity
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 import kotlinx.coroutines.flow.Flow
@@ -14,18 +16,19 @@ import javax.inject.Inject
 class RoutineRepositoryImpl
     @Inject
     constructor(
-        private val dataSource: RoutineDataSource,
+        private val localDataSource: RoutineLocalDataSource,
+        private val remoteDataSource: RoutineRemoteDataSource,
         private val routineModelMapper: RoutineModelMapper,
         private val taskModelMapper: TaskModelMapper,
     ) : RoutineRepository {
         override fun getAllRoutines(): Flow<List<Routine>> {
-            return dataSource.getAllRoutines().map { routineWithTasks ->
+            return localDataSource.getAllRoutines().map { routineWithTasks ->
                 routineWithTasks.map { routineModelMapper.toDomain(it.routine, it.tasks) }
             }
         }
 
         override fun getRoutine(id: String): Flow<LoadedValue<Routine>> {
-            return dataSource.getRoutineById(id).map { it ->
+            return localDataSource.getRoutineById(id).map { it ->
                 if (it != null) {
                     LoadedValue.Done(routineModelMapper.toDomain(it.routine, it.tasks))
                 } else {
@@ -35,40 +38,40 @@ class RoutineRepositoryImpl
         }
 
         override fun getRoutineByName(name: String): Flow<Routine?> {
-            return dataSource.getRoutineByName(name).map { routineWithTasks ->
+            return localDataSource.getRoutineByName(name).map { routineWithTasks ->
                 routineWithTasks?.let { routineModelMapper.toDomain(it.routine, it.tasks) }
             }
         }
 
         override suspend fun insertRoutine(routine: Routine) {
             val entity = routineModelMapper.toEntity(routine)
-            dataSource.insertRoutineWithTasks(entity.routine, entity.tasks)
+            localDataSource.insertRoutineWithTasks(entity.routine, entity.tasks)
         }
 
         override suspend fun insertRoutines(routines: List<Routine>) {
             routines.forEach {
                 val entity = routineModelMapper.toEntity(it)
-                dataSource.insertRoutineWithTasks(entity.routine, entity.tasks)
+                localDataSource.insertRoutineWithTasks(entity.routine, entity.tasks)
             }
         }
 
         override suspend fun updateRoutine(routine: Routine) {
             val entity = routineModelMapper.toEntity(routine)
-            dataSource.updateRoutineWithTasks(entity.routine, entity.tasks)
+            localDataSource.updateRoutineWithTasks(entity.routine, entity.tasks)
         }
 
         override suspend fun deleteRoutineById(id: String) {
-            dataSource.deleteRoutineById(id)
+            localDataSource.deleteRoutineById(id)
         }
 
         override fun getTasksByRoutineId(routineId: String): Flow<List<Task>> {
-            return dataSource.getTasksByRoutineId(routineId).map { taskEntities ->
+            return localDataSource.getTasksByRoutineId(routineId).map { taskEntities ->
                 taskEntities.map { taskModelMapper.toDomain(it) }
             }
         }
 
         override fun getTaskByTaskId(id: String): Flow<Task?> {
-            return dataSource.getTaskByTaskId(id).map { taskEntities ->
+            return localDataSource.getTaskByTaskId(id).map { taskEntities ->
                 taskEntities.let { taskModelMapper.toDomain(it) }
             }
         }
@@ -77,17 +80,17 @@ class RoutineRepositoryImpl
             task: Task,
             parentRoutineId: String,
         ) {
-            val currentTasks = dataSource.getTasksByRoutineId(parentRoutineId).first()
+            val currentTasks = localDataSource.getTasksByRoutineId(parentRoutineId).first()
             val nextIndex = (currentTasks.maxOfOrNull { it.orderIndex } ?: -1) + 1
             val taskWithIndex = task.copy(orderIndex = nextIndex)
-            dataSource.insertTask(taskModelMapper.toEntity(taskWithIndex, parentRoutineId))
+            localDataSource.insertTask(taskModelMapper.toEntity(taskWithIndex, parentRoutineId))
         }
 
         override suspend fun insertTasks(
             tasks: List<Task>,
             parentRoutineId: String,
         ) {
-            dataSource.insertTasks(
+            localDataSource.insertTasks(
                 tasks.map { taskModelMapper.toEntity(it, parentRoutineId) },
             )
         }
@@ -96,20 +99,40 @@ class RoutineRepositoryImpl
             task: Task,
             parentRoutineId: String,
         ) {
-            dataSource.updateTask(taskModelMapper.toEntity(task, parentRoutineId))
+            localDataSource.updateTask(taskModelMapper.toEntity(task, parentRoutineId))
         }
 
         override suspend fun deleteTaskById(id: String) {
-            dataSource.deleteTaskById(id)
+            localDataSource.deleteTaskById(id)
         }
 
         override suspend fun deleteAllTasksByRoutineId(routineId: String) {
-            dataSource.deleteAllTasksByRoutineId(routineId)
+            localDataSource.deleteAllTasksByRoutineId(routineId)
         }
 
         override fun getRoutinesByName(name: String): Flow<List<Routine>> {
-            return dataSource.getRoutinesByName(name).map { routinesWithTasks ->
+            return localDataSource.getRoutinesByName(name).map { routinesWithTasks ->
                 routinesWithTasks.map { routineModelMapper.toDomain(it.routine, it.tasks) }
+            }
+        }
+
+        override suspend fun syncRoutines() {
+            try {
+                val remoteData = remoteDataSource.getRoutines()
+
+                val routineEntities = remoteData.map { it.toEntity() }
+
+                val taskEntities =
+                    remoteData.flatMap { routine ->
+                        routine.tasks.map { task -> task.toEntity(routine.id) }
+                    }
+
+                localDataSource.insertRoutines(routineEntities)
+                localDataSource.insertTasks(taskEntities)
+            } catch (e: Exception) {
+                // サーバーが落ちている、電波がない等のエラー時はここでキャッチ
+                e.printStackTrace()
+                // ※エラーが起きても、ViewModelはRoomの古いデータを表示し続けるのでアプリは落ちません（超安全！）
             }
         }
     }

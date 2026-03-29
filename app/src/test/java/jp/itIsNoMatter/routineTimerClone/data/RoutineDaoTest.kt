@@ -4,10 +4,10 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import jp.itIsNoMatter.routineTimerClone.data.dao.RoutineDao
-import jp.itIsNoMatter.routineTimerClone.data.database.EEffortDatabase
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineEntity
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.TaskEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.dao.RoutineDao
+import jp.itIsNoMatter.routineTimerClone.data.local.database.EEffortDatabase
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.TaskEntity
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.test.runTest
 import org.hamcrest.CoreMatchers.`is`
