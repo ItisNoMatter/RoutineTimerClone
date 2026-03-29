@@ -83,6 +83,10 @@ dependencies {
     implementation(libs.androidx.navigation.safe.args.generator)
     implementation(libs.androidx.compose.foundation.layout)
     implementation(libs.androidx.junit.ktx)
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.android)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
 
     ksp(libs.room.compiler)
     ksp(libs.hiltCompiler)
