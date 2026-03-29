@@ -6,11 +6,11 @@ import io.mockk.mockk
 import io.mockk.verify
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.datasource.RoutineDataSource
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineEntity
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineWithTasks
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.TaskEntity
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.RoutineModelMapper
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.entity.RoutineEntity
+import jp.itIsNoMatter.routineTimerClone.data.entity.RoutineWithTasks
+import jp.itIsNoMatter.routineTimerClone.data.entity.TaskEntity
+import jp.itIsNoMatter.routineTimerClone.data.entity.mapper.RoutineModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.entity.mapper.TaskModelMapper
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepositoryImpl
 import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine

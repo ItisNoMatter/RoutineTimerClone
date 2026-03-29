@@ -1,4 +1,4 @@
-package jp.itIsNoMatter.routineTimerClone.data.entitiy
+package jp.itIsNoMatter.routineTimerClone.data.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

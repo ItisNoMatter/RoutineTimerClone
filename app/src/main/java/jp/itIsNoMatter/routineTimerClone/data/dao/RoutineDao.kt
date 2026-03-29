@@ -6,9 +6,9 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineEntity
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineWithTasks
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.TaskEntity
+import jp.itIsNoMatter.routineTimerClone.data.entity.RoutineEntity
+import jp.itIsNoMatter.routineTimerClone.data.entity.RoutineWithTasks
+import jp.itIsNoMatter.routineTimerClone.data.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

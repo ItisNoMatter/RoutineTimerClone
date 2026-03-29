@@ -1,9 +1,9 @@
 package jp.itIsNoMatter.routineTimerClone.data.datasource
 
 import jp.itIsNoMatter.routineTimerClone.data.dao.RoutineDao
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineEntity
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.RoutineWithTasks
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.TaskEntity
+import jp.itIsNoMatter.routineTimerClone.data.entity.RoutineEntity
+import jp.itIsNoMatter.routineTimerClone.data.entity.RoutineWithTasks
+import jp.itIsNoMatter.routineTimerClone.data.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

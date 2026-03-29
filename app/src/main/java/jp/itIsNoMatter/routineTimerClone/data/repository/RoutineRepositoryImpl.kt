@@ -2,8 +2,8 @@ package jp.itIsNoMatter.routineTimerClone.data.repository
 
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.datasource.RoutineDataSource
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.RoutineModelMapper
-import jp.itIsNoMatter.routineTimerClone.data.entitiy.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.entity.mapper.RoutineModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.entity.mapper.TaskModelMapper
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 import kotlinx.coroutines.flow.Flow
