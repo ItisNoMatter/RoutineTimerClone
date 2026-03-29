@@ -16,6 +16,12 @@ class RoutineListViewModel
     ) : ViewModel() {
         val routines = routineRepository.getAllRoutines()
 
+        init {
+            viewModelScope.launch {
+                routineRepository.syncRoutines()
+            }
+        }
+
         companion object {
             val Noop =
                 RoutineListViewModel(

@@ -1,88 +1,50 @@
 package jp.itIsNoMatter.routineTimerClone.data.local.datasource
 
-import jp.itIsNoMatter.routineTimerClone.data.local.dao.RoutineDao
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineEntity
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineWithTasks
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.TaskEntity
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
-class RoutineLocalDataSource
-    @Inject
-    constructor(private val dao: RoutineDao) : RoutineDataSource {
-        override fun getAllRoutines(): Flow<List<RoutineWithTasks>> {
-            return dao.getAllRoutines()
-        }
+interface RoutineLocalDataSource {
+    fun getAllRoutines(): Flow<List<RoutineWithTasks>>
 
-        override fun getRoutineById(id: String): Flow<RoutineWithTasks?> {
-            return dao.getRoutineById(id)
-        }
+    fun getRoutineById(id: String): Flow<RoutineWithTasks?>
 
-        override fun getRoutineByName(name: String): Flow<RoutineWithTasks?> {
-            return dao.getRoutineByName(name)
-        }
+    fun getRoutineByName(name: String): Flow<RoutineWithTasks?>
 
-        override fun getRoutinesByName(name: String): Flow<List<RoutineWithTasks>> {
-            return dao.getRoutinesByName(name)
-        }
+    fun getRoutinesByName(name: String): Flow<List<RoutineWithTasks>>
 
-        override suspend fun insertRoutine(routine: RoutineEntity) {
-            dao.insertRoutine(routine)
-        }
+    suspend fun insertRoutine(routine: RoutineEntity)
 
-        override suspend fun insertRoutines(routines: List<RoutineEntity>) {
-            return dao.insertRoutines(routines)
-        }
+    suspend fun insertRoutines(routines: List<RoutineEntity>)
 
-        override suspend fun insertTask(task: TaskEntity) {
-            return dao.insertTask(task)
-        }
+    suspend fun insertTask(task: TaskEntity)
 
-        override suspend fun insertTasks(tasks: List<TaskEntity>) {
-            tasks.forEach {
-                insertTask(it)
-            }
-        }
+    suspend fun insertTasks(tasks: List<TaskEntity>)
 
-        override fun getTasksByRoutineId(id: String): Flow<List<TaskEntity>> {
-            return dao.getTasksByRoutineId(id)
-        }
+    fun getTasksByRoutineId(id: String): Flow<List<TaskEntity>>
 
-        override fun getTaskByTaskId(id: String): Flow<TaskEntity> {
-            return dao.getTaskByTaskId(id)
-        }
+    fun getTaskByTaskId(id: String): Flow<TaskEntity>
 
-        override suspend fun deleteAllTasksByRoutineId(id: String) {
-            dao.deleteAllTasksByRoutineId(id)
-        }
+    suspend fun deleteAllTasksByRoutineId(id: String)
 
-        override suspend fun deleteRoutineById(id: String) {
-            dao.deleteRoutineById(id)
-        }
+    suspend fun deleteRoutineById(id: String)
 
-        override suspend fun deleteTaskById(id: String) {
-            dao.deleteTaskById(id)
-        }
+    suspend fun deleteTaskById(id: String)
 
-        override suspend fun updateRoutine(routine: RoutineEntity) {
-            dao.updateRoutine(routine)
-        }
+    // ※ DAO側ではInt（更新行数）を返していましたが、
+    // DataSourceやRepositoryで使わないなら Unit のままで全く問題ありません。
+    suspend fun updateRoutine(routine: RoutineEntity)
 
-        override suspend fun updateTask(task: TaskEntity) {
-            dao.updateTask(task)
-        }
+    suspend fun updateTask(task: TaskEntity)
 
-        override suspend fun insertRoutineWithTasks(
-            routine: RoutineEntity,
-            tasks: List<TaskEntity>,
-        ): String {
-            return dao.insertRoutineWithTasks(routine, tasks)
-        }
+    suspend fun insertRoutineWithTasks(
+        routine: RoutineEntity,
+        tasks: List<TaskEntity>,
+    ): String
 
-        override suspend fun updateRoutineWithTasks(
-            routine: RoutineEntity,
-            tasks: List<TaskEntity>,
-        ) {
-            dao.updateRoutineWithTasks(routine, tasks)
-        }
-    }
+    suspend fun updateRoutineWithTasks(
+        routine: RoutineEntity,
+        tasks: List<TaskEntity>,
+    )
+}
