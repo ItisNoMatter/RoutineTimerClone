@@ -7,7 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import jp.itIsNoMatter.routineTimerClone.data.database.EEffortDatabase
+import jp.itIsNoMatter.routineTimerClone.data.local.database.EEffortDatabase
 import javax.inject.Singleton
 
 @Module

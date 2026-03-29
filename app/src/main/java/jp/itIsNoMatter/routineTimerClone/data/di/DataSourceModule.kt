@@ -4,9 +4,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import jp.itIsNoMatter.routineTimerClone.data.dao.RoutineDao
-import jp.itIsNoMatter.routineTimerClone.data.datasource.RoutineDataSource
-import jp.itIsNoMatter.routineTimerClone.data.datasource.RoutineLocalDataSource
+import jp.itIsNoMatter.routineTimerClone.data.local.dao.RoutineDao
+import jp.itIsNoMatter.routineTimerClone.data.local.datasource.RoutineDataSource
+import jp.itIsNoMatter.routineTimerClone.data.local.datasource.RoutineLocalDataSource
 import javax.inject.Singleton
 
 @Module

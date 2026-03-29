@@ -1,7 +1,8 @@
-package jp.itIsNoMatter.routineTimerClone.data.entity
+package jp.itIsNoMatter.routineTimerClone.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import java.util.UUID
 
@@ -15,7 +16,7 @@ import java.util.UUID
             onDelete = ForeignKey.CASCADE,
         ),
     ],
-    indices = [androidx.room.Index("parentRoutineId")],
+    indices = [Index("parentRoutineId")],
 )
 data class TaskEntity(
     @PrimaryKey val id: String = UUID.randomUUID().toString(),

@@ -1,6 +1,6 @@
-package jp.itIsNoMatter.routineTimerClone.data.entity.mapper
+package jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper
 
-import jp.itIsNoMatter.routineTimerClone.data.entity.TaskEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.TaskEntity
 import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 

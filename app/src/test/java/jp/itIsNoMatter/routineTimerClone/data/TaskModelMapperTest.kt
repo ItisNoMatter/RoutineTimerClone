@@ -1,7 +1,7 @@
 package jp.itIsNoMatter.routineTimerClone.data
 
-import jp.itIsNoMatter.routineTimerClone.data.entity.TaskEntity
-import jp.itIsNoMatter.routineTimerClone.data.entity.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.TaskEntity
+import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.TaskModelMapper
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 import org.junit.Test
 
