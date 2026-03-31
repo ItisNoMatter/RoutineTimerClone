@@ -1,6 +1,7 @@
 package jp.itIsNoMatter.routineTimerClone.data.repository
 
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
+import jp.itIsNoMatter.routineTimerClone.data.remote.RoutineResponse
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 import kotlinx.coroutines.flow.Flow
@@ -47,6 +48,8 @@ interface RoutineRepository {
     fun getRoutinesByName(name: String): Flow<List<Routine>>
 
     suspend fun syncRoutines()
+
+    suspend fun addRoutine(routine: RoutineResponse)
 }
 
 object FakeRoutineRepository : RoutineRepository {
@@ -120,5 +123,8 @@ object FakeRoutineRepository : RoutineRepository {
     }
 
     override suspend fun syncRoutines() {
+    }
+
+    override suspend fun addRoutine(routine: RoutineResponse) {
     }
 }

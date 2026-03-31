@@ -4,6 +4,7 @@ import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.local.datasource.RoutineLocalDataSource
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.RoutineModelMapper
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.remote.RoutineResponse
 import jp.itIsNoMatter.routineTimerClone.data.remote.datasource.RoutineRemoteDataSource
 import jp.itIsNoMatter.routineTimerClone.data.remote.toEntity
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
@@ -46,6 +47,13 @@ class RoutineRepositoryImpl
         override suspend fun insertRoutine(routine: Routine) {
             val entity = routineModelMapper.toEntity(routine)
             localDataSource.insertRoutineWithTasks(entity.routine, entity.tasks)
+
+            val response = routineModelMapper.toResponse(routine)
+
+            try {
+                remoteDataSource.addRoutine(response)
+            } catch (e: Exception) {
+            }
         }
 
         override suspend fun insertRoutines(routines: List<Routine>) {
@@ -58,10 +66,23 @@ class RoutineRepositoryImpl
         override suspend fun updateRoutine(routine: Routine) {
             val entity = routineModelMapper.toEntity(routine)
             localDataSource.updateRoutineWithTasks(entity.routine, entity.tasks)
+
+            val response = routineModelMapper.toResponse(routine)
+            try {
+                remoteDataSource.updateRoutine(response)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         override suspend fun deleteRoutineById(id: String) {
             localDataSource.deleteRoutineById(id)
+
+            try {
+                remoteDataSource.deleteRoutine(id)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         override fun getTasksByRoutineId(routineId: String): Flow<List<Task>> {
@@ -134,5 +155,10 @@ class RoutineRepositoryImpl
                 e.printStackTrace()
                 // ※エラーが起きても、ViewModelはRoomの古いデータを表示し続けるのでアプリは落ちません（超安全！）
             }
+        }
+
+        override suspend fun addRoutine(routine: RoutineResponse) {
+            // サーバー（Remote）にデータを送信！
+            remoteDataSource.addRoutine(routine)
         }
     }

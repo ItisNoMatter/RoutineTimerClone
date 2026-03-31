@@ -11,6 +11,7 @@ import jp.itIsNoMatter.routineTimerClone.data.local.entity.RoutineWithTasks
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.TaskEntity
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.RoutineModelMapper
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.remote.RoutineResponse
 import jp.itIsNoMatter.routineTimerClone.data.remote.datasource.RoutineRemoteDataSource
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepositoryImpl
 import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
@@ -91,11 +92,15 @@ class RoutineRepositoryTest {
             // 1つのRoutineEntityにまとめられるMapperの戻り値を模倣
             // (toEntityの戻り値の型に合わせて調整してください。ここでは(routine, tasks)のPairやラッパークラスを想定)
             val mockMappedResult = mockk<RoutineWithTasks>()
+            val mockResponse = mockk<RoutineResponse>()
             every { mockMappedResult.routine } returns routineEntity
             every { mockMappedResult.tasks } returns taskEntities
 
             every { routineMapper.toEntity(routine) } returns mockMappedResult
             coEvery { localDataSource.insertRoutineWithTasks(any(), any()) } returns "new-id" // 戻り値は無視されるが定義は必要
+
+            every { routineMapper.toResponse(routine) } returns mockResponse
+            coEvery { remoteDataSource.addRoutine(any()) } returns Unit
 
             // 実行
             repository.insertRoutine(routine)
