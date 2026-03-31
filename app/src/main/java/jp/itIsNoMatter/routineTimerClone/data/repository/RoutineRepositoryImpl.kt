@@ -4,6 +4,7 @@ import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.local.datasource.RoutineLocalDataSource
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.RoutineModelMapper
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.TaskModelMapper
+import jp.itIsNoMatter.routineTimerClone.data.remote.RoutineResponse
 import jp.itIsNoMatter.routineTimerClone.data.remote.datasource.RoutineRemoteDataSource
 import jp.itIsNoMatter.routineTimerClone.data.remote.toEntity
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
@@ -134,5 +135,10 @@ class RoutineRepositoryImpl
                 e.printStackTrace()
                 // ※エラーが起きても、ViewModelはRoomの古いデータを表示し続けるのでアプリは落ちません（超安全！）
             }
+        }
+
+        override suspend fun addRoutine(routine: RoutineResponse) {
+            // サーバー（Remote）にデータを送信！
+            remoteDataSource.addRoutine(routine)
         }
     }

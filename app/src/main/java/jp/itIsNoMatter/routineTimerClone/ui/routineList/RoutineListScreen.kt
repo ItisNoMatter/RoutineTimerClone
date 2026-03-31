@@ -53,7 +53,9 @@ fun RoutineListScreen(
         routines = routines,
         onRoutineClick = { routineId -> navController.navigate(Route.RoutineEdit(routineId)) },
         onPlayButtonClick = { routineId -> navController.navigate(Route.RunRoutine(routineId)) },
-        onAddRoutineClick = { navController.navigate(Route.RoutineCreate) },
+        onAddRoutineClick = { // navController.navigate(Route.RoutineCreate)
+            viewModel.addDummyRoutine()
+        },
         onDeleteRoutine = viewModel::deleteRoutine,
     )
 }
