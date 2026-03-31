@@ -1,6 +1,5 @@
 package jp.itIsNoMatter.routineTimerClone.data.repository
 
-import android.util.Log
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.local.datasource.RoutineLocalDataSource
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.RoutineModelMapper
