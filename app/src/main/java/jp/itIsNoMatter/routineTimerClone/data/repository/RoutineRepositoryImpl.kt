@@ -53,9 +53,7 @@ class RoutineRepositoryImpl
 
             try {
                 remoteDataSource.addRoutine(response)
-                Log.d("RealPOST", "✅ 本物のルーティンをサーバーにPOSTしました！")
             } catch (e: Exception) {
-                Log.e("RealPOST", "❌ POST通信エラー", e)
             }
         }
 
