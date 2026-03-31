@@ -105,6 +105,10 @@ class RoutineCreateViewModel
         fun onClickBackButton() {
             val state = uiState.value
             viewModelScope.launch {
+                if (state is RoutineCreateUiState.Done) {
+                    routineRepository.updateRoutine(state.routine)
+                }
+
                 if (state is RoutineCreateUiState.Done && state.routine.name.isBlank()) {
                     routineRepository.deleteRoutineById(state.routine.id)
                 }

@@ -73,6 +73,7 @@ class RoutineEditViewModel
         fun onBackScreen() {
             viewModelScope.launch {
                 deleteInvalidTasks()
+                routineRepository.updateRoutine((uiState.value as RoutineEditUiState.Done).routine)
                 _navigateTo.emit(NavEvent.NavigateBack)
             }
         }

@@ -1,5 +1,6 @@
 package jp.itIsNoMatter.routineTimerClone.data.repository
 
+import android.util.Log
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.local.datasource.RoutineLocalDataSource
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper.RoutineModelMapper
@@ -47,6 +48,15 @@ class RoutineRepositoryImpl
         override suspend fun insertRoutine(routine: Routine) {
             val entity = routineModelMapper.toEntity(routine)
             localDataSource.insertRoutineWithTasks(entity.routine, entity.tasks)
+
+            val response = routineModelMapper.toResponse(routine)
+
+            try {
+                remoteDataSource.addRoutine(response)
+                Log.d("RealPOST", "✅ 本物のルーティンをサーバーにPOSTしました！")
+            } catch (e: Exception) {
+                Log.e("RealPOST", "❌ POST通信エラー", e)
+            }
         }
 
         override suspend fun insertRoutines(routines: List<Routine>) {
@@ -59,10 +69,23 @@ class RoutineRepositoryImpl
         override suspend fun updateRoutine(routine: Routine) {
             val entity = routineModelMapper.toEntity(routine)
             localDataSource.updateRoutineWithTasks(entity.routine, entity.tasks)
+
+            val response = routineModelMapper.toResponse(routine)
+            try {
+                remoteDataSource.updateRoutine(response)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         override suspend fun deleteRoutineById(id: String) {
             localDataSource.deleteRoutineById(id)
+
+            try {
+                remoteDataSource.deleteRoutine(id)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         override fun getTasksByRoutineId(routineId: String): Flow<List<Task>> {

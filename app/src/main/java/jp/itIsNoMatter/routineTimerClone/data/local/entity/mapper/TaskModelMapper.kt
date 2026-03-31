@@ -1,6 +1,7 @@
 package jp.itIsNoMatter.routineTimerClone.data.local.entity.mapper
 
 import jp.itIsNoMatter.routineTimerClone.data.local.entity.TaskEntity
+import jp.itIsNoMatter.routineTimerClone.data.remote.TaskResponse
 import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 
@@ -24,6 +25,16 @@ object TaskModelMapper {
             seconds = task.duration.getTotalSeconds(),
             parentRoutineId = parentRoutineId,
             announceRemainingTimeFlag = task.announceRemainingTimeFlag,
+        )
+    }
+
+    fun toResponse(task: Task): TaskResponse {
+        return TaskResponse(
+            id = task.id,
+            name = task.name,
+            seconds = task.duration.getTotalSeconds(),
+            announceRemainingTimeFlag = task.announceRemainingTimeFlag,
+            orderIndex = task.orderIndex,
         )
     }
 }
