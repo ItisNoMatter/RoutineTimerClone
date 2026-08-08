@@ -6,6 +6,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.serialization.kotlinx.json.json
 import jp.itIsNoMatter.routineTimerClone.data.remote.datasource.RoutineRemoteDataSource
@@ -29,6 +30,12 @@ object NetworkModule {
                         prettyPrint = true
                     },
                 )
+            }
+            // 接続先に到達できない場合でも無期限に待たされないようにするタイムアウト設定
+            install(HttpTimeout) {
+                connectTimeoutMillis = 5000
+                requestTimeoutMillis = 8000
+                socketTimeoutMillis = 8000
             }
         }
     }

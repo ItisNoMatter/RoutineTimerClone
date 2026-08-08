@@ -1,5 +1,6 @@
 package jp.itIsNoMatter.routineTimerClone.ui.routineEdit
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -71,10 +72,18 @@ class RoutineEditViewModel
         }
 
         fun onBackScreen() {
+            val state = uiState.value
             viewModelScope.launch {
-                deleteInvalidTasks()
-                routineRepository.updateRoutine((uiState.value as RoutineEditUiState.Done).routine)
-                _navigateTo.emit(NavEvent.NavigateBack)
+                try {
+                    if (state is RoutineEditUiState.Done) {
+                        deleteInvalidTasks()
+                        routineRepository.updateRoutine(state.routine)
+                    }
+                } catch (e: Exception) {
+                    Log.e("RoutineEditViewModel", "Failed to persist routine on back", e)
+                } finally {
+                    _navigateTo.emit(NavEvent.NavigateBack)
+                }
             }
         }
 

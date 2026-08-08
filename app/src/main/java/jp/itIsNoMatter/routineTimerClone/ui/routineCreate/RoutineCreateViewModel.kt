@@ -1,5 +1,6 @@
 package jp.itIsNoMatter.routineTimerClone.ui.routineCreate
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -105,14 +106,19 @@ class RoutineCreateViewModel
         fun onClickBackButton() {
             val state = uiState.value
             viewModelScope.launch {
-                if (state is RoutineCreateUiState.Done) {
-                    routineRepository.updateRoutine(state.routine)
+                try {
+                    if (state is RoutineCreateUiState.Done) {
+                        if (state.routine.name.isBlank()) {
+                            routineRepository.deleteRoutineById(state.routine.id)
+                        } else {
+                            routineRepository.updateRoutine(state.routine)
+                        }
+                    }
+                } catch (e: Exception) {
+                    Log.e("RoutineCreateViewModel", "Failed to persist routine on back", e)
+                } finally {
+                    _navigateTo.emit(NavEvent.NavigateBack)
                 }
-
-                if (state is RoutineCreateUiState.Done && state.routine.name.isBlank()) {
-                    routineRepository.deleteRoutineById(state.routine.id)
-                }
-                _navigateTo.emit(NavEvent.NavigateBack)
             }
         }
     }
