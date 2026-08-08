@@ -17,9 +17,6 @@ fun RoutineEditScreen(
     navHostController: NavHostController,
     viewModel: RoutineEditViewModel = hiltViewModel(),
 ) {
-    BackHandler {
-        viewModel.onBackScreen()
-    }
     LaunchedEffect(Unit) {
         viewModel.fetch(routineId)
     }
@@ -37,6 +34,7 @@ fun RoutineEditScreen(
             Text("Loading ...")
         }
         is RoutineEditUiState.Done -> {
+            BackHandler(onBack = viewModel::onBackScreen)
             val doneRoutine = uiState.routine
             RoutineEditContent(
                 routine = doneRoutine,
