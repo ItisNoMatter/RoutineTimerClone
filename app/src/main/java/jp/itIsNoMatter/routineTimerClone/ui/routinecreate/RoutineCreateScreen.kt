@@ -1,4 +1,4 @@
-package jp.itIsNoMatter.routineTimerClone.ui.routineCreate
+package jp.itIsNoMatter.routineTimerClone.ui.routinecreate
 
 import android.util.Log
 import androidx.activity.compose.BackHandler

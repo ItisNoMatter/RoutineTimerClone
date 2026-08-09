@@ -1,7 +1,8 @@
-package jp.itIsNoMatter.routineTimerClone.ui.routineList
+package jp.itIsNoMatter.routineTimerClone.ui.routinelist
 
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -36,12 +37,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.Route
+
+private val FabClearance = 88.dp
 
 @Composable
 fun RoutineListScreen(
@@ -109,9 +113,11 @@ fun RoutineCard(
     }
 }
 
+internal const val ROUTINE_LIST_TEST_TAG = "routineList"
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun RoutineListContent(
+internal fun RoutineListContent(
     routines: List<Routine>,
     onRoutineClick: (routineId: String) -> Unit = {},
     onPlayButtonClick: (routineId: String) -> Unit = {},
@@ -172,7 +178,9 @@ private fun RoutineListContent(
             modifier =
                 Modifier
                     .padding(innerPadding)
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .testTag(ROUTINE_LIST_TEST_TAG),
+            contentPadding = PaddingValues(bottom = FabClearance),
         ) {
             items(routines) { routine ->
                 RoutineCard(

@@ -1,0 +1,87 @@
+name: PR Issue Link Check
+
+on:
+  pull_request:
+    types:
+      - opened
+      - edited
+      - synchronize
+    branches:
+      - master
+
+permissions:
+  pull-requests: write
+
+jobs:
+  check-issue-link:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Detect bare issue references without a closing keyword
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.pull_request.body || "";
+            const marker = "<!-- pr-issue-link-check -->";
+
+            // "close #12" のようにGitHubの自動closeキーワードを伴う参照を集める
+            const closeKeywordRegex = /\b(close|closes|closed|fix|fixes|fixed|resolve|resolves|resolved)\s*:?\s*#(\d+)/gi;
+            const linkedNumbers = new Set();
+            let m;
+            while ((m = closeKeywordRegex.exec(body)) !== null) {
+              linkedNumbers.add(m[2]);
+            }
+
+            // 本文中の全issue参照を集める
+            const allRefsRegex = /#(\d+)/g;
+            const allNumbers = new Set();
+            while ((m = allRefsRegex.exec(body)) !== null) {
+              allNumbers.add(m[1]);
+            }
+
+            const bareNumbers = [...allNumbers].filter((n) => !linkedNumbers.has(n));
+
+            const { owner, repo } = context.repo;
+            const prNumber = context.payload.pull_request.number;
+
+            const existingComments = await github.rest.issues.listComments({
+              owner,
+              repo,
+              issue_number: prNumber,
+            });
+            const existing = existingComments.data.find((c) => c.body.includes(marker));
+
+            if (bareNumbers.length === 0) {
+              // 既にリマインダーコメントがあり、今は解消されている場合はその旨を残して終了
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner,
+                  repo,
+                  comment_id: existing.id,
+                  body: `${marker}\n closeキーワード漏れは解消されました。`,
+                });
+              }
+              return;
+            }
+
+            const refList = bareNumbers.map((n) => `#${n}`).join(", ");
+            const commentBody = [
+              marker,
+              `本文に ${refList} への言及がありますが、GitHubのissue自動closeキーワード(\`close\`/\`closes\`/\`fix\`/\`fixes\`/\`resolve\`/\`resolves\` + \`#N\`)になっていません。`,
+              "このPRのマージで該当issueをcloseしたい場合は `close #N` の形式に書き換えてください。意図的な言及であれば無視して構いません。",
+            ].join("\n\n");
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner,
+                repo,
+                comment_id: existing.id,
+                body: commentBody,
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: prNumber,
+                body: commentBody,
+              });
+            }

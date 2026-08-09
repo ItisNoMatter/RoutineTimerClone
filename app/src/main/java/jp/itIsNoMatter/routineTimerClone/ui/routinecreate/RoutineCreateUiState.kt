@@ -1,4 +1,4 @@
-package jp.itIsNoMatter.routineTimerClone.ui.routineCreate
+package jp.itIsNoMatter.routineTimerClone.ui.routinecreate
 
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 
