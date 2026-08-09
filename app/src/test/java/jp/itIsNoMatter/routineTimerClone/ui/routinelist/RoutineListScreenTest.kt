@@ -1,4 +1,4 @@
-package jp.itIsNoMatter.routineTimerClone.ui.routineList
+package jp.itIsNoMatter.routineTimerClone.ui.routinelist
 
 import androidx.compose.ui.test.getBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
