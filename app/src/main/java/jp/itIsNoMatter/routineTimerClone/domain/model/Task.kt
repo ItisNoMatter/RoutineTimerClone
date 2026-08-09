@@ -36,6 +36,8 @@ data class Task(
     val isInvalidValue: Boolean
         get() = name.isEmpty() || duration == Duration.Zero
 
+    fun toSpokenDurationString(): String = "${minutes}分${seconds}秒"
+
     companion object {
         val Empty =
             Task(
