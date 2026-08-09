@@ -1,0 +1,50 @@
+{
+  "skill_name": "gh-issue-creator",
+  "evals": [
+    {
+      "id": 0,
+      "eval_name": "small-task-followup",
+      "prompt": "さっき直した戻るボタンのハングの件、再発防止のフォローアップissueにしといて",
+      "expected_output": "「小タスク」テンプレートで、コミット81f4e0e(戻るボタンがネットワークハングでブロックされる問題を修正)の内容を踏まえた再発防止・フォローアップ用のissueが作成される。親issueは関連しそうなものが検索されるが、無理に紐付けず妥当な判断がされる。",
+      "files": [],
+      "assertions": [
+        "issue_created_successfully",
+        "uses_small_task_template",
+        "correct_label_applied",
+        "content_reflects_source_fix",
+        "related_issue_search_performed",
+        "user_confirmed_before_creation"
+      ]
+    },
+    {
+      "id": 1,
+      "eval_name": "longterm-offline-support",
+      "prompt": "ルーティン機能のオフライン対応、issueにして。まだざっくりとした構想段階",
+      "expected_output": "「中長期タスク」テンプレートで、目的/背景欄が構想段階であることを踏まえた内容で埋まったissueが作成される。close条件はデフォルトの「全ての子タスクが終了」のままか、確認の上で妥当な内容になっている。",
+      "files": [],
+      "assertions": [
+        "issue_created_successfully",
+        "uses_longterm_task_template",
+        "correct_label_applied",
+        "close_condition_addressed",
+        "acknowledges_conceptual_stage",
+        "user_confirmed_before_creation"
+      ]
+    },
+    {
+      "id": 2,
+      "eval_name": "parent-issue-search-notification",
+      "prompt": "タイマーの通知が来ない不具合、issue化して。前にも似たようなissueあった気がする",
+      "expected_output": "「小タスク」テンプレートで、gh issue listなどを使い関連しそうな既存issueを検索し、候補があれば提示した上で親issue欄を埋める(もしくは適切と判断すれば空欄にする)issueが作成される。",
+      "files": [],
+      "assertions": [
+        "issue_created_successfully",
+        "uses_small_task_template",
+        "correct_label_applied",
+        "related_issue_search_performed",
+        "parent_issue_handled_honestly",
+        "user_confirmed_before_creation"
+      ]
+    }
+  ]
+}
