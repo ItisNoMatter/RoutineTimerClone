@@ -16,6 +16,7 @@ import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
@@ -90,6 +91,36 @@ class RoutineEditViewModelTest {
             assertThat(navEvents, `is`(listOf(NavEvent.NavigateBack)))
 
             collectJob.cancel()
+        }
+
+    @Test
+    fun `fetch - 保存中にRoomの再emitが起きてもisSavingがtrueのまま保持されること`() =
+        runTest(testDispatcher) {
+            // RoomのgetRoutineById()相当。updateRoutine()等のDB書き込みで再emitされうるホットなFlowを模倣する
+            val routineFlow = MutableSharedFlow<LoadedValue<Routine>>(replay = 1)
+            routineFlow.tryEmit(LoadedValue.Done(routine))
+            every { routineRepository.getRoutine(routine.id) } returns routineFlow
+
+            val freshViewModel = RoutineEditViewModel(routineRepository)
+            freshViewModel.fetch(routine.id)
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val updateRoutineGate = CompletableDeferred<Unit>()
+            coEvery { routineRepository.updateRoutine(routine) } coAnswers {
+                // 保存の書き込みによってRoomの監視Flowが再emitされる状況を再現する
+                routineFlow.emit(LoadedValue.Done(routine))
+                updateRoutineGate.await()
+            }
+
+            freshViewModel.onBackScreen()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val state = freshViewModel.uiState.value
+            assertThat(state is RoutineEditUiState.Done, `is`(true))
+            assertThat((state as RoutineEditUiState.Done).isSaving, `is`(true))
+
+            updateRoutineGate.complete(Unit)
+            testDispatcher.scheduler.advanceUntilIdle()
         }
 
     @Test

@@ -34,8 +34,9 @@ class RoutineEditViewModel
                     routineRepository.getRoutine(routineId).collect { value ->
                         val routine = value.getOrNull()
                         if (routine != null) {
-                            _uiState.update {
-                                RoutineEditUiState.Done(routine)
+                            _uiState.update { current ->
+                                val isSaving = (current as? RoutineEditUiState.Done)?.isSaving ?: false
+                                RoutineEditUiState.Done(routine, isSaving = isSaving)
                             }
                         }
                     }
