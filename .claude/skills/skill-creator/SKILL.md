@@ -181,7 +181,7 @@ Execute this task:
 - Outputs to save: <what the user cares about — e.g., "the .docx file", "the final CSV">
 ```
 
-**ベースラインの実行**（同じプロンプトですが、ベースラインはコンテキストに依存します）:
+**ベースラインの実行**（同じプロンプトですが、ベースラインはコンテキストに依存します）: 重要な注意点として、ベースラインのサブエージェントに「スキルパスなし」と伝えるだけでは不十分です — スキルがすでに `.claude/skills/<name>/SKILL.md` として存在している場合、そのサブエージェントの `available_skills` には引き続き表示され、参照されてしまう可能性があります。ベースラインの実行をスポーンする前に、対象のスキルディレクトリを一時的に `.claude/skills/` の外（例: `<workspace>/skill-snapshot/` へ `mv`、既存スキル改善の場合は下記のスナップショットと同じ場所でよい）へ退避させ、スキルありとベースライン両方の実行が完了してから元の場所へ戻してください。
 *   **新しいスキルの作成**: スキルは全くありません。同じプロンプト、スキルパスなし、`without_skill/outputs/` に保存します。
 *   **既存のスキルの改善**: 古いバージョン。編集する前に、スキルのスナップショットを取得し（`cp -r <skill-path> <workspace>/skill-snapshot/`）、ベースラインのサブエージェントをそのスナップショットに向けます。`old_skill/outputs/` に保存します。
 
@@ -353,7 +353,7 @@ HTMLテンプレートを使用して、評価セットをユーザーに提示�
 
 1.  `assets/eval_review.html` からテンプレートを読み込みます
 2.  プレースホルダーを置き換えます：
-    *   `__EVAL_DATA_PLACEHOLDER__` → 評価アイテムのJSON配列（引用符で囲まないでください — これはJS変数の代入です）
+    *   `__EVAL_DATA_PLACEHOLDER__` → 評価アイテムのJSON配列（引用符で囲まないでください — これはJS変数の代入です）。埋め込む前に、JSON文字列中の `<` を `<` に置換してください（例: `json.dumps(items).replace("<", "\\u003c")`）— クエリ文言に `</script>` が含まれていると、そのまま埋め込んだ場合にスクリプトタグが早期に閉じられ、ページが破損します。
     *   `__SKILL_NAME_PLACEHOLDER__` → スキルの名前
     *   `__SKILL_DESCRIPTION_PLACEHOLDER__` → スキルの現在の説明
 3.  一時ファイル（例：`/tmp/eval_review_<skill-name>.html`）に書き込み、それを開きます：`open /tmp/eval_review_<skill-name>.html`
@@ -366,7 +366,7 @@ HTMLテンプレートを使用して、評価セットをユーザーに提示�
 
 ユーザーに伝えます：「これには少し時間がかかります — バックグラウンドで最適化ループを実行し、定期的に確認します。」
 
-評価セットをワークスペースに保存し、バックグラウンドで実行します：
+評価セットをワークスペースに保存し、バックグラウンドで実行します（`aggregate_benchmark.py` と同様、skill-creator ディレクトリから実行してください — `scripts.*` の相対importがそこを起点に解決されるためです）：
 
 ```bash
 python -m scripts.run_loop \
@@ -397,7 +397,7 @@ JSON出力から `best_description` を取得し、スキルのSKILL.mdフロン
 
 ### パッケージ化と提示（ファイル配信ツールが利用可能な場合のみ）
 
-ユーザーにファイルを提示するツール — `present_files`、またはCoworkリモートの場合は `SendUserFile` — にアクセスできるかどうかを確認します。どちらもない場合は、このステップをスキップしてください。アクセスできる場合は、スキルをパッケージ化し、そのツールで結果の `.skill` ファイルをユーザーに送信します：
+ユーザーにファイルを提示するツール — `present_files`、またはCoworkリモートの場合は `SendUserFile` — にアクセスできるかどうかを確認します。どちらもない場合は、このステップをスキップしてください。アクセスできる場合は、スキルをパッケージ化し、そのツールで結果の `.skill` ファイルをユーザーに送信します（他のスクリプトと同様、skill-creator ディレクトリから実行してください）：
 
 ```bash
 python -m scripts.package_skill <path/to/skill-folder>

@@ -83,8 +83,14 @@ def run_loop(
             print(f"Description: {current_description}", file=sys.stderr)
             print(f"{'='*60}", file=sys.stderr)
 
-        # Evaluate train + test together in one batch for parallelism
-        all_queries = train_set + test_set
+        # Evaluate train + test together in one batch for parallelism. Each
+        # item is tagged with its split so results can be recovered by that
+        # tag afterward — matching by query text would silently misclassify
+        # (or drop) items where the same query text appears in both splits.
+        all_queries = (
+            [{**q, "_split": "train"} for q in train_set]
+            + [{**q, "_split": "test"} for q in test_set]
+        )
         t0 = time.time()
         all_results = run_eval(
             eval_set=all_queries,
@@ -99,10 +105,8 @@ def run_loop(
         )
         eval_elapsed = time.time() - t0
 
-        # Split results back into train/test by matching queries
-        train_queries_set = {q["query"] for q in train_set}
-        train_result_list = [r for r in all_results["results"] if r["query"] in train_queries_set]
-        test_result_list = [r for r in all_results["results"] if r["query"] not in train_queries_set]
+        train_result_list = [r for r in all_results["results"] if r.get("_split") == "train"]
+        test_result_list = [r for r in all_results["results"] if r.get("_split") == "test"]
 
         train_passed = sum(1 for r in train_result_list if r["pass"])
         train_total = len(train_result_list)
@@ -148,7 +152,7 @@ def run_loop(
                 "test_size": len(test_set),
                 "history": history,
             }
-            live_report_path.write_text(generate_html(partial_output, auto_refresh=True, skill_name=name))
+            live_report_path.write_text(generate_html(partial_output, auto_refresh=True, skill_name=name), encoding="utf-8")
 
         if verbose:
             def print_eval_stats(label, results, elapsed):
@@ -213,6 +217,9 @@ def run_loop(
 
         current_description = new_description
 
+    if not history:
+        raise ValueError("max_iterations must be at least 1 (no iterations were run)")
+
     # Find the best iteration by TEST score (or train if no test set)
     if test_set:
         best = max(history, key=lambda h: h["test_passed"] or 0)
@@ -258,7 +265,11 @@ def main():
     parser.add_argument("--results-dir", default=None, help="Save all outputs (results.json, report.html, log.txt) to a timestamped subdirectory here")
     args = parser.parse_args()
 
-    eval_set = json.loads(Path(args.eval_set).read_text())
+    if args.max_iterations < 1:
+        print("Error: --max-iterations must be at least 1", file=sys.stderr)
+        sys.exit(1)
+
+    eval_set = json.loads(Path(args.eval_set).read_text(encoding="utf-8"))
     skill_path = Path(args.skill_path)
 
     if not (skill_path / "SKILL.md").exists():
@@ -275,7 +286,10 @@ def main():
         else:
             live_report_path = Path(args.report)
         # Open the report immediately so the user can watch
-        live_report_path.write_text("<html><body><h1>Starting optimization loop...</h1><meta http-equiv='refresh' content='5'></body></html>")
+        live_report_path.write_text(
+            "<html><body><h1>Starting optimization loop...</h1><meta http-equiv='refresh' content='5'></body></html>",
+            encoding="utf-8",
+        )
         webbrowser.open(str(live_report_path))
     else:
         live_report_path = None
@@ -310,15 +324,15 @@ def main():
     json_output = json.dumps(output, indent=2)
     print(json_output)
     if results_dir:
-        (results_dir / "results.json").write_text(json_output)
+        (results_dir / "results.json").write_text(json_output, encoding="utf-8")
 
     # Write final HTML report (without auto-refresh)
     if live_report_path:
-        live_report_path.write_text(generate_html(output, auto_refresh=False, skill_name=name))
+        live_report_path.write_text(generate_html(output, auto_refresh=False, skill_name=name), encoding="utf-8")
         print(f"\nReport: {live_report_path}", file=sys.stderr)
 
     if results_dir and live_report_path:
-        (results_dir / "report.html").write_text(generate_html(output, auto_refresh=False, skill_name=name))
+        (results_dir / "report.html").write_text(generate_html(output, auto_refresh=False, skill_name=name), encoding="utf-8")
 
     if results_dir:
         print(f"Results saved to: {results_dir}", file=sys.stderr)
