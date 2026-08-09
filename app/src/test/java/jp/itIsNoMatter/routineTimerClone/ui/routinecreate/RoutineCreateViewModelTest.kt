@@ -1,17 +1,17 @@
-package jp.itIsNoMatter.routineTimerClone.ui.routineEdit
+package jp.itIsNoMatter.routineTimerClone.ui.routinecreate
 
 import android.util.Log
+import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
 import io.mockk.mockkStatic
 import io.mockk.unmockkStatic
 import jp.itIsNoMatter.routineTimerClone.core.LoadedValue
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepository
-import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
-import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -30,29 +30,22 @@ import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class RoutineEditViewModelTest {
+class RoutineCreateViewModelTest {
     private val testDispatcher = StandardTestDispatcher()
     private val routineRepository = mockk<RoutineRepository>()
-    private lateinit var viewModel: RoutineEditViewModel
+    private lateinit var viewModel: RoutineCreateViewModel
 
-    private val routine =
-        Routine(
-            id = "routine-1",
-            name = "test",
-            tasks =
-                listOf(
-                    Task(id = "task-1", name = "task", duration = Duration(1, 0), announceRemainingTimeFlag = true),
-                ),
-        )
+    private val routine = Routine(id = "routine-1", name = "test", tasks = emptyList())
 
     @Before
     fun setup() {
         Dispatchers.setMain(testDispatcher)
         mockkStatic(Log::class)
         every { Log.e(any(), any(), any()) } returns 0
-        every { routineRepository.getRoutine(routine.id) } returns flowOf(LoadedValue.Done(routine))
-        viewModel = RoutineEditViewModel(routineRepository)
-        viewModel.fetch(routine.id)
+        coEvery { routineRepository.insertRoutine(any()) } just Runs
+        every { routineRepository.getRoutine(any()) } returns flowOf(LoadedValue.Done(routine))
+        viewModel = RoutineCreateViewModel(routineRepository)
+        viewModel.create()
         testDispatcher.scheduler.advanceUntilIdle()
     }
 
@@ -63,7 +56,7 @@ class RoutineEditViewModelTest {
     }
 
     @Test
-    fun `onBackScreen - 保存処理が完了するまでisSavingがtrueになり、その間の再入力は無視されること`() =
+    fun `onClickBackButton - 保存処理が完了するまでisSavingがtrueになり、その間の再入力は無視されること`() =
         runTest(testDispatcher) {
             val navEvents = mutableListOf<NavEvent>()
             val collectJob = launch { viewModel.navigateTo.collect { navEvents.add(it) } }
@@ -72,16 +65,16 @@ class RoutineEditViewModelTest {
             coEvery { routineRepository.updateRoutine(routine) } coAnswers { updateRoutineGate.await() }
 
             // 戻る操作 -> 保存処理が完了するまでisSaving=trueになり、画面遷移はまだ起きない
-            viewModel.onBackScreen()
+            viewModel.onClickBackButton()
             testDispatcher.scheduler.advanceUntilIdle()
 
             val savingState = viewModel.uiState.value
-            assertThat(savingState is RoutineEditUiState.Done, `is`(true))
-            assertThat((savingState as RoutineEditUiState.Done).isSaving, `is`(true))
+            assertThat(savingState is RoutineCreateUiState.Done, `is`(true))
+            assertThat((savingState as RoutineCreateUiState.Done).isSaving, `is`(true))
             assertThat(navEvents.isEmpty(), `is`(true))
 
             // 保存中に戻る操作をしても無視され、保存処理は1回しか実行されないこと
-            viewModel.onBackScreen()
+            viewModel.onClickBackButton()
             testDispatcher.scheduler.advanceUntilIdle()
             coVerify(exactly = 1) { routineRepository.updateRoutine(routine) }
 
@@ -94,15 +87,48 @@ class RoutineEditViewModelTest {
         }
 
     @Test
-    fun `fetch - 保存中にRoomの再emitが起きてもisSavingがtrueのまま保持されること`() =
+    fun `onClickBackButton - タイトルが空の場合はdeleteRoutineByIdが呼ばれ、保存完了まで連打が無視されること`() =
         runTest(testDispatcher) {
-            // RoomのgetRoutineById()相当。updateRoutine()等のDB書き込みで再emitされうるホットなFlowを模倣する
+            val blankRoutine = routine.copy(name = "")
+            every { routineRepository.getRoutine(any()) } returns flowOf(LoadedValue.Done(blankRoutine))
+            val freshViewModel = RoutineCreateViewModel(routineRepository)
+            freshViewModel.create()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val navEvents = mutableListOf<NavEvent>()
+            val collectJob = launch { freshViewModel.navigateTo.collect { navEvents.add(it) } }
+
+            val deleteRoutineGate = CompletableDeferred<Unit>()
+            coEvery { routineRepository.deleteRoutineById(blankRoutine.id) } coAnswers { deleteRoutineGate.await() }
+
+            freshViewModel.onClickBackButton()
+            testDispatcher.scheduler.advanceUntilIdle()
+
+            val savingState = freshViewModel.uiState.value
+            assertThat(savingState is RoutineCreateUiState.Done, `is`(true))
+            assertThat((savingState as RoutineCreateUiState.Done).isSaving, `is`(true))
+
+            freshViewModel.onClickBackButton()
+            testDispatcher.scheduler.advanceUntilIdle()
+            coVerify(exactly = 1) { routineRepository.deleteRoutineById(blankRoutine.id) }
+
+            deleteRoutineGate.complete(Unit)
+            testDispatcher.scheduler.advanceUntilIdle()
+            assertThat(navEvents, `is`(listOf(NavEvent.NavigateBack)))
+
+            collectJob.cancel()
+        }
+
+    @Test
+    fun `create - 保存中にRoomの再emitが起きてもisSavingがtrueのまま保持されること`() =
+        runTest(testDispatcher) {
+            // RoomのgetRoutine()相当。updateRoutine()等のDB書き込みで再emitされうるホットなFlowを模倣する
             val routineFlow = MutableSharedFlow<LoadedValue<Routine>>(replay = 1)
             routineFlow.tryEmit(LoadedValue.Done(routine))
-            every { routineRepository.getRoutine(routine.id) } returns routineFlow
+            every { routineRepository.getRoutine(any()) } returns routineFlow
 
-            val freshViewModel = RoutineEditViewModel(routineRepository)
-            freshViewModel.fetch(routine.id)
+            val freshViewModel = RoutineCreateViewModel(routineRepository)
+            freshViewModel.create()
             testDispatcher.scheduler.advanceUntilIdle()
 
             val updateRoutineGate = CompletableDeferred<Unit>()
@@ -112,26 +138,26 @@ class RoutineEditViewModelTest {
                 updateRoutineGate.await()
             }
 
-            freshViewModel.onBackScreen()
+            freshViewModel.onClickBackButton()
             testDispatcher.scheduler.advanceUntilIdle()
 
             val state = freshViewModel.uiState.value
-            assertThat(state is RoutineEditUiState.Done, `is`(true))
-            assertThat((state as RoutineEditUiState.Done).isSaving, `is`(true))
+            assertThat(state is RoutineCreateUiState.Done, `is`(true))
+            assertThat((state as RoutineCreateUiState.Done).isSaving, `is`(true))
 
             updateRoutineGate.complete(Unit)
             testDispatcher.scheduler.advanceUntilIdle()
         }
 
     @Test
-    fun `onBackScreen - 保存処理が失敗しても画面遷移(NavigateBack)が発火すること`() =
+    fun `onClickBackButton - 保存処理が失敗しても画面遷移(NavigateBack)が発火すること`() =
         runTest(testDispatcher) {
             val navEvents = mutableListOf<NavEvent>()
             val collectJob = launch { viewModel.navigateTo.collect { navEvents.add(it) } }
 
             coEvery { routineRepository.updateRoutine(routine) } throws RuntimeException("network error")
 
-            viewModel.onBackScreen()
+            viewModel.onClickBackButton()
             testDispatcher.scheduler.advanceUntilIdle()
 
             assertThat(navEvents, `is`(listOf(NavEvent.NavigateBack)))
