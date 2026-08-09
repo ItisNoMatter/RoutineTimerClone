@@ -113,7 +113,7 @@ class RunRoutineViewModel
         }
 
         fun speakTaskInstruction(task: Task) {
-            speak("今から${task.minutes}分${task.seconds}秒間、${task.name}を始めてください")
+            speak("今から${task.toSpokenDurationString()}間、${task.name}を始めてください")
         }
 
         override fun onCleared() {

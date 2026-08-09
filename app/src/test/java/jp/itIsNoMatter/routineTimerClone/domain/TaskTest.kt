@@ -24,4 +24,16 @@ class TaskTest {
         assertEquals(1, task.minutes)
         assertEquals(30, task.seconds)
     }
+
+    @Test
+    fun toSpokenDurationStringTest() {
+        val task = Task(id = "1", name = "hoge", minutes = 2, seconds = 30, announceRemainingTimeFlag = true)
+        assertEquals("2分30秒", task.toSpokenDurationString())
+    }
+
+    @Test
+    fun toSpokenDurationStringTest_singleDigitSeconds() {
+        val task = Task(id = "1", name = "hoge", minutes = 0, seconds = 5, announceRemainingTimeFlag = true)
+        assertEquals("0分5秒", task.toSpokenDurationString())
+    }
 }
