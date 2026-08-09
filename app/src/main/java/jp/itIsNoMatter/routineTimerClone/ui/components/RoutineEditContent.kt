@@ -1,6 +1,8 @@
 package jp.itIsNoMatter.routineTimerClone.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,6 +18,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -30,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
@@ -45,46 +49,65 @@ import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 @Composable
 fun RoutineEditContent(
     routine: Routine,
+    isSaving: Boolean = false,
     onRoutineTitleChange: (String) -> Unit = {},
     onClickAddButton: () -> Unit = {},
     onClickTaskCard: (taskId: String) -> Unit = {},
     onClickBackButton: () -> Unit = {},
 ) {
-    Scaffold(
-        topBar = {
-            RoutineEditTopBar(
-                routine = routine,
-                onRoutineTitleChange = onRoutineTitleChange,
-                onClickBackButton = onClickBackButton,
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                RoutineEditTopBar(
+                    routine = routine,
+                    onRoutineTitleChange = onRoutineTitleChange,
+                    onClickBackButton = onClickBackButton,
+                    enabled = !isSaving,
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    modifier =
+                        Modifier
+                            .padding(bottom = 16.dp)
+                            .imePadding(),
+                    onClick = onClickAddButton,
+                ) {
+                    Icon(Icons.Filled.Add, "Add Task")
+                }
+            },
+        ) { innerPadding ->
+            LazyColumn(
+                contentPadding = innerPadding,
                 modifier =
                     Modifier
-                        .padding(bottom = 16.dp)
-                        .imePadding(),
-                onClick = onClickAddButton,
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.surfaceContainerHigh),
             ) {
-                Icon(Icons.Filled.Add, "Add Task")
-            }
-        },
-    ) { innerPadding ->
-        LazyColumn(
-            contentPadding = innerPadding,
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceContainerHigh),
-        ) {
-            items(routine.tasks.size) { index ->
-                if (index == 0) {
-                    TaskCard(routine.tasks[index], NodePosition.FIRST, onClick = { onClickTaskCard(routine.tasks[index].id) })
-                } else if (index == routine.tasks.size - 1) {
-                    TaskCard(routine.tasks[index], NodePosition.LAST, onClick = { onClickTaskCard(routine.tasks[index].id) })
-                } else {
-                    TaskCard(routine.tasks[index], NodePosition.MIDDLE, onClick = { onClickTaskCard(routine.tasks[index].id) })
+                items(routine.tasks.size) { index ->
+                    if (index == 0) {
+                        TaskCard(routine.tasks[index], NodePosition.FIRST, onClick = { onClickTaskCard(routine.tasks[index].id) })
+                    } else if (index == routine.tasks.size - 1) {
+                        TaskCard(routine.tasks[index], NodePosition.LAST, onClick = { onClickTaskCard(routine.tasks[index].id) })
+                    } else {
+                        TaskCard(routine.tasks[index], NodePosition.MIDDLE, onClick = { onClickTaskCard(routine.tasks[index].id) })
+                    }
                 }
+            }
+        }
+        if (isSaving) {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.32f))
+                        .clickable(
+                            indication = null,
+                            interactionSource = remember { MutableInteractionSource() },
+                        ) {},
+                contentAlignment = Alignment.Center,
+            ) {
+                CircularProgressIndicator()
             }
         }
     }
@@ -95,6 +118,7 @@ fun RoutineEditTopBar(
     routine: Routine,
     onRoutineTitleChange: (String) -> Unit = {},
     onClickBackButton: () -> Unit = {},
+    enabled: Boolean = true,
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -129,6 +153,7 @@ fun RoutineEditTopBar(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             IconButton(
+                enabled = enabled,
                 onClick = {
                     onClickBackButton()
                 },
@@ -209,5 +234,30 @@ fun RoutineEditContentPreview() {
                         ),
                     ),
             ),
+    )
+}
+
+@Preview(
+    showBackground = true,
+    device = "spec:width=411dp,height=891dp,dpi=420,isRound=false,chinSize=0dp,orientation=portrait",
+)
+@Composable
+fun RoutineEditContentSavingPreview() {
+    RoutineEditContent(
+        routine =
+            Routine(
+                id = "1",
+                name = "test",
+                tasks =
+                    listOf(
+                        Task(
+                            id = "1",
+                            name = "test",
+                            duration = Duration(minutes = 1, seconds = 2),
+                            announceRemainingTimeFlag = true,
+                        ),
+                    ),
+            ),
+        isSaving = true,
     )
 }
