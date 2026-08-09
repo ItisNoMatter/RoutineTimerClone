@@ -1,4 +1,4 @@
-package jp.itIsNoMatter.routineTimerClone.ui.routineEdit
+package jp.itIsNoMatter.routineTimerClone.ui.routinecreate
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jp.itIsNoMatter.routineTimerClone.core.getOrNull
 import jp.itIsNoMatter.routineTimerClone.data.repository.RoutineRepository
+import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.Route
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,15 +19,42 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class RoutineEditViewModel
+class RoutineCreateViewModel
     @Inject
     constructor(
         private val routineRepository: RoutineRepository,
     ) : ViewModel() {
-        private val _uiState = MutableStateFlow<RoutineEditUiState>(RoutineEditUiState.Loading)
-        val uiState: StateFlow<RoutineEditUiState> = _uiState.asStateFlow()
+        private val _uiState = MutableStateFlow<RoutineCreateUiState>(RoutineCreateUiState.Loading)
+        val uiState: StateFlow<RoutineCreateUiState> = _uiState.asStateFlow()
+
         private val _navigateTo = MutableSharedFlow<NavEvent>()
         val navigateTo = _navigateTo.asSharedFlow()
+
+        fun create() {
+            if (uiState.value is RoutineCreateUiState.Done) return
+            viewModelScope.launch {
+                try {
+                    val newRoutine = Routine(name = "", tasks = emptyList())
+
+                    val routineId = newRoutine.id
+
+                    routineRepository.insertRoutine(newRoutine)
+
+                    routineRepository.getRoutine(routineId).collect { value ->
+                        val routine = value.getOrNull()
+                        if (routine != null) {
+                            _uiState.update {
+                                RoutineCreateUiState.Done(routine)
+                            }
+                        }
+                    }
+                } catch (e: Exception) {
+                    _uiState.update {
+                        RoutineCreateUiState.Error(e)
+                    }
+                }
+            }
+        }
 
         fun fetch(routineId: String) {
             viewModelScope.launch {
@@ -35,13 +63,13 @@ class RoutineEditViewModel
                         val routine = value.getOrNull()
                         if (routine != null) {
                             _uiState.update {
-                                RoutineEditUiState.Done(routine)
+                                RoutineCreateUiState.Done(routine)
                             }
                         }
                     }
                 } catch (e: Exception) {
                     _uiState.update {
-                        RoutineEditUiState.Error(e)
+                        RoutineCreateUiState.Error(e)
                     }
                 }
             }
@@ -49,50 +77,47 @@ class RoutineEditViewModel
 
         fun onRoutineTitleChange(title: String) {
             val state = uiState.value
-            if (state !is RoutineEditUiState.Done) return
+            if (state !is RoutineCreateUiState.Done) return
             viewModelScope.launch {
                 routineRepository.updateRoutine(state.routine.copy(name = title))
             }
         }
 
         fun onClickAddTaskButton() {
+            val state = uiState.value
+            if (state !is RoutineCreateUiState.Done) return
             viewModelScope.launch {
-                if (uiState.value is RoutineEditUiState.Done) {
-                    val routineId = (uiState.value as RoutineEditUiState.Done).routine.id
+                if (uiState.value is RoutineCreateUiState.Done) {
+                    val routineId = state.routine.id
                     _navigateTo.emit(NavEvent.NavigateTo(route = Route.TaskCreate(routineId)))
                 }
             }
         }
 
         fun onClickTaskCard(taskId: String) {
+            val state = uiState.value
+            if (state !is RoutineCreateUiState.Done) return
+            val parentRoutineId = state.routine.id
             viewModelScope.launch {
-                val parentRoutineId = (uiState.value as RoutineEditUiState.Done).routine.id
                 _navigateTo.emit(NavEvent.NavigateTo(route = Route.TaskEdit(parentRoutineId, taskId)))
             }
         }
 
-        fun onBackScreen() {
+        fun onClickBackButton() {
             val state = uiState.value
             viewModelScope.launch {
                 try {
-                    if (state is RoutineEditUiState.Done) {
-                        deleteInvalidTasks()
-                        routineRepository.updateRoutine(state.routine)
+                    if (state is RoutineCreateUiState.Done) {
+                        if (state.routine.name.isBlank()) {
+                            routineRepository.deleteRoutineById(state.routine.id)
+                        } else {
+                            routineRepository.updateRoutine(state.routine)
+                        }
                     }
                 } catch (e: Exception) {
-                    Log.e("RoutineEditViewModel", "Failed to persist routine on back", e)
+                    Log.e("RoutineCreateViewModel", "Failed to persist routine on back", e)
                 } finally {
                     _navigateTo.emit(NavEvent.NavigateBack)
-                }
-            }
-        }
-
-        private suspend fun deleteInvalidTasks() {
-            val state = uiState.value
-            if (state !is RoutineEditUiState.Done) return
-            state.routine.tasks.forEach { task ->
-                if (task.isInvalidValue) {
-                    routineRepository.deleteTaskById(task.id)
                 }
             }
         }
