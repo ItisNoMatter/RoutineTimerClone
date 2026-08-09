@@ -1,4 +1,4 @@
-package jp.itIsNoMatter.routineTimerClone.ui.runRoutine
+package jp.itIsNoMatter.routineTimerClone.ui.runroutine
 
 import android.app.Application
 import android.media.SoundPool

@@ -1,4 +1,4 @@
-package jp.itIsNoMatter.routineTimerClone.ui.routineEdit
+package jp.itIsNoMatter.routineTimerClone.ui.routinecreate
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
@@ -12,13 +12,12 @@ import jp.itIsNoMatter.routineTimerClone.ui.components.RoutineEditContent
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 
 @Composable
-fun RoutineEditScreen(
-    routineId: String,
+fun RoutineCreateScreen(
     navHostController: NavHostController,
-    viewModel: RoutineEditViewModel = hiltViewModel(),
+    viewModel: RoutineCreateViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
-        viewModel.fetch(routineId)
+        viewModel.create()
     }
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collect { event ->
@@ -28,24 +27,24 @@ fun RoutineEditScreen(
             }
         }
     }
-
     when (val uiState = viewModel.uiState.collectAsState().value) {
-        is RoutineEditUiState.Loading -> {
+        is RoutineCreateUiState.Loading -> {
             Text("Loading ...")
         }
-        is RoutineEditUiState.Done -> {
-            BackHandler(onBack = viewModel::onBackScreen)
+        is RoutineCreateUiState.Done -> {
+            BackHandler(enabled = !uiState.isSaving, onBack = viewModel::onClickBackButton)
             val doneRoutine = uiState.routine
             RoutineEditContent(
                 routine = doneRoutine,
+                isSaving = uiState.isSaving,
                 onRoutineTitleChange = viewModel::onRoutineTitleChange,
                 onClickAddButton = viewModel::onClickAddTaskButton,
                 onClickTaskCard = viewModel::onClickTaskCard,
-                onClickBackButton = viewModel::onBackScreen,
+                onClickBackButton = viewModel::onClickBackButton,
             )
         }
-        is RoutineEditUiState.Error -> {
-            Log.e("RoutineEditScreen", "Error: ${uiState.e}")
+        is RoutineCreateUiState.Error -> {
+            Log.e("RoutineCreateScreen", "Error: ${uiState.e}")
         }
     }
 }

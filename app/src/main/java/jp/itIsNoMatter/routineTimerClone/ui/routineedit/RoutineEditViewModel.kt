@@ -1,4 +1,4 @@
-package jp.itIsNoMatter.routineTimerClone.ui.routineEdit
+package jp.itIsNoMatter.routineTimerClone.ui.routineedit
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -34,8 +34,9 @@ class RoutineEditViewModel
                     routineRepository.getRoutine(routineId).collect { value ->
                         val routine = value.getOrNull()
                         if (routine != null) {
-                            _uiState.update {
-                                RoutineEditUiState.Done(routine)
+                            _uiState.update { current ->
+                                val isSaving = (current as? RoutineEditUiState.Done)?.isSaving ?: false
+                                RoutineEditUiState.Done(routine, isSaving = isSaving)
                             }
                         }
                     }
@@ -73,9 +74,11 @@ class RoutineEditViewModel
 
         fun onBackScreen() {
             val state = uiState.value
+            if (state is RoutineEditUiState.Done && state.isSaving) return
             viewModelScope.launch {
                 try {
                     if (state is RoutineEditUiState.Done) {
+                        _uiState.update { state.copy(isSaving = true) }
                         deleteInvalidTasks()
                         routineRepository.updateRoutine(state.routine)
                     }

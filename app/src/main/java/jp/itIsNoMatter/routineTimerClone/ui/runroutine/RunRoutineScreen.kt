@@ -1,4 +1,4 @@
-package jp.itIsNoMatter.routineTimerClone.ui.runRoutine
+package jp.itIsNoMatter.routineTimerClone.ui.runroutine
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

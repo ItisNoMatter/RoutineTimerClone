@@ -1,4 +1,4 @@
-package jp.itIsNoMatter.routineTimerClone.ui.routineCreate
+package jp.itIsNoMatter.routineTimerClone.ui.routineedit
 
 import android.util.Log
 import androidx.activity.compose.BackHandler
@@ -12,12 +12,13 @@ import jp.itIsNoMatter.routineTimerClone.ui.components.RoutineEditContent
 import jp.itIsNoMatter.routineTimerClone.ui.navigation.NavEvent
 
 @Composable
-fun RoutineCreateScreen(
+fun RoutineEditScreen(
+    routineId: String,
     navHostController: NavHostController,
-    viewModel: RoutineCreateViewModel = hiltViewModel(),
+    viewModel: RoutineEditViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(Unit) {
-        viewModel.create()
+        viewModel.fetch(routineId)
     }
     LaunchedEffect(Unit) {
         viewModel.navigateTo.collect { event ->
@@ -27,23 +28,25 @@ fun RoutineCreateScreen(
             }
         }
     }
+
     when (val uiState = viewModel.uiState.collectAsState().value) {
-        is RoutineCreateUiState.Loading -> {
+        is RoutineEditUiState.Loading -> {
             Text("Loading ...")
         }
-        is RoutineCreateUiState.Done -> {
-            BackHandler(onBack = viewModel::onClickBackButton)
+        is RoutineEditUiState.Done -> {
+            BackHandler(enabled = !uiState.isSaving, onBack = viewModel::onBackScreen)
             val doneRoutine = uiState.routine
             RoutineEditContent(
                 routine = doneRoutine,
+                isSaving = uiState.isSaving,
                 onRoutineTitleChange = viewModel::onRoutineTitleChange,
                 onClickAddButton = viewModel::onClickAddTaskButton,
                 onClickTaskCard = viewModel::onClickTaskCard,
-                onClickBackButton = viewModel::onClickBackButton,
+                onClickBackButton = viewModel::onBackScreen,
             )
         }
-        is RoutineCreateUiState.Error -> {
-            Log.e("RoutineCreateScreen", "Error: ${uiState.e}")
+        is RoutineEditUiState.Error -> {
+            Log.e("RoutineEditScreen", "Error: ${uiState.e}")
         }
     }
 }
