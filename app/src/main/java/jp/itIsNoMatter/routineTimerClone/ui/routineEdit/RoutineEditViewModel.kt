@@ -73,9 +73,11 @@ class RoutineEditViewModel
 
         fun onBackScreen() {
             val state = uiState.value
+            if (state is RoutineEditUiState.Done && state.isSaving) return
             viewModelScope.launch {
                 try {
                     if (state is RoutineEditUiState.Done) {
+                        _uiState.update { state.copy(isSaving = true) }
                         deleteInvalidTasks()
                         routineRepository.updateRoutine(state.routine)
                     }

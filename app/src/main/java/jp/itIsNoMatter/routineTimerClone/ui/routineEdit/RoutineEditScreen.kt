@@ -34,10 +34,11 @@ fun RoutineEditScreen(
             Text("Loading ...")
         }
         is RoutineEditUiState.Done -> {
-            BackHandler(onBack = viewModel::onBackScreen)
+            BackHandler(enabled = !uiState.isSaving, onBack = viewModel::onBackScreen)
             val doneRoutine = uiState.routine
             RoutineEditContent(
                 routine = doneRoutine,
+                isSaving = uiState.isSaving,
                 onRoutineTitleChange = viewModel::onRoutineTitleChange,
                 onClickAddButton = viewModel::onClickAddTaskButton,
                 onClickTaskCard = viewModel::onClickTaskCard,
