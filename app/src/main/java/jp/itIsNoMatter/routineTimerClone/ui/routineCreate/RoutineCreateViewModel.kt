@@ -43,8 +43,9 @@ class RoutineCreateViewModel
                     routineRepository.getRoutine(routineId).collect { value ->
                         val routine = value.getOrNull()
                         if (routine != null) {
-                            _uiState.update {
-                                RoutineCreateUiState.Done(routine)
+                            _uiState.update { current ->
+                                val isSaving = (current as? RoutineCreateUiState.Done)?.isSaving ?: false
+                                RoutineCreateUiState.Done(routine, isSaving = isSaving)
                             }
                         }
                     }
@@ -105,9 +106,11 @@ class RoutineCreateViewModel
 
         fun onClickBackButton() {
             val state = uiState.value
+            if (state is RoutineCreateUiState.Done && state.isSaving) return
             viewModelScope.launch {
                 try {
                     if (state is RoutineCreateUiState.Done) {
+                        _uiState.update { state.copy(isSaving = true) }
                         if (state.routine.name.isBlank()) {
                             routineRepository.deleteRoutineById(state.routine.id)
                         } else {
