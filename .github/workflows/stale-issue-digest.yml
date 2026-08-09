@@ -1,0 +1,45 @@
+name: Stale Issue Digest
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+
+permissions:
+  issues: read
+
+jobs:
+  digest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: List stale open issues
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          THRESHOLD_DAYS=60
+          THRESHOLD_DATE=$(date -u -d "-${THRESHOLD_DAYS} days" +%Y-%m-%dT%H:%M:%SZ)
+
+          echo "## 棚卸し対象: ${THRESHOLD_DAYS}日以上更新の無いopen issue" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          STALE=$(gh issue list --repo "${{ github.repository }}" --state open --limit 200 \
+            --json number,title,url,updatedAt \
+            --jq --arg threshold "$THRESHOLD_DATE" '
+              [.[] | select(.updatedAt < $threshold)]
+              | sort_by(.updatedAt)
+            ')
+
+          COUNT=$(echo "$STALE" | jq 'length')
+
+          if [ "$COUNT" -eq 0 ]; then
+            echo "該当issueはありません。" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "${COUNT} 件が対象です:" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "| # | タイトル | 最終更新日 |" >> "$GITHUB_STEP_SUMMARY"
+            echo "|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+            echo "$STALE" | jq -r '.[] | "| [#\(.number)](\(.url)) | \(.title) | \(.updatedAt | split("T")[0]) |"' >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "_自動closeは行いません。close条件を満たしているかはコードやテストを読んでの判断が必要なため、人手(またはClaude Codeでの棚卸しセッション)で確認してください。_" >> "$GITHUB_STEP_SUMMARY"
