@@ -6,10 +6,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import jp.itIsNoMatter.routineTimerClone.ui.routineCreate.RoutineCreateScreen
-import jp.itIsNoMatter.routineTimerClone.ui.routineEdit.RoutineEditScreen
-import jp.itIsNoMatter.routineTimerClone.ui.routineList.RoutineListScreen
-import jp.itIsNoMatter.routineTimerClone.ui.runRoutine.runRoutineScreen
+import jp.itIsNoMatter.routineTimerClone.ui.routinecreate.RoutineCreateScreen
+import jp.itIsNoMatter.routineTimerClone.ui.routineedit.RoutineEditScreen
+import jp.itIsNoMatter.routineTimerClone.ui.routinelist.RoutineListScreen
+import jp.itIsNoMatter.routineTimerClone.ui.runroutine.runRoutineScreen
 import jp.itIsNoMatter.routineTimerClone.ui.task.create.TaskCreateScreen
 import jp.itIsNoMatter.routineTimerClone.ui.task.edit.TaskEditScreen
 
