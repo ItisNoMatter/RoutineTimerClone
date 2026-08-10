@@ -35,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.ImeAction
@@ -46,10 +47,13 @@ import jp.itIsNoMatter.routineTimerClone.domain.model.Duration
 import jp.itIsNoMatter.routineTimerClone.domain.model.Routine
 import jp.itIsNoMatter.routineTimerClone.domain.model.Task
 
+internal const val ROUTINE_TITLE_TEXT_FIELD_TEST_TAG = "routineTitleTextField"
+
 @Composable
 fun RoutineEditContent(
     routine: Routine,
     isSaving: Boolean = false,
+    isBackButtonEnabled: Boolean = !isSaving,
     onRoutineTitleChange: (String) -> Unit = {},
     onClickAddButton: () -> Unit = {},
     onClickTaskCard: (taskId: String) -> Unit = {},
@@ -62,7 +66,7 @@ fun RoutineEditContent(
                     routine = routine,
                     onRoutineTitleChange = onRoutineTitleChange,
                     onClickBackButton = onClickBackButton,
-                    enabled = !isSaving,
+                    enabled = isBackButtonEnabled,
                 )
             },
             floatingActionButton = {
@@ -158,7 +162,7 @@ fun RoutineEditTopBar(
                     onClickBackButton()
                 },
             ) {
-                Icon(Icons.AutoMirrored.Filled.ArrowBack, null)
+                Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
             }
             Box(modifier = Modifier.weight(1f)) {
                 if (routine.name.isEmpty()) {
@@ -187,7 +191,8 @@ fun RoutineEditTopBar(
                         ),
                     modifier =
                         Modifier
-                            .fillMaxWidth(),
+                            .fillMaxWidth()
+                            .testTag(ROUTINE_TITLE_TEXT_FIELD_TEST_TAG),
                 )
             }
         }

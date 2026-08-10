@@ -39,6 +39,7 @@ fun RoutineEditScreen(
             RoutineEditContent(
                 routine = doneRoutine,
                 isSaving = uiState.isSaving,
+                isBackButtonEnabled = !uiState.isSaving && doneRoutine.name.isNotBlank(),
                 onRoutineTitleChange = viewModel::onRoutineTitleChange,
                 onClickAddButton = viewModel::onClickAddTaskButton,
                 onClickTaskCard = viewModel::onClickTaskCard,
@@ -47,6 +48,7 @@ fun RoutineEditScreen(
         }
         is RoutineEditUiState.Error -> {
             Log.e("RoutineEditScreen", "Error: ${uiState.e}")
+            Text("Error")
         }
     }
 }
