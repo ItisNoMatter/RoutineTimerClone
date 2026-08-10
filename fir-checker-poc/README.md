@@ -1,7 +1,8 @@
-# FIR Checker PoC (#154)
+# FIR Checker PoC (#154) / 危険判定ロジック (#155)
 
-K2コンパイラのFIR拡張APIを使い、危険な`as`キャストを検出してコンパイルエラーにする最小構成のコンパイラプラグインのPoC。
-`#153`(FIR Checker導入)の技術調査タスク。**本モジュールは`:app`のビルドには一切組み込まれておらず、独立した検証用モジュール。**
+K2コンパイラのFIR拡張APIを使い、危険な`as`キャストを検出してコンパイルエラーにする最小構成のコンパイラプラグインのPoC(#154)と、
+「危険」とみなす条件を定義した検出ロジック本体(#155)。
+`#153`(FIR Checker導入)の子issue。**本モジュールは`:app`のビルドには一切組み込まれておらず、独立した検証用モジュール。**
 
 ## 構成
 
@@ -14,14 +15,15 @@ K2コンパイラのFIR拡張APIを使い、危険な`as`キャストを検出�
 ./gradlew :fir-checker-poc-sample:compileKotlin
 ```
 
-`fir-checker-poc-sample/src/main/kotlin/Sample.kt`の`value as String`(危険な`as`)で以下のエラーが出て失敗する。
+`fir-checker-poc-sample/src/main/kotlin/Sample.kt`の`value as String`(宣言型・スマートキャストいずれからも保証されないダウンキャスト)で以下のエラーが出て失敗する。
 `value as? Int`(安全な`as?`)は検出対象外のため、そちらではエラーが出ないことも確認済み。
 
 ```
-e: .../Sample.kt:5:16 Unsafe 'as' cast is prohibited by AsCastChecker. Use 'as?' or a smart cast instead.
+e: .../Sample.kt:5:16 This 'as' downcast is not guaranteed to succeed and may throw ClassCastException at runtime. Use 'as?' or an 'is' check instead.
 ```
 
 `as`を`as?`に変えれば`BUILD SUCCESSFUL`になることも確認済み。
+`DangerConditionsSample.kt`では残り2つの条件(アップキャストは安全/スマートキャストで代替可能)も確認済み(詳細は次節)。
 
 ## FIR拡張APIの調査結果
 
@@ -40,10 +42,27 @@ e: .../Sample.kt:5:16 Unsafe 'as' cast is prohibited by AsCastChecker. Use 'as?'
 4. **チェッカー本体**
    `as`/`as?`/`is`/`!is`はいずれもFIR上では`FirTypeOperatorCall`という同じノードで表現され、`FirOperation`列挙型(`AS`, `SAFE_AS`, `IS`, `NOT_IS`)で区別される。
    対応する基底クラスは`FirTypeOperatorCallChecker`で、`ExpressionCheckers.typeOperatorCallCheckers`に登録する。
-   今回のPoCでは`expression.operation == FirOperation.AS`の場合に無条件でエラーを出す(スマートキャストで代替可能かどうか等の判定は行わない、issueの要求通りの最小構成)。この判定ロジックの精緻化は`#155`のスコープ。
+   `#154`のPoCでは`expression.operation == FirOperation.AS`の場合に無条件でエラーを出していた(issueの要求通りの最小構成)。「危険」の判定ロジックへの精緻化は`#155`で行った(後述)。
 
 5. **診断(エラー)の定義**
    `by error0<PsiElement>()`という委譲プロパティでエラーファクトリを定義し(`org.jetbrains.kotlin.diagnostics.error0`)、`BaseDiagnosticRendererFactory`でメッセージ文言を紐付け、`RootDiagnosticRendererFactory.registerFactory(...)`でグローバル登録する。
+
+## 「危険」の判定ロジック (#155)
+
+`#154`のPoCは`as`を無条件でエラーにしていたが、実際にはキャストが失敗しようがない安全なケース(アップキャスト等)まで巻き込んでしまう。
+`AsCastChecker`は以下の2つの型情報を`ConeKotlinType`の`isSubtypeOf`(`org.jetbrains.kotlin.fir.types.isSubtypeOf`)で比較し、`AsCastDangerClassifier`(純粋関数、`fir-checker-poc/src/test`でユニットテスト済み)に渡して3値に分類する。
+
+- **宣言型 (`declaredType`)**: スマートキャストを考慮しない、素の型。`argument`が`FirSmartCastExpression`でラップされている場合は`originalExpression.resolvedType`、そうでなければ`argument.resolvedType`をそのまま使う。
+- **スマートキャスト型 (`smartCastType`)**: `FirSmartCastExpression.smartcastType`。スマートキャストが効いていない場合は`null`。
+
+| 条件 | 分類 | 意味 |
+| --- | --- | --- |
+| `declaredType`がキャスト先のサブタイプ(または同一型) | `SAFE` | アップキャスト/同一型キャスト。失敗しようがない |
+| `declaredType`は満たさないが`smartCastType`がキャスト先のサブタイプ | `SMART_CAST_REPLACEABLE` | issueの「スマートキャストで代替可能」に対応。`as`を書かずスマートキャストされた値をそのまま使うべき |
+| どちらも満たさない | `UNGUARANTEED_DOWNCAST` | issueの「型の関係が保証されないダウンキャストである」に対応。`ClassCastException`の恐れがある実行時失敗しうるダウンキャスト |
+
+`SAFE`以外は`AsCastFirErrors`の対応する診断(`SMART_CAST_REPLACEABLE_AS_CAST` / `UNGUARANTEED_DOWNCAST_AS_CAST`)でコンパイルエラーにする。
+`fir-checker-poc-sample/src/main/kotlin/DangerConditionsSample.kt`で3パターンとも`./gradlew :fir-checker-poc-sample:compileKotlin`でローカル確認済み(アップキャストの行だけエラーが出ないことも確認済み)。
 
 ### Gradle組み込み(プラグインとしての適用方法)
 
