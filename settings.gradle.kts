@@ -21,3 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "RoutineTimerClone"
 include(":app")
+include(":fir-checker-poc")
+include(":fir-checker-poc-sample")

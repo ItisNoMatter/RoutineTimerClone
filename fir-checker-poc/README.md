@@ -1,0 +1,72 @@
+# FIR Checker PoC (#154)
+
+K2コンパイラのFIR拡張APIを使い、危険な`as`キャストを検出してコンパイルエラーにする最小構成のコンパイラプラグインのPoC。
+`#153`(FIR Checker導入)の技術調査タスク。**本モジュールは`:app`のビルドには一切組み込まれておらず、独立した検証用モジュール。**
+
+## 構成
+
+- `fir-checker-poc/` … コンパイラプラグイン本体
+- `fir-checker-poc-sample/` … プラグインを適用したサンプルモジュール。意図的に危険な`as`キャストを含み、**コンパイルが失敗することが正しい状態**
+
+## 動作確認方法
+
+```
+./gradlew :fir-checker-poc-sample:compileKotlin
+```
+
+`fir-checker-poc-sample/src/main/kotlin/Sample.kt`の`value as String`(危険な`as`)で以下のエラーが出て失敗する。
+`value as? Int`(安全な`as?`)は検出対象外のため、そちらではエラーが出ないことも確認済み。
+
+```
+e: .../Sample.kt:5:16 Unsafe 'as' cast is prohibited by AsCastChecker. Use 'as?' or a smart cast instead.
+```
+
+`as`を`as?`に変えれば`BUILD SUCCESSFUL`になることも確認済み。
+
+## FIR拡張APIの調査結果
+
+危険な`as`キャストを検出するために必要な最小限のコンポーネントは以下の5つ。
+
+1. **`CompilerPluginRegistrar`** (`org.jetbrains.kotlin.compiler.plugin`)
+   コンパイラプラグインのエントリポイント。`supportsK2 = true`をオーバーライドし、`ExtensionStorage.registerExtensions()`内で`FirExtensionRegistrarAdapter.registerExtension(...)`を呼んでFIR拡張を登録する。
+   `META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar`にFQCNを1行書くだけでサービスとして認識される。
+
+2. **`FirExtensionRegistrar`** (`org.jetbrains.kotlin.fir.extensions`)
+   `configurePlugin()`内で`+::MyFirAdditionalCheckersExtension`という独特の構文(コンストラクタ参照を`unaryPlus`で登録)でFIR拡張のファクトリを登録する。
+
+3. **`FirAdditionalCheckersExtension`** (`org.jetbrains.kotlin.fir.analysis.extensions`)
+   `expressionCheckers`(今回使用。他に`declarationCheckers`, `typeCheckers`がある)に、実際のチェッカー実装をまとめた`ExpressionCheckers`オブジェクトを渡す。
+
+4. **チェッカー本体**
+   `as`/`as?`/`is`/`!is`はいずれもFIR上では`FirTypeOperatorCall`という同じノードで表現され、`FirOperation`列挙型(`AS`, `SAFE_AS`, `IS`, `NOT_IS`)で区別される。
+   対応する基底クラスは`FirTypeOperatorCallChecker`で、`ExpressionCheckers.typeOperatorCallCheckers`に登録する。
+   今回のPoCでは`expression.operation == FirOperation.AS`の場合に無条件でエラーを出す(スマートキャストで代替可能かどうか等の判定は行わない、issueの要求通りの最小構成)。この判定ロジックの精緻化は`#155`のスコープ。
+
+5. **診断(エラー)の定義**
+   `by error0<PsiElement>()`という委譲プロパティでエラーファクトリを定義し(`org.jetbrains.kotlin.diagnostics.error0`)、`BaseDiagnosticRendererFactory`でメッセージ文言を紐付け、`RootDiagnosticRendererFactory.registerFactory(...)`でグローバル登録する。
+
+### Gradle組み込み(プラグインとしての適用方法)
+
+サブプロジェクト側で以下を書くだけで、Gradleサブプラグイン(`KotlinCompilerPluginSupportPlugin`)を自作しなくてもローカルの生プラグインとして適用できる。
+
+```kotlin
+dependencies {
+    kotlinCompilerPluginClasspath(project(":fir-checker-poc"))
+}
+```
+
+`#156`(Gradleプラグイン化)では、これをオプション指定(有効/無効切り替え)可能な形でパッケージングし、`:app`に組み込むことになる想定。
+
+## つまずいた点
+
+- ルートの`build.gradle.kts`で`org.jetbrains.kotlin.android`だけを`apply false`宣言している状態で、別モジュールから`org.jetbrains.kotlin.jvm`を素朴に適用しようとすると
+  `Error resolving plugin ... already on the classpath with an unknown version`で失敗した。
+  両者は同じ`kotlin-gradle-plugin`実体を指すマーカーIDが異なるだけなので、ルートの`plugins{}`ブロックに`jetbrains.kotlin.jvm`も`apply false`で追加し、バージョン解決を一本化することで解消した。
+- FIR拡張APIは**Unstable**であることが明記されており、Kotlinのバージョンが上がるたびに破壊的変更が入りうる。今回は本プロジェクトが使用しているKotlin 2.1.10のコンパイラソース(タグ`v2.1.10`)を直接参照してAPI形状を確認した。
+
+## 参考にした実装
+
+- [JetBrains/kotlin `docs/fir/fir-plugins.md`](https://github.com/JetBrains/kotlin/blob/master/docs/fir/fir-plugins.md)
+- [Kotlin/compiler-plugin-template](https://github.com/Kotlin/compiler-plugin-template) — 公式テンプレート
+- [kitakkun/NoCopy-Compiler-Plugin](https://github.com/kitakkun/NoCopy-Compiler-Plugin) — `FirAdditionalCheckersExtension`で特定の呼び出しを禁止する実例(Kotlin 2.0.0時点)。本PoCの構成は主にこれを踏襲した
+- [JetBrains/kotlin `FirCastOperatorsChecker.kt`](https://github.com/JetBrains/kotlin/blob/v2.1.10/compiler/fir/checkers/src/org/jetbrains/kotlin/fir/analysis/checkers/expression/FirCastOperatorsChecker.kt) — コンパイラ本体が`UNCHECKED_CAST`等を報告する際に使っている実際の`as`/`is`チェッカー
