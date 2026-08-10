@@ -74,7 +74,7 @@ class RoutineEditViewModel
 
         fun onBackScreen() {
             val state = uiState.value
-            if (state is RoutineEditUiState.Done && state.isSaving) return
+            if (state is RoutineEditUiState.Done && (state.isSaving || state.routine.name.isBlank())) return
             viewModelScope.launch {
                 try {
                     if (state is RoutineEditUiState.Done) {
