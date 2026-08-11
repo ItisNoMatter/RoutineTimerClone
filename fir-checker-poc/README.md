@@ -1,8 +1,8 @@
-# FIR Checker PoC (#154) / 危険判定ロジック (#155)
+# FIR Checker PoC (#154) / 危険判定ロジック (#155) / Gradle組み込み (#156)
 
 K2コンパイラのFIR拡張APIを使い、危険な`as`キャストを検出してコンパイルエラーにする最小構成のコンパイラプラグインのPoC(#154)と、
 「危険」とみなす条件を定義した検出ロジック本体(#155)。
-`#153`(FIR Checker導入)の子issue。**本モジュールは`:app`のビルドには一切組み込まれておらず、独立した検証用モジュール。**
+`#153`(FIR Checker導入)の子issue。**`:app`には`firChecker.enabled`(既定`false`)で有効化できる形で組み込み済み(`#156`)。詳細は後述。**
 
 ## 構成
 
@@ -74,7 +74,35 @@ dependencies {
 }
 ```
 
-`#156`(Gradleプラグイン化)では、これをオプション指定(有効/無効切り替え)可能な形でパッケージングし、`:app`に組み込むことになる想定。
+### `:app`への組み込み (#156)
+
+上記の仕組みを`:app`に実際に適用した。ただし現時点の`:app`には`#157`(危険な`as`の棚卸し)未対応の危険なキャストが複数残っており、
+チェッカーを無条件で有効化するとビルドが壊れる。そのため`gradle.properties`の`firChecker.enabled`(既定`false`)でON/OFFを切り替えられる形にした。
+
+```kotlin
+// app/build.gradle.kts
+val firCheckerEnabled = (findProperty("firChecker.enabled") as String?)?.toBoolean() ?: false
+
+dependencies {
+    if (firCheckerEnabled) {
+        kotlinCompilerPluginClasspath(project(":fir-checker-poc"))
+    }
+    // ...
+}
+```
+
+動作確認方法:
+
+```
+# 既定(無効)。既存コードに影響せず BUILD SUCCESSFUL になることを確認済み
+./gradlew :app:compileDebugKotlin
+
+# 有効化。#157 未対応の危険なキャスト6件(RunRoutineViewModel.kt / RoutineEditViewModel.kt)が
+# すべて検出されコンパイルエラーになることを確認済み
+./gradlew :app:compileDebugKotlin -PfirChecker.enabled=true
+```
+
+`#157`で危険なキャストを解消したのち、`firChecker.enabled`の既定値を`true`に切り替える想定。
 
 ## つまずいた点
 
