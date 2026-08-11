@@ -62,7 +62,14 @@ android {
     }
 }
 
+// #156: FIR Checker(危険な as キャスト検出, #153)の有効/無効切り替え。詳細は gradle.properties 参照。
+val firCheckerEnabled = (findProperty("firChecker.enabled") as String?)?.toBoolean() ?: false
+
 dependencies {
+    if (firCheckerEnabled) {
+        kotlinCompilerPluginClasspath(project(":fir-checker-poc"))
+    }
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
